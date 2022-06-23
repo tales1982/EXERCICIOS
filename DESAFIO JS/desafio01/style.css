@@ -1,0 +1,25 @@
+body {
+    font: normal 20px arial;
+    margin: 0px auto;
+    background-color: #a459a4;
+}
+
+h1 {
+    text-align: center;
+    color: #e7ba14;
+}
+div{
+    text-align: center;
+}
+button {
+    border-radius: 20px;
+    background-color: #a513a5;
+    color: #eeda3b;
+    font-weight: bolder;
+    width: 150px;
+    height: 100px;
+}
+button:hover {
+    background-color: #efe69e;
+    color: #B59E48;
+}

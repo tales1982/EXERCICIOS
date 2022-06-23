@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Numeros com js</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <h1>Trabalhando com numeros!!</h1>
+    <button onclick="btn()">Click para calcular</button>
+    <section id="msg">
+        <p></p>
+    </section>
+
+
+    <script>
+        function btn() {
+            let n1 = Number(prompt('Digite um numero'))
+            let resultado = document.querySelector('section#msg')
+
+            .innerHTML = `O dobro de ${n1} è <strong>${n1 * 2}</strong>
+            <br> E a metade do ${n1} è <strong>${n1 / 2}</strong>`
+
+        }
+    </script>
+</body>
+
+</html>

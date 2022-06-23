@@ -1,0 +1,37 @@
+* {
+    height: 50%;
+    text-align: center;
+    
+}
+
+body {
+    background-image: linear-gradient(to bottom, rgb(39, 174, 207), rgba(17, 34, 226, 0.336));
+    background-attachment: fixed;
+}
+h1 {
+    
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    font-size: 70px;
+    color: rgb(20, 26, 197);
+}
+button {
+    background-color: rgb(90, 12, 135);
+    height: 80px;
+    width: 180px;
+    border-radius: 20px;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    font-size: 18px;
+    color: aliceblue;
+    
+}
+button:hover{
+    background-color: gold;
+    color: brown;
+    font: 700px;
+}
+section {
+    margin-top: 50px;
+    font-size: 50px;
+    color: rgb(20, 26, 197);
+
+}

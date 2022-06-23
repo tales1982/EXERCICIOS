@@ -1,0 +1,39 @@
+*{
+    text-align: center;    
+}
+body {
+    background-image: linear-gradient(#AD0300,#610200);
+    background-attachment: fixed;
+}
+
+h1 {
+    margin: 80px auto 60px auto;
+    font-family: Geneva, Tahoma, sans-serif;
+    font-size: 60px;
+    color: aliceblue;
+}
+
+button {
+    background-color:#eb615f ;
+    height: 80px;
+    width: 180px;
+    border-radius: 20px;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    font-size: 20px;
+    color: aliceblue;
+    margin-bottom: 50px;
+
+}
+
+button:hover {
+    background-color: gold;
+    font-size: 22px;
+
+}
+
+section {
+    font-weight: 800;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    font-size: 25px; 
+    color: aliceblue;
+}

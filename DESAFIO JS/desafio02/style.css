@@ -1,0 +1,22 @@
+body {
+    background-color: #5828A6;
+    font: normal 30px Georgia, serif;
+    color: #E42EF2;
+    text-align: center;
+}
+
+button {
+    height: 55px;
+    width: 160px;
+    border-radius: 20px;
+    background-color: #E42EF2;
+    color: rgb(8, 8, 8);
+    font-weight: bold;
+    font: normal 20px Georgia, serif;
+
+}
+
+button:hover {
+    background-color: #2E4DF2;
+    color: gold;
+}

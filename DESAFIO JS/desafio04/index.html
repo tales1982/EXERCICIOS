@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <h1>Calculando Troco</h1>
+
+    <button onclick="btn()">Compra produto</button>
+
+    <script>
+
+        function btn() {
+            let pro1 = prompt('Que produto você está comprando?')
+            let preco = Number(prompt(`Quanto custa o ${pro1} que você esta comprando?`))
+            let troco = Number(prompt(`Qual foi o valor que você deu pagar o ${pro1}`))
+            let res = alert(`você comprou um ${pro1} que custa R$ ${preco}.
+Deu R$ ${troco} em dinheiro e vai recer R$ ${troco - preco} de troco.
+Volte sempre!!`)
+        }
+
+/*teste*/
+
+    </script>
+
+</body>
+
+</html>

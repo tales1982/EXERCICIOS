@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<<<<<<< HEAD
+
+=======
+>>>>>>> 89190cb6d88409a404a7f444c847154d3ee4dc05
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<<<<<<< HEAD
+    <title>D
+        ocument</title>
+</head>
+
+<body>
+    <h1>Trabalhando com Dados!!</h1>
+
+    <button onclick="clique()">Clique para começar</button>
+
+    <script>
+        function clique() {
+            let nome = prompt('Qual seu nome?')
+           
+    </script>
+    
+</body>
+
+=======
+    <title>Document</title>
+   <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <h1>Trabalhando com Dados v2.0</h1>
+
+    <button onclick="btn()">Clique para começar</button>
+
+    <p id="msg">Aqui vai aparecer o resultado...</p>
+    
+    <script>
+        function btn() {
+            let nome = prompt('Qual seu nome?')
+            let res = document.querySelector('p#msg')// aqui vai endicar o local que vou alterar
+            res.innerHTML =  `Prazer te conhecer <strong>${nome}</strong>!`//Aqui e a nova msg que vai aparecer nao presisar de () posso usar innrhtml ou innertext
+           
+            
+        }
+    </script>
+</body>
+>>>>>>> 89190cb6d88409a404a7f444c847154d3ee4dc05
+</html>

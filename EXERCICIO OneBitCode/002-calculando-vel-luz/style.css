@@ -1,0 +1,73 @@
+body{
+    background: url(planetater_w7i9h4qw.gif)no-repeat;
+    position: fixed;
+    background-color: black;
+    color: aqua;
+}
+
+.section-primary{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100vw;
+    height: 100vh;
+    font-size: 2em;
+    
+}
+
+.distance,.unity{
+    height: 40px;
+    width: 350px;
+    border-radius: 10px;
+    font-size: 0.8em;
+
+}
+.li{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+
+    
+}
+ #btn{
+    border-radius: 10px;
+    height: 60px;
+    width: 180px;
+    background-color: rgba(153, 242, 10, 0.626);
+    color: rgb(240, 240, 240);
+    font-size: 0.8em;
+    font-weight: bold;
+    box-shadow: 2px 2px 2px rgb(228, 166, 225);
+    
+}
+#btn:hover{
+    background-color: rgb(238, 0, 255);
+    font-size: 1.3em;
+    color: gold;
+}
+.resPc{display: flex;
+    flex-direction:row;
+}
+
+.pc{
+    color: greenyellow;
+    padding-left: 10px;
+}
+
+.resAu{display: flex;
+    flex-direction:row;
+}
+
+.au{
+    color: greenyellow;
+    padding-left: 10px;
+}
+
+.resKm{display: flex;
+    flex-direction:row;
+}
+
+.km{
+    color: greenyellow;
+    padding-left: 10px;
+}

@@ -1,0 +1,32 @@
+body{
+background-color: blanchedalmond;
+font-size: 1.4em;
+}
+.container-00{
+    background-color: blanchedalmond;
+    height: 100vh;
+    width: 100vw;
+}
+
+.container-01{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 10px;
+
+}
+
+.ul{
+display: flex;
+flex-direction: column; 
+}
+
+.btn{
+    border-radius: 10px;
+    width: 120px;
+    height: 70px;
+    color: rgb(203, 104, 17);
+    font-weight: bolder;
+    font-size: 1.2em;
+    background-color: rgba(7, 212, 181, 0.695);
+}

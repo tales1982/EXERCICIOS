@@ -1,0 +1,19 @@
+*{
+    margin: 0px;
+    border: 0px;
+}
+/*classe oculta imagen Win*/
+#winImg{
+    height: 100vh;
+    width: 100vw;
+    background: url(imagens/6a6976c2ef6e7e1485c5a92312ba6d78.gif);
+}
+/*classe oculta h3 win*/
+.winH3{
+    font-size: 16em;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 500px;
+}

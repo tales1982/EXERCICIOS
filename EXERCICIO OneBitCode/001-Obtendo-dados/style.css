@@ -1,0 +1,94 @@
+.body-dark {
+    background-color: black;
+    color: white;
+}
+header{
+    padding-top: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: green;
+    font-size: 1.5em;
+}
+.btn-theme{
+     border-radius: 10px;
+    height: 70px;
+    width: 160px;
+    background-color: rgb(145, 242, 10);
+    color: rgb(155, 59, 32);
+    font-size: 1.5em;
+    font-weight: bold;
+    box-shadow: 2px 2px 2px rgb(4, 133, 7);
+}
+.btn-theme2{
+     border-radius: 10px;
+    height: 70px;
+    width: 160px;
+    background-color: rgb(145, 242, 10);
+    color: rgb(155, 59, 32);
+    font-size: 1.5em;
+    font-weight: bold;
+    box-shadow: 2px 2px 2px rgb(4, 133, 7);
+}
+.form{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding-top: 5px;
+    height: 700px;
+
+}
+
+.input{
+    height: 30px;
+    width: 300px;
+    padding: 10px;
+    border-radius: 10px;
+    border-color: green;
+    font-size: 1.0em;
+    margin-bottom: 30px;
+    color: rgb(4, 4, 126);
+    font-weight: 600;
+    box-shadow: 2px 2px 2px rgb(4, 133, 7);
+}
+input:hover{
+    background-color: rgba(243, 130, 110, 0.808);
+}
+
+label{
+    color: green;
+    font-size: 1.5em;
+    font-weight: bold;
+}
+.btn{
+    display: flex;
+    flex-direction: row;
+   justify-content: center;
+   
+}
+#btn-submit{
+    border-radius: 10px;
+    height: 50px;
+    width: 150px;
+    background-color: rgb(145, 242, 10);
+    color: rgb(40, 155, 32);
+    font-size: 1.5em;
+    font-weight: bold;
+    box-shadow: 2px 2px 2px rgb(4, 133, 7);
+}
+#btn-submit:hover{
+    color: rgb(238, 227, 12);
+    background-color: tomato;
+    font-size: 1.8em;
+}
+
+/*resul li*/
+.res{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    font-size: 1.6em;
+    color: rgb(40, 155, 32);
+    font-weight: bold;
+}
+

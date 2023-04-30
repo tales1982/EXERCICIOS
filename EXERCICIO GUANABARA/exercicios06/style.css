@@ -1,0 +1,43 @@
+*{
+    text-align: center;
+    margin-top: 20px
+}
+body {
+    background-image: linear-gradient(rgba(255, 0, 0, 0.85), rgba(44, 4, 17, 0.936) );
+    background-attachment:fixed;
+}
+
+h1{
+
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 40px;
+    color: rgb(222, 216, 228);
+
+}
+
+button {
+    margin: 50px;
+    border-radius: 20px;
+    height: 90px;
+    width: 180px;background-color: rgb(244, 17, 203);
+    color: aliceblue;
+    font-size: 25px;
+
+}
+
+button:hover{
+    background-color: rgb(245, 243, 231);
+    color: #ff0000;
+}
+
+section{
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 25px;
+    color: aliceblue;
+
+}
+
+script>section>p> {
+    background-color:gold;
+    
+}

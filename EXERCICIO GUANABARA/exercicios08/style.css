@@ -1,0 +1,46 @@
+body {
+    background-image: linear-gradient(#d30457,#490a23);
+    background-attachment: fixed;
+    text-align: center;
+    padding: 50px ;
+}
+h1 {
+    font-size: 50px;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    color:rgb(243, 193, 29);
+}
+button {
+    height: 100px;
+    width: 250px;
+    font-size: 25px;
+    font-family:Arial, Helvetica, sans-serif;
+    font-weight: bolder;
+    background-color:rgb(243, 193, 29) ;
+    border-radius: 20px;
+    color: #900909;
+    margin-bottom: 60px;
+}
+button:hover{
+    background-color: rgb(233, 223, 170);
+}
+section#msg{
+    text-align: center;
+}
+
+
+section {
+    font-size: 25px;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    color: rgb(243, 193, 29);
+    text-align: left;
+}
+footer {
+    text-align: center;
+    margin:  200px;
+    color: rgb(238, 188, 25);
+}
+footer>a{
+    font-size: 18px;
+    color: rgb(238, 188, 25);
+}
+

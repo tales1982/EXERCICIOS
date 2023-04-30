@@ -1,0 +1,37 @@
+
+.container {
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.977);
+}
+
+.blocoLoguin {
+  height: 300px;
+  width: 400px;
+  background-color: rgb(26, 138, 136);
+  border-radius: 10px;
+}
+
+.form{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    color: aliceblue;
+    font-size: 1.2em;
+}
+
+input{
+    border-radius: 10px;
+    height: 20px;
+    font-size: 1em;
+
+}
+#btn{
+    height: 35px;
+    font-size: 1em;
+}

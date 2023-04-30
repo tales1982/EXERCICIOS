@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <h1>Contador de cliques</h1>
+    <button id="a1" onclick="clicar()">Clique em min</button>
+    <button id="b1" onclick="zerar()">Zera o Contador</button>
+    <section id="result">
+        <p></p>
+    </section>
+
+    <script>
+        let contador = 0
+        let res = document.querySelector('section#result')
+        function clicar() {
+            contador++ // É a mesma coisa que contador = contador + 1
+            res.innerHTML = `<p>O contador está com <mark>${contador}</mark> cliques.</p>`
+        }
+        function zerar() {
+            contador = 0
+            res.innerHTML = null
+        }
+    </script>
+</body>
+
+</html>

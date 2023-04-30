@@ -1,0 +1,37 @@
+*{
+    margin: 0px;
+    padding: 0px;
+}
+.container{
+    display: flex;
+    flex-direction: column;
+    margin: auto;
+     height:100vh;
+    width: 800px;
+    
+}
+#section{
+    padding-top: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+#praia{
+    height: 650px;
+    width: auto;
+    
+}
+.praia-sol{
+    display: none;
+}
+#dia-chuva{
+    height: 650px;
+    width: auto;
+}
+.chuva{
+    display: none;
+}
+h3{
+    padding-top: 10px;
+    color: rgb(12, 62, 1);
+}

@@ -1,0 +1,34 @@
+* {
+    text-align: center;
+}
+
+h1 {
+    color: rgb(101, 5, 101);
+}
+
+body {
+    background-image: linear-gradient(to bottom, rgb(7, 158, 245), rgba(12, 239, 247, 0.336));
+    background-attachment: fixed;
+}
+
+.btn {
+    background-color: violet;
+    color: rgb(101, 5, 101);
+    height: 40px;
+    width: 110px;
+    border-radius: 20px;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    font-size: 20px;
+    margin-bottom: 50px;
+}
+
+.btn:hover {
+    background-color: gold;
+    font-size: 22px;
+ 
+}
+section {
+    font-size: 22px ;
+    color: rgb(101, 5, 101);
+    
+}

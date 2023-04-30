@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="main.js" defer></script>
+    <link rel="stylesheet" href="style.css" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div class="containe">
+      <section class="section">
+        <form action="">
+          <h1>Cadastro de dev</h1>
+
+          <div>
+            <label for="nome">Nome completo:</label>
+            <input
+              type="text"
+              required
+              minlength="3"
+              placeholder="Digite o nome. "
+              id="nome"
+              class="input"
+            />
+          </div>
+          
+
+          <div>
+            <label for="idade">Idade:</label>
+            <input
+              type="number"
+              required
+              id="idade"
+              class="input"
+              placeholder="Digite sua idade."
+            />
+          </div>
+
+          <div>
+            <label for="salario">Salario atual:</label>
+            <input
+              type="number"
+              required
+              id="salario"
+              class="input"
+              placeholder="Digite o salario atual."
+            />
+          </div>
+          <div><hr>
+            <p>Sexo</p>
+            <label for="sexo">Masculino.</label>
+            <input type="radio" name="sexo" id="sexo" value="Masculino"/>
+            <label for="sexo">Feminino.</label>
+            <input type="radio" name="sexo" id="sexo" value="Feminino"/>
+          </div><hr>
+          <div>
+           
+            <p>Estado civil</p>
+            <label for="check-box">Solteiro</label>
+            <input type="radio" name="check-box" id="check-box" value="Solteiro"/><br>
+            <label for="check-box">Casado</label>
+            <input type="radio" name="check-box" id="check-box" value="Casado"/><br>
+            <label for="check-box">Divorciado</label>
+            <input type="radio" name="check-box" id="check-box" value="Divorciado"/><br>
+            <label for="check-box">Viúvo</label>
+            <input type="radio" name="check-box" id="check-box" value="Viúvo"/>
+          </div><br>
+           <input type="submit" value="enviar" id="btn"><hr>
+
+        </form>
+        
+        <p>Resultado</p>
+        <ul class="ul">
+
+        </ul>
+      </section>
+    </div>
+  </body>
+</html>

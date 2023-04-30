@@ -1,0 +1,82 @@
+* {
+  margin: 0px;
+}
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100vh;
+  width: 100vw;
+  background: url(astronaut.jpg);
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #061326;
+  height: 1200px;
+  width: 900px;
+  color: white;
+  margin: 50px;
+  border-radius: 20px;
+  box-shadow: 5px 5px 5px 5px #234880;
+}
+
+h1 {
+  font-size: 2.5em;
+  padding-top: 20px;
+  color: rgb(163, 40, 234);
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 10px;
+  padding-top: 50px;
+  font-size: 1.5em;
+  width: 800px;
+  color: rgb(163, 40, 234);
+  font-weight: bold;
+}
+
+form > p {
+  margin: 10px;
+}
+form > p > input {
+  height: 30px;
+  border-radius: 10px;
+  box-shadow: 2px 2px 2px #884cea;
+  text-align: center;
+  font-size: 1.2em;
+  color: rgb(46, 40, 234);
+  font-weight: bold;
+}
+
+#btn {
+  font-size: 1.1em;
+  width: 100px;
+  height: 40px;
+  border-radius: 10px;
+  color: rgb(163, 40, 234);
+  font-weight: bold;
+  box-shadow: 2px 2px 2px #884cea;
+}
+
+#btn:hover {
+  width: 110px;
+  height: 60px;
+  color: rgb(18, 229, 29);
+  background-color: #884cea;
+  box-shadow: 3px 3px 3px 3px gold;
+}
+
+.resP {
+  padding-top: 50px;
+  font-size: 1.8em;
+  color: rgb(255, 255, 255);
+  font-weight: bold;
+}

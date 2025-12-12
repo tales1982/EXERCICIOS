@@ -1,0 +1,1165 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exercícios Redux - Guia Completo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #764abc;
+            --primary-dark: #5c3799;
+            --secondary: #f8f9fa;
+            --accent: #ff6b6b;
+            --success: #51cf66;
+            --warning: #ffd43b;
+            --dark: #212529;
+            --light: #f8f9fa;
+            --shadow: rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .stat-card {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 15px 25px;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+        }
+
+        .stat-number {
+            font-size: 2em;
+            font-weight: bold;
+            display: block;
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .category {
+            margin-bottom: 50px;
+        }
+
+        .category-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 3px solid var(--primary);
+        }
+
+        .category-badge {
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .badge-iniciante {
+            background: linear-gradient(135deg, #51cf66, #37b24d);
+            color: white;
+        }
+
+        .badge-intermediario {
+            background: linear-gradient(135deg, #ffd43b, #fab005);
+            color: var(--dark);
+        }
+
+        .badge-avancado {
+            background: linear-gradient(135deg, #ff6b6b, #fa5252);
+            color: white;
+        }
+
+        .badge-expert {
+            background: linear-gradient(135deg, #764abc, #5c3799);
+            color: white;
+        }
+
+        .category-title {
+            font-size: 1.8em;
+            color: var(--dark);
+            flex: 1;
+        }
+
+        .exercises {
+            display: grid;
+            gap: 20px;
+        }
+
+        .exercise-card {
+            background: white;
+            border: 2px solid #e9ecef;
+            border-radius: 15px;
+            padding: 25px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .exercise-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            background: var(--primary);
+            transform: scaleY(0);
+            transition: transform 0.3s ease;
+        }
+
+        .exercise-card:hover {
+            border-color: var(--primary);
+            box-shadow: 0 5px 20px var(--shadow);
+            transform: translateY(-2px);
+        }
+
+        .exercise-card:hover::before {
+            transform: scaleY(1);
+        }
+
+        .exercise-card.completed {
+            background: linear-gradient(135deg, #f0fff4 0%, #e8f5e9 100%);
+            border-color: var(--success);
+        }
+
+        .exercise-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .checkbox-wrapper {
+            position: relative;
+            margin-top: 5px;
+        }
+
+        .exercise-checkbox {
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            appearance: none;
+            border: 2px solid #ced4da;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .exercise-checkbox:checked {
+            background: var(--success);
+            border-color: var(--success);
+        }
+
+        .exercise-checkbox:checked::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .exercise-info {
+            flex: 1;
+        }
+
+        .exercise-title {
+            font-size: 1.3em;
+            color: var(--dark);
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .exercise-objective {
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border-left: 4px solid var(--primary);
+        }
+
+        .objective-label {
+            font-weight: bold;
+            color: var(--primary);
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .objective-text {
+            color: #495057;
+            margin-top: 5px;
+        }
+
+        .exercise-description {
+            color: #495057;
+            margin-bottom: 15px;
+        }
+
+        .exercise-tasks {
+            margin-top: 15px;
+        }
+
+        .task-list {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .task-list li {
+            padding: 8px 0 8px 30px;
+            position: relative;
+            color: #495057;
+        }
+
+        .task-list li::before {
+            content: '→';
+            position: absolute;
+            left: 10px;
+            color: var(--primary);
+            font-weight: bold;
+        }
+
+        .extra-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #ffd43b, #fab005);
+            color: var(--dark);
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.85em;
+            font-weight: bold;
+            margin-left: 8px;
+        }
+
+        .tech-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 15px;
+        }
+
+        .tech-tag {
+            background: #e9ecef;
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.85em;
+            color: #495057;
+            font-weight: 500;
+        }
+
+        .progress-bar {
+            background: #e9ecef;
+            height: 8px;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+
+        .progress-fill {
+            background: linear-gradient(90deg, var(--success), #37b24d);
+            height: 100%;
+            transition: width 0.5s ease;
+        }
+
+        footer {
+            background: #f8f9fa;
+            padding: 30px;
+            text-align: center;
+            color: #6c757d;
+        }
+
+        .reset-btn {
+            background: linear-gradient(135deg, #ff6b6b, #fa5252);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            font-size: 1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 15px;
+        }
+
+        .reset-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            header h1 {
+                font-size: 1.8em;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            .stats {
+                gap: 15px;
+            }
+
+            .category-title {
+                font-size: 1.4em;
+            }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🚀 Exercícios Redux - Guia Completo</h1>
+            <p>Domine Redux e RTK Query do básico ao avançado</p>
+            <div class="stats">
+                <div class="stat-card">
+                    <span class="stat-number" id="completed-count">0</span>
+                    <span class="stat-label">Concluídos</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number" id="total-count">20</span>
+                    <span class="stat-label">Total</span>
+                </div>
+                <div class="stat-card">
+                    <span class="stat-number" id="progress-percent">0%</span>
+                    <span class="stat-label">Progresso</span>
+                </div>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress-bar"></div>
+            </div>
+        </header>
+
+        <div class="content">
+            <!-- INICIANTE -->
+            <section class="category fade-in">
+                <div class="category-header">
+                    <span class="category-badge badge-iniciante">Iniciante</span>
+                    <h2 class="category-title">Fundamentos do Redux</h2>
+                </div>
+                <div class="exercises">
+                    <!-- EX-01 -->
+                    <div class="exercise-card" data-id="ex-01">
+                        <div class="exercise-header">
+                            <div class="checkbox-wrapper">
+                                <input type="checkbox" class="exercise-checkbox" data-exercise="ex-01">
+                            </div>
+                            <div class="exercise-info">
+                                <h3 class="exercise-title">EX-01 — Counter + Actions (createSlice)</h3>
+                            </div>
+                        </div>
+                        <div class="exercise-objective">
+                            <div class="objective-label">🎯 Objetivo</div>
+                            <div class="objective-text">Entender state, actions, reducers e Provider</div>
+                        </div>
+                        <div class="exercise-description">
+                            Crie um contador simples para aprender os conceitos fundamentais do Redux. Este é o primeiro passo para dominar o gerenciamento de estado global.
+                        </div>
+                        <ul class="task-list">
+                            <li>Store com <code>configureStore</code> e um slice <code>counter</code></li>
+                            <li>Actions: <code>increment</code>, <code>decrement</code>, <code>addByAmount(n)</code></li>
+                            <li>UI com botões e input numérico</li>
+                            <li>Persistir valor em <code>localStorage</code> <span class="extra-badge">EXTRA</span></li>
+                        </ul>
+                        <div class="tech-tags">
+                            <span class="tech-tag">configureStore</span>
+                            <span class="tech-tag">createSlice</span>
+                            <span class="tech-tag">useDispatch</span>
+                            <span class="tech-tag">useSelector</span>
+                        </div>
+                    </div>
+
+                    <!-- EX-02 -->
+                    <div class="exercise-card" data-id="ex-02">
+                        <div class="exercise-header">
+                            <div class="checkbox-wrapper">
+                                <input type="checkbox" class="exercise-checkbox" data-exercise="ex-02">
+                            </div>
+                            <div class="exercise-info">
+                                <h3 class="exercise-title">EX-02 — Todo List (CRUD local)</h3>
+                            </div>
+                        </div>
+                        <div class="exercise-objective">
+                            <div class="objective-label">🎯 Objetivo</div>
+                            <div class="objective-text">CRUD com arrays, IDs, filtros e selectors</div>
+                        </div>
+                        <div class="exercise-description">
+                            Implemente uma lista de tarefas completa com operações CRUD, aprendendo a manipular arrays no Redux e criar selectors derivados.
+                        </div>
+                        <ul class="task-list">
+                            <li>Modelar <code>Todo</code>: <code>{id, title, done, createdAt}</code></li>
+                            <li>Reducers: add, toggleDone, editTitle, remove</li>
+                            <li>Filtro: all/active/done</li>
+                            <li>Selector derivado: contagem de done/active</li>
+                            <li>Salvar/restaurar do <code>localStorage</code> <span class="extra-badge">EXTRA</span></li>
+                        </ul>
+                        <div class="tech-tags">
+                            <span class="tech-tag">Array manipulation</span>
+                            <span class="tech-tag">Selectors</span>
+                            <span class="tech-tag">Filters</span>
+                        </div>
+                    </div>
+
+                    <!-- EX-03 -->
+                    <div class="exercise-card" data-id="ex-03">
+                        <div class="exercise-header">
+                            <div class="checkbox-wrapper">
+                                <input type="checkbox" class="exercise-checkbox" data-exercise="ex-03">
+                            </div>
+                            <div class="exercise-info">
+                                <h3 class="exercise-title">EX-03 — Múltiplos Slices (Carrinho de Compras)</h3>
+                            </div>
+                        </div>
+                        <div class="exercise-objective">
+                            <div class="objective-label">🎯 Objetivo</div>
+                            <div class="objective-text">Aprender a organizar múltiplos slices e comunicação entre eles</div>
+                        </div>
+                        <div class="exercise-description">
+                            Crie um carrinho de compras com produtos e gerenciamento de estoque, praticando a organização de múltiplos slices relacionados.
+                        </div>
+                        <ul class="task-list">
+                            <li>Slice <code>products</code>: lista de produtos com preço e estoque</li>
+                            <li>Slice <code>cart</code>: itens no carrinho com quantidade</li>
+                            <li>Actions: addToCart, removeFromCart, updateQuantity</li>
+                            <li>Selector derivado: total do carrinho, quantidade de itens</li>
+                            <li>Validação: não permitir adicionar sem estoque <span class="extra-badge">EXTRA</span></li>
+                        </ul>
+                        <div class="tech-tags">
+                            <span class="tech-tag">Multiple Slices</span>
+                            <span class="tech-tag">Derived State</span>
+                            <span class="tech-tag">Business Logic</span>
+                        </div>
+                    </div>
+
+                    <!-- EX-04 -->
+                    <div class="exercise-card" data-id="ex-04">
+                        <div class="exercise-header">
+                            <div class="checkbox-wrapper">
+                                <input type="checkbox" class="exercise-checkbox" data-exercise="ex-04">
+                            </div>
+                            <div class="exercise-info">
+                                <h3 class="exercise-title">EX-04 — Middleware e Logger Customizado</h3>
+                            </div>
+                        </div>
+                        <div class="exercise-objective">
+                            <div class="objective-label">🎯 Objetivo</div>
+                            <div class="objective-text">Entender o fluxo de middleware e criar middleware personalizado</div>
+                        </div>
+                        <div class="exercise-description">
+                            Crie um middleware customizado para logging e analytics, entendendo como interceptar actions no Redux.
+                        </div>
+                        <ul class="task-list">
+                            <li>Implementar middleware de logging: registrar action, state anterior/posterior</li>
+                            <li>Middleware de analytics: rastrear ações específicas</li>
+                            <li>Middleware de validação: validar payloads antes de processar</li>
+                            <li>UI simples para visualizar logs em tempo real</li>
+                            <li>Adicionar filtros para tipos de actions específicas <span class="extra-badge">EXTRA</span></li>
+                        </ul>
+                        <div class="tech-tags">
+                            <span class="tech-tag">Middleware</span>
+                            <span class="tech-tag">Custom Logic</span>
+                            <span class="tech-tag">Logging</span>
+                        </div>
+                    </div>
+
+                    <!-- EX-05 -->
+                    <div class="exercise-card" data-id="ex-05">
+                        <div class="exercise-header">
+                            <div class="checkbox-wrapper">
+                                <input type="checkbox" class="exercise-checkbox" data-exercise="ex-05">
+                            </div>
+                            <div class="exercise-info">
+                                <h3 class="exercise-title">EX-05 — Form com Redux (Cadastro de Usuário)</h3>
+                            </div>
+                        </div>
+                        <div class="exercise-objective">
+                            <div class="objective-label">🎯 Objetivo</div>
+                            <div class="objective-text">Gerenciar formulários complexos com Redux e validação</div>
+                        </div>
+                        <div class="exercise-description">
+                            Implemente um formulário de cadastro multi-step com validação, aprendendo boas práticas de gerenciamento de formulários no Redux.
+                        </div>
+                        <ul class="task-list">
+                            <li>Slice <code>form</code>: campos (nome, email, senha, confirmar senha)</li>
+                            <li>Actions: updateField, validateField, submitForm, resetForm</li>
+                            <li>Validação em tempo real com mensagens de erro</li>
+                            <li>Multi-step form: informações pessoais → endereço → confirmação</li>
+                            <li>Preview dos dados antes de submeter <span class="extra-badge">EXTRA</span></li>
+                        </ul>
+                        <div class="tech-tags">
+                            <span class="tech-tag">Forms</span>
+                            <span class="tech-tag">Validation</span>
+                            <span class="tech-tag">Multi-step</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- INTERMEDIÁRIO -->
+            <section class="category fade-in">
+                <div class="category-header">
+                    <span class="category-badge badge-intermediario">Intermediário</span>
+                    <h2 class="category-title">Operações Assíncronas</h2>
+                </div>
+                <div class="exercises">
+                    <!-- EX-06 -->
+                    <div class="exercise-card" data-id="ex-06">
+                        <div class="exercise-header">
+                            <div class="checkbox-wrapper">
+                                <input type="checkbox" class="exercise-checkbox" data-exercise="ex-06">
+                            </div>
+                            <div class="exercise-info">
+                                <h3 class="exercise-title">EX-06 — Async com createAsyncThunk (GET posts)</h3>
+                            </div>
+                        </div>
+                        <div class="exercise-objective">
+                            <div class="objective-label">🎯 Objetivo</div>
+                            <div class="objective-text">Fluxo async (pending/fulfilled/rejected) + tratamento de erro</div>
+                        </div>
+                        <div class="exercise-description">
+                            Implemente busca de posts de uma API externa, aprendendo a lidar com estados assíncronos e tratamento de erros no Redux.
+                        </div>
+                        <ul class="task-list">
+                            <li>Slice <code>posts</code>: <code>items</code>, <code>status</code>, <code>error</code></li>
+                            <li>Thunk <code>fetchPosts()</code> consumindo <code>/posts</code></li>
+                            <li>UI: lista + refresh + loading + erro + estado vazio</li>
+                            <li>Abort/cancel usando <code>thunkAPI.signal</code> <span class="extra-badge">EXTRA</span></li>
+                        </ul>
+                        <div class="tech-tags">
+                            <span class="tech-tag">createAsyncThunk</span>
+                            <span class="tech-tag">API Calls</span>
+                            <span class="tech-tag">Error Handling</span>
+                        </div>
+                    </div>
+
+                    <!-- EX-07 -->
+                    <div class="exercise-card" data-id="ex-07">
+                        <div class="exercise-header">
+                            <div class="checkbox-wrapper">
+                                <input type="checkbox" class="exercise-checkbox" data-exercise="ex-07">
+                            </div>
+                            <div class="exercise-info">
+                                <h3 class="exercise-title">EX-07 — Normalização com createEntityAdapter (Users)</h3>
+                            </div>
+                        </div>
+                        <div class="exercise-objective">
+                            <div class="objective-label">🎯 Objetivo</div>
+                            <div class="objective-text">Normalizar dados com IDs, usar selectors gerados e CRUD eficiente</div>
+                        </div>
+                        <div class="exercise-description">
+                            Use createEntityAdapter para gerenciar uma lista de usuários de forma eficiente, aprendendo sobre normalização de dados.
+                        </div>
+                        <ul class="task-list">
+                            <li>Adapter com <code>selectId</code> e <code>sortComparer</code></li>
+                            <li>Usar <code>addOne</code>, <code>updateOne</code>, <code>removeOne</code>, <code>setAll</code></li>
+                            <li>Selectors gerados: <code>selectAll</code>, <code>selectById</code>, <code>selectTotal</code></li>
+                            <li>UI: lista ordenada, busca por ID, edição inline</li>
+                            <li>Adicionar filtro e ordenação customizada <span class="extra-badge">EXTRA</span></li>
+                        </ul>
+                        <div class="tech-tags">
+                            <span class="tech-tag">createEntityAdapter</span>
+                            <span class="tech-tag">Normalization</span>
+                            <span class="tech-tag">Efficient Updates</span>
+                        </div>
+                    </div>
+
+                    <!-- EX-08 -->
+                    <div class="exercise-card" data-id="ex-08">
+                        <div class="exercise-header">
+                            <div class="checkbox-wrapper">
+                                <input type="checkbox" class="exercise-checkbox" data-exercise="ex-08">
+                            </div>
+                            <div class="exercise-info">
+                                <h3 class="exercise-title">EX-08 — Multiple Async Thunks (Weather App)</h3>
+                            </div>
+                        </div>
+                        <div class="exercise-objective">
+                            <div class="objective-label">🎯 Objetivo</div>
+                            <div class="objective-text">Coordenar múltiplas chamadas assíncronas e gerenciar estado complexo</div>
+                        </div>
+                        <div class="exercise-description">
+                            Crie um app de clima que busca dados de múltiplas APIs, aprendendo a coordenar várias operações assíncronas.
+                        </div>
+                        <ul class="task-list">
+                            <li>Thunk <code>fetchCurrentWeather(city)</code></li>
+                            <li>Thunk <code>fetchForecast(city)</code></li>
+                            <li>Thunk <code>fetchAirQuality(city)</code></li>
+                            <li>Gerenciar loading states independentes para cada thunk</li>
+                            <li>Cache de resultados por cidade com timestamp <span class="extra-badge">EXTRA</span></li>
+                        </ul>
+                        <div class="tech-tags">
+                            <span class="tech-tag">Multiple APIs</span>
+                            <span class="tech-tag">Parallel Requests</span>
+                            <span class="tech-tag">Caching</span>
+                        </div>
+                    </div>
+
+                    <!-- EX-09 -->
+                    <div class="exercise-card" data-id="ex-09">
+                        <div class="exercise-header">
+                            <div class="checkbox-wrapper">
+                                <input type="checkbox" class="exercise-checkbox" data-exercise="ex-09">
+                            </div>
+                            <div class="exercise-info">
+                                <h3 class="exercise-title">EX-09 — Pagination e Infinite Scroll</h3>
+                            </div>
+                        </div>
+                        <div class="exercise-objective">
+                            <div class="objective-label">🎯 Objetivo</div>
+                            <div class="objective-text">Implementar paginação e scroll infinito com Redux</div>
+                        </div>
+                        <div class="exercise-description">
+                            Crie uma lista paginada com infinite scroll, aprendendo a gerenciar grandes volumes de dados de forma eficiente.
+                        </div>
+                        <ul class="task-list">
+                            <li>Thunk <code>fetchPosts(page)</code> com controle de página</li>
+                            <li>State: <code>items</code>, <code>currentPage</code>, <code>hasMore</code>, <code>totalPages</code></li>
+                            <li>UI: botões next/previous ou infinite scroll</li>
+                            <li>Prevenir duplicatas ao carregar mais itens</li>
+                            <li>Implementar skeleton loading <span class="extra-badge">EXTRA</span></li>
+                        </ul>
+                        <div class="tech-tags">
+                            <span class="tech-tag">Pagination</span>
+                            <span class="tech-tag">Infinite Scroll</span>
+                            <span class="tech-tag">Performance</span>
+                        </div>
+                    </div>
+
+                    <!-- EX-10 -->
+                    <div class="exercise-card" data-id="ex-10">
+                        <div class="exercise-header">
+                            <div class="checkbox-wrapper">
+                                <input type="checkbox" class="exercise-checkbox" data-exercise="ex-10">
+                            </div>
+                            <div class="exercise-info">
+                                <h3 class="exercise-title">EX-10 — Error Retry e Offline Support</h3>
+                            </div>
+                        </div>
+                        <div class="exercise-objective">
+                            <div class="objective-label">🎯 Objetivo</div>
+                            <div class="objective-text">Implementar retry automático e suporte offline</div>
+                        </div>
+                        <div class="exercise-description">
+                            Adicione resiliência à aplicação com retry automático e queue de operações offline, essencial para apps robustos.
+                        </div>
+                        <ul class="task-list">
+                            <li>Implementar retry logic em thunks com exponential backoff</li>
+                            <li>Detectar status online/offline e atualizar state</li>
+                            <li>Queue de operações pendentes quando offline</li>
+                            <li>Processar queue automaticamente quando voltar online</li>
+                            <li>Indicator visual de status de conexão <span class="extra-badge">EXTRA</span></li>
+                        </ul>
+                        <div class="tech-tags">
+                            <span class="tech-tag">Retry Logic</span>
+                            <span class="tech-tag">Offline Support</span>
+                            <span class="tech-tag">Network Detection</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- AVANÇADO -->
+            <section class="category fade-in">
+                <div class="category-header">
+                    <span class="category-badge badge-avancado">Avançado</span>
+                    <h2 class="category-title">RTK Query Fundamentos</h2>
+                </div>
+                <div class="exercises">
+                    <!-- EX-11 -->
+                    <div class="exercise-card" data-id="ex-11">
+                        <div class="exercise-header">
+                            <div class="checkbox-wrapper">
+                                <input type="checkbox" class="exercise-checkbox" data-exercise="ex-11">
+                            </div>
+                            <div class="exercise-info">
+                                <h3 class="exercise-title">EX-11 — RTK Query: baseApi + endpoints + cache</h3>
+                            </div>
+                        </div>
+                        <div class="exercise-objective">
+                            <div class="objective-label">🎯 Objetivo</div>
+                            <div class="objective-text">Substituir thunks por RTK Query, usando cache automático</div>
+                        </div>
+                        <div class="exercise-description">
+                            Migre de createAsyncThunk para RTK Query, aproveitando o poder do cache automático e invalidação inteligente.
+                        </div>
+                        <ul class="task-list">
+                            <li>Criar <code>baseApi</code> com <code>createApi</code> e <code>fetchBaseQuery</code></li>
+                            <li>Endpoint <code>getPosts</code> + hook <code>useGetPostsQuery</code></li>
+                            <li>UI: refetch e estado de cache</li>
+                            <li>Paginação via query params e <code>selectFromResult</code> <span class="extra-badge">EXTRA</span></li>
+                        </ul>
+                        <div class="tech-tags">
+                            <span class="tech-tag">RTK Query</span>
+                            <span class="tech-tag">Automatic Caching</span>
+                            <span class="tech-tag">fetchBaseQuery</span>
+                        </div>
+                    </div>
+
+                    <!-- EX-12 -->
+                    <div class="exercise-card" data-id="ex-12">
+                        <div class="exercise-header">
+                            <div class="checkbox-wrapper">
+                                <input type="checkbox" class="exercise-checkbox" data-exercise="ex-12">
+                            </div>
+                            <div class="exercise-info">
+                                <h3 class="exercise-title">EX-12 — RTK Query: Transformações e Normalização</h3>
+                            </div>
+                        </div>
+                        <div class="exercise-objective">
+                            <div class="objective-label">🎯 Objetivo</div>
+                            <div class="objective-text">Transformar dados da API e normalizar com RTK Query</div>
+                        </div>
+                        <div class="exercise-description">
+                            Use transformResponse para processar dados da API e integrá-los perfeitamente com sua aplicação.
+                        </div>
+                        <ul class="task-list">
+                            <li>Endpoint com <code>transformResponse</code> para formatar datas</li>
+                            <li>Transformar estrutura de dados aninhados</li>
+                            <li>Normalizar dados com <code>createEntityAdapter</code> dentro do RTK Query</li>
+                            <li>Usar <code>transformErrorResponse</code> para mensagens de erro customizadas</li>
+                            <li>Implementar computed fields nos dados transformados <span class="extra-badge">EXTRA</span></li>
+                        </ul>
+                        <div class="tech-tags">
+                            <span class="tech-tag">transformResponse</span>
+                            <span class="tech-tag">Data Normalization</span>
+                            <span class="tech-tag">Error Transform</span>
+                        </div>
+                    </div>
+
+                    <!-- EX-13 -->
+                    <div class="exercise-card" data-id="ex-13">
+                        <div class="exercise-header">
+                            <div class="checkbox-wrapper">
+                                <input type="checkbox" class="exercise-checkbox" data-exercise="ex-13">
+                            </div>
+                            <div class="exercise-info">
+                                <h3 class="exercise-title">EX-13 — RTK Query: Polling e Auto-Refetch</h3>
+                            </div>
+                        </div>
+                        <div class="exercise-objective">
+                            <div class="objective-label">🎯 Objetivo</div>
+                            <div class="objective-text">Implementar polling automático e refetch em tempo real</div>
+                        </div>
+                        <div class="exercise-description">
+                            Configure polling para manter dados sempre atualizados, ideal para dashboards e aplicações em tempo real.
+                        </div>
+                        <ul class="task-list">
+                            <li>Usar <code>pollingInterval</code> para atualização automática</li>
+                            <li>Implementar <code>refetchOnFocus</code> e <code>refetchOnReconnect</code></li>
+                            <li>Controlar polling dinamicamente (play/pause)</li>
+                            <li>UI: indicator de última atualização e próxima atualização</li>
+                            <li>Skip polling quando em background <span class="extra-badge">EXTRA</span></li>
+                        </ul>
+                        <div class="tech-tags">
+                            <span class="tech-tag">Polling</span>
+                            <span class="tech-tag">Real-time Updates</span>
+                            <span class="tech-tag">Auto-refetch</span>
+                        </div>
+                    </div>
+
+                    <!-- EX-14 -->
+                    <div class="exercise-card" data-id="ex-14">
+                        <div class="exercise-header">
+                            <div class="checkbox-wrapper">
+                                <input type="checkbox" class="exercise-checkbox" data-exercise="ex-14">
+                            </div>
+                            <div class="exercise-info">
+                                <h3 class="exercise-title">EX-14 — RTK Query: Conditional Fetching e Lazy Queries</h3>
+                            </div>
+                        </div>
+                        <div class="exercise-objective">
+                            <div class="objective-label">🎯 Objetivo</div>
+                            <div class="objective-text">Controlar quando queries são executadas e usar lazy queries</div>
+                        </div>
+                        <div class="exercise-description">
+                            Aprenda a controlar precisamente quando dados são buscados, otimizando performance e experiência do usuário.
+                        </div>
+                        <ul class="task-list">
+                            <li>Usar <code>skip</code> para conditional fetching</li>
+                            <li>Implementar <code>useLazyQuery</code> para busca sob demanda</li>
+                            <li>Buscar dados baseado em ações do usuário</li>
+                            <li>UI: botão "Load More" com lazy query</li>
+                            <li>Prefetch de dados antes da navegação <span class="extra-badge">EXTRA</span></li>
+                        </ul>
+                        <div class="tech-tags">
+                            <span class="tech-tag">Conditional Fetching</span>
+                            <span class="tech-tag">Lazy Queries</span>
+                            <span class="tech-tag">Prefetching</span>
+                        </div>
+                    </div>
+
+                    <!-- EX-15 -->
+                    <div class="exercise-card" data-id="ex-15">
+                        <div class="exercise-header">
+                            <div class="checkbox-wrapper">
+                                <input type="checkbox" class="exercise-checkbox" data-exercise="ex-15">
+                            </div>
+                            <div class="exercise-info">
+                                <h3 class="exercise-title">EX-15 — RTK Query: Authentication e Headers Dinâmicos</h3>
+                            </div>
+                        </div>
+                        <div class="exercise-objective">
+                            <div class="objective-label">🎯 Objetivo</div>
+                            <div class="objective-text">Implementar autenticação e gerenciamento de tokens com RTK Query</div>
+                        </div>
+                        <div class="exercise-description">
+                            Configure headers dinâmicos e autenticação, essencial para aplicações que requerem login e segurança.
+                        </div>
+                        <ul class="task-list">
+                            <li>Usar <code>prepareHeaders</code> para adicionar token de autenticação</li>
+                            <li>Implementar refresh token automático</li>
+                            <li>Endpoints de login/logout com mutations</li>
+                            <li>Lidar com erros 401 e redirecionar para login</li>
+                            <li>Implementar rate limiting no cliente <span class="extra-badge">EXTRA</span></li>
+                        </ul>
+                        <div class="tech-tags">
+                            <span class="tech-tag">Authentication</span>
+                            <span class="tech-tag">prepareHeaders</span>
+                            <span class="tech-tag">Token Management</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- EXPERT -->
+            <section class="category fade-in">
+                <div class="category-header">
+                    <span class="category-badge badge-expert">Expert</span>
+                    <h2 class="category-title">RTK Query Avançado & Testes</h2>
+                </div>
+                <div class="exercises">
+                    <!-- EX-16 -->
+                    <div class="exercise-card" data-id="ex-16">
+                        <div class="exercise-header">
+                            <div class="checkbox-wrapper">
+                                <input type="checkbox" class="exercise-checkbox" data-exercise="ex-16">
+                            </div>
+                            <div class="exercise-info">
+                                <h3 class="exercise-title">EX-16 — RTK Query: Mutations + Invalidation + Optimistic Update</h3>
+                            </div>
+                        </div>
+                        <div class="exercise-objective">
+                            <div class="objective-label">🎯 Objetivo</div>
+                            <div class="objective-text">Dominar providesTags, invalidatesTags e updates otimistas no cache</div>
+                        </div>
+                        <div class="exercise-description">
+                            Implemente mutations com invalidação inteligente de cache e updates otimistas para uma UX super responsiva.
+                        </div>
+                        <ul class="task-list">
+                            <li>Adicionar mutation <code>addPost</code> e invalidar tags do list</li>
+                            <li>Adicionar mutation <code>deletePost</code> com update otimista via <code>onQueryStarted</code></li>
+                            <li>UI: feedback de loading por item (ex.: botão "Deleting...")</li>
+                            <li>Rollback correto em erro (undo patch) <span class="extra-badge">EXTRA</span></li>
+                        </ul>
+                        <div class="tech-tags">
+                            <span class="tech-tag">Mutations</span>
+                            <span class="tech-tag">Cache Invalidation</span>
+                            <span class="tech-tag">Optimistic Updates</span>
+                        </div>
+                    </div>
+
+                    <!-- EX-17 -->
+                    <div class="exercise-card" data-id="ex-17">
+                        <div class="exercise-header">
+                            <div class="checkbox-wrapper">
+                                <input type="checkbox" class="exercise-checkbox" data-exercise="ex-17">
+                            </div>
+                            <div class="exercise-info">
+                                <h3 class="exercise-title">EX-17 — Streaming e WebSocket com RTK Query</h3>
+                            </div>
+                        </div>
+                        <div class="exercise-objective">
+                            <div class="objective-label">🎯 Objetivo</div>
+                            <div class="objective-text">Integrar WebSockets e streaming de dados em tempo real</div>
+                        </div>
+                        <div class="exercise-description">
+                            Crie uma aplicação de chat ou dashboard em tempo real usando RTK Query com WebSockets.
+                        </div>
+                        <ul class="task-list">
+                            <li>Implementar <code>onCacheEntryAdded</code> para WebSocket connection</li>
+                            <li>Atualizar cache com mensagens em tempo real</li>
+                            <li>Gerenciar conexão/desconexão do WebSocket</li>
+                            <li>UI: chat em tempo real ou dashboard de métricas</li>
+                            <li>Implementar reconnection automática com exponential backoff <span class="extra-badge">EXTRA</span></li>
+                        </ul>
+                        <div class="tech-tags">
+                            <span class="tech-tag">WebSockets</span>
+                            <span class="tech-tag">Real-time</span>
+                            <span class="tech-tag">Streaming</span>
+                        </div>
+                    </div>
+
+                    <!-- EX-18 -->
+                    <div class="exercise-card" data-id="ex-18">
+                        <div class="exercise-header">
+                            <div class="checkbox-wrapper">
+                                <input type="checkbox" class="exercise-checkbox" data-exercise="ex-18">
+                            </div>
+                            <div class="exercise-info">
+                                <h3 class="exercise-title">EX-18 — Code Splitting e Injection de Endpoints</h3>
+                            </div>
+                        </div>
+                        <div class="exercise-objective">
+                            <div class="objective-label">🎯 Objetivo</div>
+                            <div class="objective-text">Implementar lazy loading de endpoints para otimizar bundle size</div>
+                        </div>
+                        <div class="exercise-description">
+                            Use injectEndpoints para carregar endpoints sob demanda, essencial para aplicações grandes.
+                        </div>
+                        <ul class="task-list">
+                            <li>Criar <code>baseApi</code> vazia inicial</li>
+                            <li>Usar <code>injectEndpoints</code> em features separadas</li>
+                            <li>Configurar code splitting por rota/feature</li>
+                            <li>UI: diferentes seções da app com endpoints próprios</li>
+                            <li>Medir e comparar tamanho do bundle <span class="extra-badge">EXTRA</span></li>
+                        </ul>
+                        <div class="tech-tags">
+                            <span class="tech-tag">Code Splitting</span>
+                            <span class="tech-tag">injectEndpoints</span>
+                            <span class="tech-tag">Performance</span>
+                        </div>
+                    </div>
+
+                    <!-- EX-19 -->
+                    <div class="exercise-card" data-id="ex-19">
+                        <div class="exercise-header">
+                            <div class="checkbox-wrapper">
+                                <input type="checkbox" class="exercise-checkbox" data-exercise="ex-19">
+                            </div>
+                            <div class="exercise-info">
+                                <h3 class="exercise-title">EX-19 — Custom Base Query e Error Handling Global</h3>
+                            </div>
+                        </div>
+                        <div class="exercise-objective">
+                            <div class="objective-label">🎯 Objetivo</div>
+                            <div class="objective-text">Criar base query customizada com interceptors e error handling</div>
+                        </div>
+                        <div class="exercise-description">
+                            Implemente uma base query personalizada com logging, retry, transformações e tratamento de erros global.
+                        </div>
+                        <ul class="task-list">
+                            <li>Criar custom <code>baseQuery</code> wrapping <code>fetchBaseQuery</code></li>
+                            <li>Adicionar logging de todas as requisições</li>
+                            <li>Implementar retry logic global</li>
+                            <li>Tratamento de erros centralizado (toast notifications)</li>
+                            <li>Rate limiting e request throttling <span class="extra-badge">EXTRA</span></li>
+                        </ul>
+                        <div class="tech-tags">
+                            <span class="tech-tag">Custom Base Query</span>
+                            <span class="tech-tag">Interceptors</span>
+                            <span class="tech-tag">Global Error Handling</span>
+                        </div>
+                    </div>
+
+                    <!-- EX-20 -->
+                    <div class="exercise-card" data-id="ex-20">
+                        <div class="exercise-header">
+                            <div class="checkbox-wrapper">
+                                <input type="checkbox" class="exercise-checkbox" data-exercise="ex-20">
+                            </div>
+                            <div class="exercise-info">
+                                <h3 class="exercise-title">EX-20 — Testes: Reducers, Selectors e Async (Thunks/RTKQ)</h3>
+                            </div>
+                        </div>
+                        <div class="exercise-objective">
+                            <div class="objective-label">🎯 Objetivo</div>
+                            <div class="objective-text">Testar lógica e fluxos sem depender da UI</div>
+                        </div>
+                        <div class="exercise-description">
+                            Implemente testes completos para Redux: reducers, selectors, thunks e RTK Query endpoints.
+                        </div>
+                        <ul class="task-list">
+                            <li>Teste unit de reducers (casos de sucesso e bordas)</li>
+                            <li>Teste unit de selectors (com state fake)</li>
+                            <li>Teste de fluxo async (MSW/fetch-mock)</li>
+                            <li>Teste de RTK Query endpoints e cache</li>
+                            <li>Testar optimistic updates e rollback <span class="extra-badge">EXTRA</span></li>
+                        </ul>
+                        <div class="tech-tags">
+                            <span class="tech-tag">Testing</span>
+                            <span class="tech-tag">Jest</span>
+                            <span class="tech-tag">MSW</span>
+                            <span class="tech-tag">React Testing Library</span>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+
+        <footer>
+            <p>💡 <strong>Dica:</strong> As checklists são salvas no seu navegador via <code>localStorage</code>.</p>
+            <p>Mantenha este HTML aberto enquanto você codifica os exercícios!</p>
+            <button class="reset-btn" id="reset-btn">🔄 Resetar Progresso</button>
+            <p style="margin-top: 20px; font-size: 0.9em;">
+                📚 Feito com ❤️ para ajudar você a dominar Redux
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        // Gerenciamento de localStorage e checkboxes
+        const STORAGE_KEY = 'redux-exercises-progress';
+
+        // Carregar progresso salvo
+        function loadProgress() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            return saved ? JSON.parse(saved) : {};
+        }
+
+        // Salvar progresso
+        function saveProgress(progress) {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+        }
+
+        // Atualizar estatísticas
+        function updateStats() {
+            const checkboxes = document.querySelectorAll('.exercise-checkbox');
+            const total = checkboxes.length;
+            const completed = Array.from(checkboxes).filter(cb => cb.checked).length;
+            const percent = Math.round((completed / total) * 100);
+
+            document.getElementById('completed-count').textContent = completed;
+            document.getElementById('total-count').textContent = total;
+            document.getElementById('progress-percent').textContent = `${percent}%`;
+            document.getElementById('progress-bar').style.width = `${percent}%`;
+        }
+
+        // Inicializar checkboxes com progresso salvo
+        function initCheckboxes() {
+            const progress = loadProgress();
+            const checkboxes = document.querySelectorAll('.exercise-checkbox');
+
+            checkboxes.forEach(checkbox => {
+                const exerciseId = checkbox.dataset.exercise;
+                if (progress[exerciseId]) {
+                    checkbox.checked = true;
+                    checkbox.closest('.exercise-card').classList.add('completed');
+                }
+
+                checkbox.addEventListener('change', function() {
+                    const progress = loadProgress();
+                    const card = this.closest('.exercise-card');
+                    
+                    if (this.checked) {
+                        progress[exerciseId] = true;
+                        card.classList.add('completed');
+                    } else {
+                        delete progress[exerciseId];
+                        card.classList.remove('completed');
+                    }
+
+                    saveProgress(progress);
+                    updateStats();
+                });
+            });
+
+            updateStats();
+        }
+
+        // Resetar progresso
+        document.getElementById('reset-btn').addEventListener('click', function() {
+            if (confirm('Tem certeza que deseja resetar todo o progresso? Esta ação não pode ser desfeita.')) {
+                localStorage.removeItem(STORAGE_KEY);
+                location.reload();
+            }
+        });
+
+        // Animação de fade-in sequencial
+        function animateCategories() {
+            const categories = document.querySelectorAll('.category');
+            categories.forEach((category, index) => {
+                setTimeout(() => {
+                    category.style.opacity = '0';
+                    category.style.transform = 'translateY(20px)';
+                    setTimeout(() => {
+                        category.style.transition = 'all 0.5s ease';
+                        category.style.opacity = '1';
+                        category.style.transform = 'translateY(0)';
+                    }, 50);
+                }, index * 100);
+            });
+        }
+
+        // Inicializar quando a página carregar
+        document.addEventListener('DOMContentLoaded', function() {
+            initCheckboxes();
+            animateCategories();
+        });
+    </script>
+</body>
+</html>

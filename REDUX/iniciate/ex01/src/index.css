@@ -1,0 +1,14 @@
+@import url("https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap");
+
+:root {
+  color-scheme: dark;
+  font-family: "Space Grotesk", Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  background-color: #0b1020;
+}
+
+body {
+  margin: 0;
+  background: radial-gradient(1200px 800px at 10% 10%, rgba(124, 58, 237, 0.35), transparent 55%),
+              radial-gradient(900px 700px at 90% 20%, rgba(59, 130, 246, 0.25), transparent 60%),
+              #0b1020;
+}

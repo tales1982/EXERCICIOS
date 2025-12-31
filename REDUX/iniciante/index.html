@@ -1,0 +1,496 @@
+html
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Redux do zero → React + TypeScript + styled-components</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 2rem;
+      background: #1a1a1a;
+      color: #e0e0e0;
+      line-height: 1.6;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    h1 {
+      color: #61dafb;
+      border-bottom: 3px solid #61dafb;
+      padding-bottom: 1rem;
+      margin-bottom: 2rem;
+    }
+    h2 {
+      color: #61dafb;
+      margin-top: 3rem;
+      margin-bottom: 1rem;
+    }
+    h3 {
+      color: #ffa726;
+      margin-top: 0;
+    }
+    pre {
+      background: #2d2d2d;
+      padding: 1.5rem;
+      border-left: 4px solid #61dafb;
+      overflow-x: auto;
+      border-radius: 4px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    }
+    code {
+      color: #89ddff;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 0.95rem;
+    }
+    .task {
+      margin: 2rem 0;
+      padding: 1.5rem;
+      border: 2px solid #61dafb;
+      border-radius: 8px;
+      background: #252525;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .task:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(97, 218, 251, 0.2);
+    }
+    .highlight {
+      background: #ffa726;
+      color: #1a1a1a;
+      padding: 0.2rem 0.4rem;
+      border-radius: 3px;
+      font-weight: bold;
+    }
+    .note {
+      background: #2d4a2d;
+      border-left: 4px solid #4caf50;
+      padding: 1rem;
+      margin: 1rem 0;
+      border-radius: 4px;
+    }
+    .warning {
+      background: #4a3d2d;
+      border-left: 4px solid #ffa726;
+      padding: 1rem;
+      margin: 1rem 0;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+
+<h1>🚀 Redux do Zero: React + TypeScript + Styled-Components</h1>
+
+<div class="note">
+  <strong>📚 O que você vai aprender:</strong>
+  <ul>
+    <li><span class="highlight">Redux Toolkit</span> - Gerenciamento de estado moderno</li>
+    <li><span class="highlight">TypeScript</span> - Tipagem forte e segurança</li>
+    <li><span class="highlight">Styled-Components</span> - CSS-in-JS poderoso</li>
+    <li><span class="highlight">React Hooks</span> - useSelector e useDispatch</li>
+  </ul>
+</div>
+
+<h2>📦 1. Configuração Inicial do Projeto</h2>
+
+<div class="warning">
+  <strong>⚠️ Pré-requisitos:</strong> Node.js (v14+) e npm instalados
+</div>
+
+<h3>Passo 1: Criar projeto React + TypeScript</h3>
+<pre><code># Criar projeto com template TypeScript
+npx create-react-app redux-playground --template typescript
+cd redux-playground</code></pre>
+
+<h3>Passo 2: Instalar dependências do Redux</h3>
+<pre><code># Redux Toolkit (já inclui Redux e ferramentas)
+npm install @reduxjs/toolkit react-redux
+
+# Styled-Components + tipos TypeScript
+npm install styled-components
+npm install --save-dev @types/styled-components</code></pre>
+
+<div class="note">
+  <strong>💡 Por que Redux Toolkit?</strong><br>
+  O Redux Toolkit é a forma oficial e recomendada de usar Redux. Ele simplifica a configuração,
+  reduz boilerplate e já vem com boas práticas integradas (Immer, Redux DevTools, etc).
+</div>
+
+<h3>Passo 3: Rodar o projeto</h3>
+<pre><code>npm start</code></pre>
+
+<h2>📁 2. Estrutura de Pastas Recomendada</h2>
+
+<pre><code>src/
+├── store/                  # Configuração do Redux
+│   ├── index.ts           # Configuração da store + tipos TS
+│   └── counterSlice.ts    # Slice do contador (state + actions)
+├── components/            # Componentes React
+│   └── Counter.tsx        # Componente com styled-components
+├── App.tsx               # Componente principal
+└── index.tsx             # Entry point (Provider aqui!)</code></pre>
+
+<div class="note">
+  <strong>🎯 Organização:</strong>
+  <ul>
+    <li><code>store/</code> - Todo código relacionado ao Redux</li>
+    <li><code>components/</code> - Componentes reutilizáveis</li>
+    <li>Cada slice representa uma "fatia" do estado global</li>
+  </ul>
+</div>
+
+<h2>⚙️ 3. Configuração TypeScript + Redux</h2>
+
+<div class="warning">
+  <strong>📝 TypeScript:</strong> O <code>tsconfig.json</code> já vem configurado pelo create-react-app.
+  Verifique se tem <code>"strict": true</code> para máxima segurança de tipos!
+</div>
+
+<h2>💻 4. Implementação dos Arquivos</h2>
+
+<h3>📄 src/store/counterSlice.ts</h3>
+<p>O <strong>slice</strong> define o estado inicial, reducers (funções que modificam o estado) e actions.</p>
+<pre><code>// src/store/counterSlice.ts
+import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+
+// Define o tipo do estado do contador
+interface CounterState {
+  value: number
+}
+
+// Estado inicial tipado
+const initialState: CounterState = {
+  value: 0
+}
+
+// Cria o slice com Redux Toolkit
+const counterSlice = createSlice({
+  name: 'counter',              // Nome do slice
+  initialState,                 // Estado inicial
+  reducers: {                   // Funções que modificam o estado
+    increment: (state) => {
+      state.value += 1          // Immer permite mutação direta!
+    },
+    decrement: (state) => {
+      state.value -= 1
+    },
+    reset: (state) => {
+      state.value = 0
+    },
+    // Exemplo com payload (para exercício 2)
+    addAmount: (state, action: PayloadAction<number>) => {
+      state.value += action.payload
+    }
+  }
+})
+
+// Exporta as actions para usar nos componentes
+export const { increment, decrement, reset, addAmount } = counterSlice.actions
+
+// Exporta o reducer para adicionar na store
+export default counterSlice.reducer
+</code></pre>
+
+<h3>📄 src/store/index.ts</h3>
+<p>Configura a <strong>store</strong> do Redux e exporta os <strong>tipos TypeScript</strong> para usar nos hooks.</p>
+<pre><code>// src/store/index.ts
+import { configureStore } from '@reduxjs/toolkit'
+import counterReducer from './counterSlice'
+
+// Cria a store combinando todos os reducers
+export const store = configureStore({
+  reducer: {
+    counter: counterReducer  // Adicione mais slices aqui conforme necessário
+  }
+})
+
+// Tipos TypeScript derivados da store
+export type RootState = ReturnType&lt;typeof store.getState&gt;     // Tipo do estado global
+export type AppDispatch = typeof store.dispatch                // Tipo do dispatch</code></pre>
+
+<div class="note">
+  <strong>🔍 TypeScript aqui:</strong>
+  <ul>
+    <li><code>RootState</code> - infere automaticamente o tipo de todo o estado</li>
+    <li><code>AppDispatch</code> - garante type-safety ao disparar actions</li>
+  </ul>
+</div>
+
+<h3>📄 src/components/Counter.tsx</h3>
+<p>Componente React com <strong>styled-components</strong> e <strong>hooks do Redux</strong>.</p>
+<pre><code>// src/components/Counter.tsx
+import React from 'react'
+import { useSelector, useDispatch } from 'react-redux'
+import { RootState } from '../store'
+import { increment, decrement, reset } from '../store/counterSlice'
+import styled from 'styled-components'
+
+// Styled-components: CSS-in-JS com suporte completo a TypeScript
+const Box = styled.div`
+  text-align: center;
+  margin-top: 2rem;
+  padding: 2rem;
+  background: #2d2d2d;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+`
+
+const Counter = styled.h2`
+  font-size: 4rem;
+  color: #61dafb;
+  margin: 1rem 0;
+  font-weight: bold;
+`
+
+const Button = styled.button`
+  margin: 0 0.5rem;
+  padding: 0.75rem 1.5rem;
+  font-size: 1.2rem;
+  background: #61dafb;
+  color: #1a1a1a;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-weight: bold;
+
+  &:hover {
+    background: #4fa8c5;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(97, 218, 251, 0.3);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+`
+
+export default function CounterComponent() {
+  // useSelector: lê dados do estado (com tipagem!)
+  const count = useSelector((state: RootState) =&gt; state.counter.value)
+
+  // useDispatch: envia actions para modificar o estado
+  const dispatch = useDispatch()
+
+  return (
+    &lt;Box&gt;
+      &lt;Counter&gt;{count}&lt;/Counter&gt;
+      &lt;div&gt;
+        &lt;Button onClick={() =&gt; dispatch(increment())}&gt;+ Incrementar&lt;/Button&gt;
+        &lt;Button onClick={() =&gt; dispatch(decrement())}&gt;- Decrementar&lt;/Button&gt;
+        &lt;Button onClick={() =&gt; dispatch(reset())}&gt;🔄 Reset&lt;/Button&gt;
+      &lt;/div&gt;
+    &lt;/Box&gt;
+  )
+}
+</code></pre>
+
+<div class="note">
+  <strong>🎨 Styled-Components:</strong>
+  <ul>
+    <li>CSS com sintaxe normal dentro do JavaScript/TypeScript</li>
+    <li>Scoped automaticamente (sem conflitos de classes)</li>
+    <li>Suporta props, temas, e tem excelente integração com TS</li>
+  </ul>
+</div>
+
+<h3>📄 src/App.tsx</h3>
+<pre><code>// src/App.tsx
+import Counter from './components/Counter'
+
+export default function App() {
+  return (
+    &lt;div&gt;
+      &lt;Counter /&gt;
+    &lt;/div&gt;
+  )
+}
+</code></pre>
+
+<h3>📄 src/index.tsx</h3>
+<p>O <strong>Provider</strong> do React-Redux disponibiliza a store para toda a aplicação.</p>
+<pre><code>// src/index.tsx
+import React from 'react'
+import ReactDOM from 'react-dom/client'
+import { Provider } from 'react-redux'  // Provider conecta Redux ao React
+import { store } from './store'
+import App from './App'
+import './index.css'
+
+const root = ReactDOM.createRoot(document.getElementById('root')!)
+root.render(
+  &lt;React.StrictMode&gt;
+    &lt;Provider store={store}&gt;  {/* Torna a store disponível para todos os componentes */}
+      &lt;App /&gt;
+    &lt;/Provider&gt;
+  &lt;/React.StrictMode&gt;
+)
+</code></pre>
+
+<div class="warning">
+  <strong>🔴 Importante:</strong> O <code>&lt;Provider&gt;</code> DEVE envolver toda a aplicação para que os hooks <code>useSelector</code> e <code>useDispatch</code> funcionem!
+</div>
+
+<h2>🎯 5. Exercícios Práticos (Nível Iniciante)</h2>
+<p>Complete os exercícios abaixo para dominar Redux + TypeScript + Styled-Components:</p>
+
+<div class="task">
+  <h3>✅ Exercício 1 – Dobrar o Valor</h3>
+  <p><strong>Objetivo:</strong> Criar uma action que multiplique o contador por 2</p>
+  <p><strong>Tarefas:</strong></p>
+  <ul>
+    <li>Adicione um reducer <code>double</code> em <code>counterSlice.ts</code></li>
+    <li>Exporte a action e adicione um botão "Dobrar" no componente</li>
+    <li>Teste se o valor dobra corretamente</li>
+  </ul>
+  <p><strong>Dica:</strong> <code>state.value *= 2</code></p>
+</div>
+
+<div class="task">
+  <h3>✅ Exercício 2 – Somar Valor Customizado</h3>
+  <p><strong>Objetivo:</strong> Permitir que o usuário some um valor específico</p>
+  <p><strong>Tarefas:</strong></p>
+  <ul>
+    <li>Use a action <code>addAmount</code> que já está no código acima</li>
+    <li>Crie um <code>input type="number"</code> com <code>useState</code></li>
+    <li>Adicione um botão que dispatche <code>addAmount(valor)</code></li>
+    <li>Use <strong>PayloadAction&lt;number&gt;</strong> para tipagem do TypeScript</li>
+  </ul>
+  <p><strong>Dica:</strong> <code>dispatch(addAmount(Number(inputValue)))</code></p>
+</div>
+
+<div class="task">
+  <h3>✅ Exercício 3 – Histórico de Valores</h3>
+  <p><strong>Objetivo:</strong> Guardar todos os valores que o contador já teve</p>
+  <p><strong>Tarefas:</strong></p>
+  <ul>
+    <li>Adicione <code>history: number[]</code> no <code>initialState</code></li>
+    <li>Em cada reducer, adicione <code>state.history.push(state.value)</code></li>
+    <li>Mostre a lista de histórico usando <code>.map()</code></li>
+    <li>Estilize com styled-components</li>
+  </ul>
+  <p><strong>Dica TypeScript:</strong> <code>interface CounterState { value: number; history: number[] }</code></p>
+</div>
+
+<div class="task">
+  <h3>✅ Exercício 4 – Tema Claro/Escuro</h3>
+  <p><strong>Objetivo:</strong> Implementar dark mode com styled-components</p>
+  <p><strong>Tarefas:</strong></p>
+  <ul>
+    <li>Crie <code>themeSlice.ts</code> com tipo <code>type Theme = 'light' | 'dark'</code></li>
+    <li>Adicione action <code>toggleTheme</code> que alterna entre os temas</li>
+    <li>Use <code>ThemeProvider</code> do styled-components</li>
+    <li>Acesse o tema nos componentes styled: <code>${props => props.theme.bg}</code></li>
+  </ul>
+  <p><strong>Dica:</strong> Combine Redux (estado do tema) + styled-components (aplicação visual)</p>
+</div>
+
+<div class="task">
+  <h3>✅ Exercício 5 – Incremento Assíncrono</h3>
+  <p><strong>Objetivo:</strong> Criar uma action que execute após delay</p>
+  <p><strong>Tarefas:</strong></p>
+  <ul>
+    <li>Use <code>createAsyncThunk</code> do Redux Toolkit</li>
+    <li>Crie uma thunk que aguarda 1 segundo antes de incrementar</li>
+    <li>Mostre estado de "loading..." enquanto aguarda</li>
+    <li>Adicione <code>extraReducers</code> para lidar com pending/fulfilled</li>
+  </ul>
+  <p><strong>Dica:</strong> <code>await new Promise(resolve => setTimeout(resolve, 1000))</code></p>
+</div>
+
+<h2>🔧 6. Configuração TypeScript (tsconfig.json)</h2>
+<div class="note">
+  <p>O create-react-app já configura o TypeScript. Verifique estas opções importantes:</p>
+  <pre><code>{
+  "compilerOptions": {
+    "target": "ES2020",
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "jsx": "react-jsx",
+    "strict": true,                    // ✅ Ativa todas verificações estritas
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true,
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true
+  }
+}</code></pre>
+</div>
+
+<h2>🚀 7. Rodando e Debugando</h2>
+<pre><code># Iniciar servidor de desenvolvimento
+npm start
+
+# Instalar Redux DevTools Extension no navegador
+# https://chrome.google.com/webstore (busque por "Redux DevTools")
+
+# Verificar tipos TypeScript
+npx tsc --noEmit
+
+# Build de produção
+npm run build</code></pre>
+
+<div class="note">
+  <strong>🔍 Redux DevTools:</strong> Instale a extensão do navegador para ver o estado em tempo real,
+  histórico de actions, time-travel debugging e muito mais!
+</div>
+
+<h2>📚 8. Resumo da Stack</h2>
+<table style="width:100%; border-collapse: collapse; margin: 2rem 0;">
+  <thead>
+    <tr style="background: #61dafb; color: #1a1a1a;">
+      <th style="padding: 1rem; text-align: left; border: 1px solid #444;">Tecnologia</th>
+      <th style="padding: 1rem; text-align: left; border: 1px solid #444;">Função</th>
+      <th style="padding: 1rem; text-align: left; border: 1px solid #444;">Por que usar?</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td style="padding: 1rem; border: 1px solid #444;"><strong>Redux Toolkit</strong></td>
+      <td style="padding: 1rem; border: 1px solid #444;">Gerenciamento de estado global</td>
+      <td style="padding: 1rem; border: 1px solid #444;">Menos boilerplate, mais produtividade</td>
+    </tr>
+    <tr style="background: #252525;">
+      <td style="padding: 1rem; border: 1px solid #444;"><strong>TypeScript</strong></td>
+      <td style="padding: 1rem; border: 1px solid #444;">Tipagem estática</td>
+      <td style="padding: 1rem; border: 1px solid #444;">Detecta erros em tempo de desenvolvimento</td>
+    </tr>
+    <tr>
+      <td style="padding: 1rem; border: 1px solid #444;"><strong>Styled-Components</strong></td>
+      <td style="padding: 1rem; border: 1px solid #444;">CSS-in-JS</td>
+      <td style="padding: 1rem; border: 1px solid #444;">Estilos escopados, dinâmicos e tipados</td>
+    </tr>
+    <tr style="background: #252525;">
+      <td style="padding: 1rem; border: 1px solid #444;"><strong>React Hooks</strong></td>
+      <td style="padding: 1rem; border: 1px solid #444;">Integração com Redux</td>
+      <td style="padding: 1rem; border: 1px solid #444;">useSelector e useDispatch simplificam o código</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2>💡 Dicas Finais</h2>
+<ul>
+  <li>✅ Sempre use <code>npm start</code> - o hot-reload atualiza instantaneamente</li>
+  <li>✅ Instale Redux DevTools para debugar facilmente</li>
+  <li>✅ Use <code>strict: true</code> no TypeScript para máxima segurança</li>
+  <li>✅ Comece simples e adicione complexidade gradualmente</li>
+  <li>✅ Faça um exercício de cada vez e teste bem antes de avançar</li>
+</ul>
+
+<p style="text-align: center; font-size: 1.2rem; margin-top: 3rem; color: #61dafb;">
+  🎓 <strong>Bons estudos! Qual exercício você vai implementar primeiro?</strong>
+</p>
+
+</div>
+
+</body>
+</html>
+

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -86,6 +87,127 @@
 
         .content {
             padding: 40px;
+        }
+
+        /* NOVA SECTION – GUIA DE INICIALIZAÇÃO DO PROJETO */
+        .setup-section {
+            margin-bottom: 50px;
+            background: #f3f4ff;
+            border-radius: 16px;
+            padding: 25px 25px 20px;
+            border: 1px solid rgba(118, 74, 188, 0.25);
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
+        }
+
+        .setup-section h2 {
+            font-size: 1.8em;
+            color: var(--dark);
+            margin-bottom: 10px;
+        }
+
+        .setup-section p.setup-intro {
+            color: #495057;
+            margin-bottom: 15px;
+        }
+
+        .setup-highlight {
+            display: inline-block;
+            background: rgba(118, 74, 188, 0.08);
+            color: var(--primary-dark);
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 0.85em;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 10px;
+        }
+
+        .setup-steps {
+            list-style: none;
+            counter-reset: step-counter;
+            margin-top: 10px;
+        }
+
+        .setup-steps li {
+            counter-increment: step-counter;
+            position: relative;
+            padding: 12px 12px 12px 45px;
+            margin-bottom: 8px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 12px;
+            border: 1px solid #e9ecef;
+        }
+
+        .setup-steps li::before {
+            content: counter(step-counter);
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.9em;
+            font-weight: bold;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+        }
+
+        .setup-steps code {
+            background: #f1f3f5;
+            color: #c92a2a;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-size: 0.9em;
+            font-weight: 500;
+            border: 1px solid #e9ecef;
+        }
+
+        .setup-steps pre {
+            background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
+            color: #e2e8f0;
+            padding: 16px;
+            border-radius: 10px;
+            overflow-x: auto;
+            margin: 10px 0;
+            border: 1px solid #4a5568;
+            box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.3);
+        }
+
+        .setup-steps pre code {
+            background: transparent;
+            color: #e2e8f0;
+            padding: 0;
+            border: none;
+            font-weight: normal;
+            font-family: 'Courier New', monospace;
+            font-size: 0.88em;
+            line-height: 1.6;
+        }
+
+        .setup-note {
+            margin-top: 15px;
+            padding: 12px 16px;
+            background: linear-gradient(135deg, #fff3bf 0%, #ffe8a1 100%);
+            border-left: 4px solid #ffd43b;
+            border-radius: 8px;
+            font-size: 0.9em;
+            color: #495057;
+            line-height: 1.6;
+        }
+
+        .setup-note code {
+            background: #fff;
+            color: #764abc;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 600;
+            border: 1px solid #f0d988;
         }
 
         .category {
@@ -363,6 +485,10 @@
             .category-title {
                 font-size: 1.4em;
             }
+
+            .setup-section {
+                padding: 20px 16px;
+            }
         }
 
         .fade-in {
@@ -374,6 +500,7 @@
                 opacity: 0;
                 transform: translateY(20px);
             }
+
             to {
                 opacity: 1;
                 transform: translateY(0);
@@ -381,6 +508,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <header>
@@ -406,6 +534,160 @@
         </header>
 
         <div class="content">
+            <!-- GUIA DE INICIALIZAÇÃO DO PROJETO -->
+            <section class="setup-section fade-in">
+                <span class="setup-highlight">Antes de começar os exercícios</span>
+                <h2>Passo a passo para iniciar o projeto (Vite + React + TypeScript + Styled Components + Redux)</h2>
+                <p class="setup-intro">
+                    Use este guia rápido para criar o projeto base que você vai usar em todos os exercícios desta
+                    página.
+                </p>
+
+                <ol class="setup-steps">
+                    <li>
+                        <strong>Criar o projeto com Vite + React + TypeScript</strong><br>
+                        No terminal, execute:<br>
+                        <code>yarn create vite redux-exercises --template react-ts</code><br>
+                        Depois entre no projeto:<br>
+                        <code>cd redux-exercises</code>
+                    </li>
+
+                    <li>
+                        <strong>Instalar Styled Components e Redux Toolkit</strong><br>
+                        Instale as dependências principais:<br>
+                        <code>yarn add styled-components @reduxjs/toolkit react-redux</code><br>
+                        Instale os tipos do Styled Components:<br>
+                        <code>yarn add -D @types/styled-components</code>
+                    </li>
+
+                    <li>
+                        <strong>Criar o primeiro slice (Counter)</strong><br>
+                        Em <code>src/store/slices</code> crie o arquivo <code>counterSlice.ts</code>:<br>
+                        <pre><code>import &#123; createSlice, PayloadAction &#125; from '@reduxjs/toolkit';
+
+type CounterState = &#123; value: number &#125;;
+const initialState: CounterState = &#123; value: 0 &#125;;
+
+export const counterSlice = createSlice(&#123;
+  name: 'counter',
+  initialState,
+  reducers: &#123;
+    increment: (state) =&gt; &#123; state.value += 1; &#125;,
+    decrement: (state) =&gt; &#123; state.value -= 1; &#125;,
+    addByAmount: (state, action: PayloadAction&lt;number&gt;) =&gt; &#123;
+      state.value += action.payload;
+    &#125;,
+  &#125;
+&#125;);
+
+export const &#123; increment, decrement, addByAmount &#125; = counterSlice.actions;
+export default counterSlice.reducer;
+</code></pre>
+                    </li>
+
+                    <li>
+                        <strong>Configurar a Store e Hooks (useAppSelector / useAppDispatch)</strong><br>
+                        Em <code>src/store/index.ts</code>:<br>
+                        <pre><code>import &#123; configureStore &#125; from '@reduxjs/toolkit';
+import &#123; TypedUseSelectorHook, useDispatch, useSelector &#125; from 'react-redux';
+import counterReducer from './slices/counterSlice';
+
+export const store = configureStore(&#123;
+  reducer: &#123;
+    counter: counterReducer,
+  &#125;
+&#125;);
+
+export type RootState = ReturnType&lt;typeof store.getState&gt;;
+export type AppDispatch = typeof store.dispatch;
+
+export const useAppDispatch: () =&gt; AppDispatch = useDispatch;
+export const useAppSelector: TypedUseSelectorHook&lt;RootState&gt; = useSelector;
+</code></pre>
+                    </li>
+
+                    <li>
+                        <strong>Envolver a aplicação com o Provider</strong><br>
+                        No arquivo <code>src/main.tsx</code>:<br>
+                        <pre><code>import React from 'react';
+import ReactDOM from 'react-dom/client';
+import &#123; Provider &#125; from 'react-redux';
+import &#123; store &#125; from './store';
+import App from './App';
+
+ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
+  &lt;React.StrictMode&gt;
+    &lt;Provider store=&#123;store&#125;&gt;
+      &lt;App /&gt;
+    &lt;/Provider&gt;
+  &lt;/React.StrictMode&gt;
+);
+</code></pre>
+                    </li>
+
+                    <li>
+                        <strong>Como utilizar useAppDispatch e useAppSelector</strong><br>
+                        Crie o componente <code>src/Counter.tsx</code>:<br>
+                        <pre><code>import &#123; useAppDispatch, useAppSelector &#125; from './store';
+import &#123; increment, decrement, addByAmount &#125; from './store/slices/counterSlice';
+import &#123; useState &#125; from 'react';
+
+export function Counter() &#123;
+  const dispatch = useAppDispatch();
+  const count = useAppSelector((state) =&gt; state.counter.value);
+  const [amount, setAmount] = useState(0);
+
+  return (
+    &lt;div&gt;
+      &lt;h2&gt;Counter: &#123;count&#125;&lt;/h2&gt;
+
+      &lt;button onClick=&#123;() =&gt; dispatch(decrement())&#125;&gt;-&lt;/button&gt;
+      &lt;button onClick=&#123;() =&gt; dispatch(increment())&#125;&gt;+&lt;/button&gt;
+
+      &lt;div style=&#123;&#123;marginTop: 10&#125;&#125;&gt;
+        &lt;input
+          type="number"
+          value=&#123;amount&#125;
+          onChange=&#123;(e) =&gt; setAmount(Number(e.target.value))&#125;
+        /&gt;
+        &lt;button onClick=&#123;() =&gt; dispatch(addByAmount(amount))&#125;&gt;
+          Somar
+        &lt;/button&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  );
+&#125;
+</code></pre>
+
+                        Agora importe no App:<br>
+                        <pre><code>import &#123; Counter &#125; from './Counter';
+
+export default function App() &#123;
+  return (
+    &lt;div&gt;
+      &lt;h1&gt;Exercícios Redux&lt;/h1&gt;
+      &lt;Counter /&gt;
+    &lt;/div&gt;
+  );
+&#125;
+</code></pre>
+                    </li>
+
+                    <li>
+                        <strong>Executar o projeto</strong><br>
+                        <code>yarn dev</code><br>
+                        Abra no navegador: <code>http://localhost:5173</code>
+                    </li>
+                </ol>
+
+                <p class="setup-note">
+                    💡 Dica: Todos os próximos exercícios seguem essa mesma estrutura:<br>
+                    Novos slices → Registrar na store → Usar com <code>useAppSelector</code> e
+                    <code>useAppDispatch</code>.
+                </p>
+            </section>
+
+
             <!-- INICIANTE -->
             <section class="category fade-in">
                 <div class="category-header">
@@ -428,11 +710,13 @@
                             <div class="objective-text">Entender state, actions, reducers e Provider</div>
                         </div>
                         <div class="exercise-description">
-                            Crie um contador simples para aprender os conceitos fundamentais do Redux. Este é o primeiro passo para dominar o gerenciamento de estado global.
+                            Crie um contador simples para aprender os conceitos fundamentais do Redux. Este é o primeiro
+                            passo para dominar o gerenciamento de estado global.
                         </div>
                         <ul class="task-list">
                             <li>Store com <code>configureStore</code> e um slice <code>counter</code></li>
-                            <li>Actions: <code>increment</code>, <code>decrement</code>, <code>addByAmount(n)</code></li>
+                            <li>Actions: <code>increment</code>, <code>decrement</code>, <code>addByAmount(n)</code>
+                            </li>
                             <li>UI com botões e input numérico</li>
                             <li>Persistir valor em <code>localStorage</code> <span class="extra-badge">EXTRA</span></li>
                         </ul>
@@ -459,14 +743,16 @@
                             <div class="objective-text">CRUD com arrays, IDs, filtros e selectors</div>
                         </div>
                         <div class="exercise-description">
-                            Implemente uma lista de tarefas completa com operações CRUD, aprendendo a manipular arrays no Redux e criar selectors derivados.
+                            Implemente uma lista de tarefas completa com operações CRUD, aprendendo a manipular arrays
+                            no Redux e criar selectors derivados.
                         </div>
                         <ul class="task-list">
                             <li>Modelar <code>Todo</code>: <code>{id, title, done, createdAt}</code></li>
                             <li>Reducers: add, toggleDone, editTitle, remove</li>
                             <li>Filtro: all/active/done</li>
                             <li>Selector derivado: contagem de done/active</li>
-                            <li>Salvar/restaurar do <code>localStorage</code> <span class="extra-badge">EXTRA</span></li>
+                            <li>Salvar/restaurar do <code>localStorage</code> <span class="extra-badge">EXTRA</span>
+                            </li>
                         </ul>
                         <div class="tech-tags">
                             <span class="tech-tag">Array manipulation</span>
@@ -487,17 +773,20 @@
                         </div>
                         <div class="exercise-objective">
                             <div class="objective-label">🎯 Objetivo</div>
-                            <div class="objective-text">Aprender a organizar múltiplos slices e comunicação entre eles</div>
+                            <div class="objective-text">Aprender a organizar múltiplos slices e comunicação entre eles
+                            </div>
                         </div>
                         <div class="exercise-description">
-                            Crie um carrinho de compras com produtos e gerenciamento de estoque, praticando a organização de múltiplos slices relacionados.
+                            Crie um carrinho de compras com produtos e gerenciamento de estoque, praticando a
+                            organização de múltiplos slices relacionados.
                         </div>
                         <ul class="task-list">
                             <li>Slice <code>products</code>: lista de produtos com preço e estoque</li>
                             <li>Slice <code>cart</code>: itens no carrinho com quantidade</li>
                             <li>Actions: addToCart, removeFromCart, updateQuantity</li>
                             <li>Selector derivado: total do carrinho, quantidade de itens</li>
-                            <li>Validação: não permitir adicionar sem estoque <span class="extra-badge">EXTRA</span></li>
+                            <li>Validação: não permitir adicionar sem estoque <span class="extra-badge">EXTRA</span>
+                            </li>
                         </ul>
                         <div class="tech-tags">
                             <span class="tech-tag">Multiple Slices</span>
@@ -518,17 +807,20 @@
                         </div>
                         <div class="exercise-objective">
                             <div class="objective-label">🎯 Objetivo</div>
-                            <div class="objective-text">Entender o fluxo de middleware e criar middleware personalizado</div>
+                            <div class="objective-text">Entender o fluxo de middleware e criar middleware personalizado
+                            </div>
                         </div>
                         <div class="exercise-description">
-                            Crie um middleware customizado para logging e analytics, entendendo como interceptar actions no Redux.
+                            Crie um middleware customizado para logging e analytics, entendendo como interceptar actions
+                            no Redux.
                         </div>
                         <ul class="task-list">
                             <li>Implementar middleware de logging: registrar action, state anterior/posterior</li>
                             <li>Middleware de analytics: rastrear ações específicas</li>
                             <li>Middleware de validação: validar payloads antes de processar</li>
                             <li>UI simples para visualizar logs em tempo real</li>
-                            <li>Adicionar filtros para tipos de actions específicas <span class="extra-badge">EXTRA</span></li>
+                            <li>Adicionar filtros para tipos de actions específicas <span
+                                    class="extra-badge">EXTRA</span></li>
                         </ul>
                         <div class="tech-tags">
                             <span class="tech-tag">Middleware</span>
@@ -552,7 +844,8 @@
                             <div class="objective-text">Gerenciar formulários complexos com Redux e validação</div>
                         </div>
                         <div class="exercise-description">
-                            Implemente um formulário de cadastro multi-step com validação, aprendendo boas práticas de gerenciamento de formulários no Redux.
+                            Implemente um formulário de cadastro multi-step com validação, aprendendo boas práticas de
+                            gerenciamento de formulários no Redux.
                         </div>
                         <ul class="task-list">
                             <li>Slice <code>form</code>: campos (nome, email, senha, confirmar senha)</li>
@@ -589,16 +882,20 @@
                         </div>
                         <div class="exercise-objective">
                             <div class="objective-label">🎯 Objetivo</div>
-                            <div class="objective-text">Fluxo async (pending/fulfilled/rejected) + tratamento de erro</div>
+                            <div class="objective-text">Fluxo async (pending/fulfilled/rejected) + tratamento de erro
+                            </div>
                         </div>
                         <div class="exercise-description">
-                            Implemente busca de posts de uma API externa, aprendendo a lidar com estados assíncronos e tratamento de erros no Redux.
+                            Implemente busca de posts de uma API externa, aprendendo a lidar com estados assíncronos e
+                            tratamento de erros no Redux.
                         </div>
                         <ul class="task-list">
-                            <li>Slice <code>posts</code>: <code>items</code>, <code>status</code>, <code>error</code></li>
+                            <li>Slice <code>posts</code>: <code>items</code>, <code>status</code>, <code>error</code>
+                            </li>
                             <li>Thunk <code>fetchPosts()</code> consumindo <code>/posts</code></li>
                             <li>UI: lista + refresh + loading + erro + estado vazio</li>
-                            <li>Abort/cancel usando <code>thunkAPI.signal</code> <span class="extra-badge">EXTRA</span></li>
+                            <li>Abort/cancel usando <code>thunkAPI.signal</code> <span class="extra-badge">EXTRA</span>
+                            </li>
                         </ul>
                         <div class="tech-tags">
                             <span class="tech-tag">createAsyncThunk</span>
@@ -619,15 +916,19 @@
                         </div>
                         <div class="exercise-objective">
                             <div class="objective-label">🎯 Objetivo</div>
-                            <div class="objective-text">Normalizar dados com IDs, usar selectors gerados e CRUD eficiente</div>
+                            <div class="objective-text">Normalizar dados com IDs, usar selectors gerados e CRUD
+                                eficiente</div>
                         </div>
                         <div class="exercise-description">
-                            Use createEntityAdapter para gerenciar uma lista de usuários de forma eficiente, aprendendo sobre normalização de dados.
+                            Use createEntityAdapter para gerenciar uma lista de usuários de forma eficiente, aprendendo
+                            sobre normalização de dados.
                         </div>
                         <ul class="task-list">
                             <li>Adapter com <code>selectId</code> e <code>sortComparer</code></li>
-                            <li>Usar <code>addOne</code>, <code>updateOne</code>, <code>removeOne</code>, <code>setAll</code></li>
-                            <li>Selectors gerados: <code>selectAll</code>, <code>selectById</code>, <code>selectTotal</code></li>
+                            <li>Usar <code>addOne</code>, <code>updateOne</code>, <code>removeOne</code>,
+                                <code>setAll</code></li>
+                            <li>Selectors gerados: <code>selectAll</code>, <code>selectById</code>,
+                                <code>selectTotal</code></li>
                             <li>UI: lista ordenada, busca por ID, edição inline</li>
                             <li>Adicionar filtro e ordenação customizada <span class="extra-badge">EXTRA</span></li>
                         </ul>
@@ -650,10 +951,12 @@
                         </div>
                         <div class="exercise-objective">
                             <div class="objective-label">🎯 Objetivo</div>
-                            <div class="objective-text">Coordenar múltiplas chamadas assíncronas e gerenciar estado complexo</div>
+                            <div class="objective-text">Coordenar múltiplas chamadas assíncronas e gerenciar estado
+                                complexo</div>
                         </div>
                         <div class="exercise-description">
-                            Crie um app de clima que busca dados de múltiplas APIs, aprendendo a coordenar várias operações assíncronas.
+                            Crie um app de clima que busca dados de múltiplas APIs, aprendendo a coordenar várias
+                            operações assíncronas.
                         </div>
                         <ul class="task-list">
                             <li>Thunk <code>fetchCurrentWeather(city)</code></li>
@@ -684,11 +987,13 @@
                             <div class="objective-text">Implementar paginação e scroll infinito com Redux</div>
                         </div>
                         <div class="exercise-description">
-                            Crie uma lista paginada com infinite scroll, aprendendo a gerenciar grandes volumes de dados de forma eficiente.
+                            Crie uma lista paginada com infinite scroll, aprendendo a gerenciar grandes volumes de dados
+                            de forma eficiente.
                         </div>
                         <ul class="task-list">
                             <li>Thunk <code>fetchPosts(page)</code> com controle de página</li>
-                            <li>State: <code>items</code>, <code>currentPage</code>, <code>hasMore</code>, <code>totalPages</code></li>
+                            <li>State: <code>items</code>, <code>currentPage</code>, <code>hasMore</code>,
+                                <code>totalPages</code></li>
                             <li>UI: botões next/previous ou infinite scroll</li>
                             <li>Prevenir duplicatas ao carregar mais itens</li>
                             <li>Implementar skeleton loading <span class="extra-badge">EXTRA</span></li>
@@ -715,7 +1020,8 @@
                             <div class="objective-text">Implementar retry automático e suporte offline</div>
                         </div>
                         <div class="exercise-description">
-                            Adicione resiliência à aplicação com retry automático e queue de operações offline, essencial para apps robustos.
+                            Adicione resiliência à aplicação com retry automático e queue de operações offline,
+                            essencial para apps robustos.
                         </div>
                         <ul class="task-list">
                             <li>Implementar retry logic em thunks com exponential backoff</li>
@@ -755,13 +1061,15 @@
                             <div class="objective-text">Substituir thunks por RTK Query, usando cache automático</div>
                         </div>
                         <div class="exercise-description">
-                            Migre de createAsyncThunk para RTK Query, aproveitando o poder do cache automático e invalidação inteligente.
+                            Migre de createAsyncThunk para RTK Query, aproveitando o poder do cache automático e
+                            invalidação inteligente.
                         </div>
                         <ul class="task-list">
                             <li>Criar <code>baseApi</code> com <code>createApi</code> e <code>fetchBaseQuery</code></li>
                             <li>Endpoint <code>getPosts</code> + hook <code>useGetPostsQuery</code></li>
                             <li>UI: refetch e estado de cache</li>
-                            <li>Paginação via query params e <code>selectFromResult</code> <span class="extra-badge">EXTRA</span></li>
+                            <li>Paginação via query params e <code>selectFromResult</code> <span
+                                    class="extra-badge">EXTRA</span></li>
                         </ul>
                         <div class="tech-tags">
                             <span class="tech-tag">RTK Query</span>
@@ -785,14 +1093,16 @@
                             <div class="objective-text">Transformar dados da API e normalizar com RTK Query</div>
                         </div>
                         <div class="exercise-description">
-                            Use transformResponse para processar dados da API e integrá-los perfeitamente com sua aplicação.
+                            Use transformResponse para processar dados da API e integrá-los perfeitamente com sua
+                            aplicação.
                         </div>
                         <ul class="task-list">
                             <li>Endpoint com <code>transformResponse</code> para formatar datas</li>
                             <li>Transformar estrutura de dados aninhados</li>
                             <li>Normalizar dados com <code>createEntityAdapter</code> dentro do RTK Query</li>
                             <li>Usar <code>transformErrorResponse</code> para mensagens de erro customizadas</li>
-                            <li>Implementar computed fields nos dados transformados <span class="extra-badge">EXTRA</span></li>
+                            <li>Implementar computed fields nos dados transformados <span
+                                    class="extra-badge">EXTRA</span></li>
                         </ul>
                         <div class="tech-tags">
                             <span class="tech-tag">transformResponse</span>
@@ -816,7 +1126,8 @@
                             <div class="objective-text">Implementar polling automático e refetch em tempo real</div>
                         </div>
                         <div class="exercise-description">
-                            Configure polling para manter dados sempre atualizados, ideal para dashboards e aplicações em tempo real.
+                            Configure polling para manter dados sempre atualizados, ideal para dashboards e aplicações
+                            em tempo real.
                         </div>
                         <ul class="task-list">
                             <li>Usar <code>pollingInterval</code> para atualização automática</li>
@@ -844,10 +1155,12 @@
                         </div>
                         <div class="exercise-objective">
                             <div class="objective-label">🎯 Objetivo</div>
-                            <div class="objective-text">Controlar quando queries são executadas e usar lazy queries</div>
+                            <div class="objective-text">Controlar quando queries são executadas e usar lazy queries
+                            </div>
                         </div>
                         <div class="exercise-description">
-                            Aprenda a controlar precisamente quando dados são buscados, otimizando performance e experiência do usuário.
+                            Aprenda a controlar precisamente quando dados são buscados, otimizando performance e
+                            experiência do usuário.
                         </div>
                         <ul class="task-list">
                             <li>Usar <code>skip</code> para conditional fetching</li>
@@ -875,10 +1188,12 @@
                         </div>
                         <div class="exercise-objective">
                             <div class="objective-label">🎯 Objetivo</div>
-                            <div class="objective-text">Implementar autenticação e gerenciamento de tokens com RTK Query</div>
+                            <div class="objective-text">Implementar autenticação e gerenciamento de tokens com RTK Query
+                            </div>
                         </div>
                         <div class="exercise-description">
-                            Configure headers dinâmicos e autenticação, essencial para aplicações que requerem login e segurança.
+                            Configure headers dinâmicos e autenticação, essencial para aplicações que requerem login e
+                            segurança.
                         </div>
                         <ul class="task-list">
                             <li>Usar <code>prepareHeaders</code> para adicionar token de autenticação</li>
@@ -910,19 +1225,23 @@
                                 <input type="checkbox" class="exercise-checkbox" data-exercise="ex-16">
                             </div>
                             <div class="exercise-info">
-                                <h3 class="exercise-title">EX-16 — RTK Query: Mutations + Invalidation + Optimistic Update</h3>
+                                <h3 class="exercise-title">EX-16 — RTK Query: Mutations + Invalidation + Optimistic
+                                    Update</h3>
                             </div>
                         </div>
                         <div class="exercise-objective">
                             <div class="objective-label">🎯 Objetivo</div>
-                            <div class="objective-text">Dominar providesTags, invalidatesTags e updates otimistas no cache</div>
+                            <div class="objective-text">Dominar providesTags, invalidatesTags e updates otimistas no
+                                cache</div>
                         </div>
                         <div class="exercise-description">
-                            Implemente mutations com invalidação inteligente de cache e updates otimistas para uma UX super responsiva.
+                            Implemente mutations com invalidação inteligente de cache e updates otimistas para uma UX
+                            super responsiva.
                         </div>
                         <ul class="task-list">
                             <li>Adicionar mutation <code>addPost</code> e invalidar tags do list</li>
-                            <li>Adicionar mutation <code>deletePost</code> com update otimista via <code>onQueryStarted</code></li>
+                            <li>Adicionar mutation <code>deletePost</code> com update otimista via
+                                <code>onQueryStarted</code></li>
                             <li>UI: feedback de loading por item (ex.: botão "Deleting...")</li>
                             <li>Rollback correto em erro (undo patch) <span class="extra-badge">EXTRA</span></li>
                         </ul>
@@ -955,7 +1274,8 @@
                             <li>Atualizar cache com mensagens em tempo real</li>
                             <li>Gerenciar conexão/desconexão do WebSocket</li>
                             <li>UI: chat em tempo real ou dashboard de métricas</li>
-                            <li>Implementar reconnection automática com exponential backoff <span class="extra-badge">EXTRA</span></li>
+                            <li>Implementar reconnection automática com exponential backoff <span
+                                    class="extra-badge">EXTRA</span></li>
                         </ul>
                         <div class="tech-tags">
                             <span class="tech-tag">WebSockets</span>
@@ -976,7 +1296,8 @@
                         </div>
                         <div class="exercise-objective">
                             <div class="objective-label">🎯 Objetivo</div>
-                            <div class="objective-text">Implementar lazy loading de endpoints para otimizar bundle size</div>
+                            <div class="objective-text">Implementar lazy loading de endpoints para otimizar bundle size
+                            </div>
                         </div>
                         <div class="exercise-description">
                             Use injectEndpoints para carregar endpoints sob demanda, essencial para aplicações grandes.
@@ -1007,10 +1328,12 @@
                         </div>
                         <div class="exercise-objective">
                             <div class="objective-label">🎯 Objetivo</div>
-                            <div class="objective-text">Criar base query customizada com interceptors e error handling</div>
+                            <div class="objective-text">Criar base query customizada com interceptors e error handling
+                            </div>
                         </div>
                         <div class="exercise-description">
-                            Implemente uma base query personalizada com logging, retry, transformações e tratamento de erros global.
+                            Implemente uma base query personalizada com logging, retry, transformações e tratamento de
+                            erros global.
                         </div>
                         <ul class="task-list">
                             <li>Criar custom <code>baseQuery</code> wrapping <code>fetchBaseQuery</code></li>
@@ -1033,7 +1356,8 @@
                                 <input type="checkbox" class="exercise-checkbox" data-exercise="ex-20">
                             </div>
                             <div class="exercise-info">
-                                <h3 class="exercise-title">EX-20 — Testes: Reducers, Selectors e Async (Thunks/RTKQ)</h3>
+                                <h3 class="exercise-title">EX-20 — Testes: Reducers, Selectors e Async (Thunks/RTKQ)
+                                </h3>
                             </div>
                         </div>
                         <div class="exercise-objective">
@@ -1111,10 +1435,10 @@
                     checkbox.closest('.exercise-card').classList.add('completed');
                 }
 
-                checkbox.addEventListener('change', function() {
+                checkbox.addEventListener('change', function () {
                     const progress = loadProgress();
                     const card = this.closest('.exercise-card');
-                    
+
                     if (this.checked) {
                         progress[exerciseId] = true;
                         card.classList.add('completed');
@@ -1132,7 +1456,7 @@
         }
 
         // Resetar progresso
-        document.getElementById('reset-btn').addEventListener('click', function() {
+        document.getElementById('reset-btn').addEventListener('click', function () {
             if (confirm('Tem certeza que deseja resetar todo o progresso? Esta ação não pode ser desfeita.')) {
                 localStorage.removeItem(STORAGE_KEY);
                 location.reload();
@@ -1156,10 +1480,11 @@
         }
 
         // Inicializar quando a página carregar
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             initCheckboxes();
             animateCategories();
         });
     </script>
 </body>
+
 </html>

@@ -12,10 +12,15 @@ import {
   TipBox,
   Input
 } from "./app.styled";
+import { useAppSelector, useAppDispatch } from './store'
+import { addNumero } from "./store/historicoSlice";
+
 
 
 
 function App() {
+
+const dispatch = useAppDispatch()
 
   return (
     <Section>
@@ -45,7 +50,7 @@ function App() {
         <span>{}</span>
         <div>
           <Input type="number" placeholder="Digite um valor" />
-          <Button>Adicionar</Button>
+          <Button onClick={() => dispatch(addNumero())}>Adicionar</Button>
         </div>
 
         <div>

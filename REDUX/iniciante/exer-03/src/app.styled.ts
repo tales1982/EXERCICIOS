@@ -14,14 +14,16 @@ export const SectionExer = styled.div`
 display:flex;
 flex-direction: column;
 align-items: center;
-justify-content: center;
+justify-content: flex-start;
 gap: 2rem;
 border-radius: 30px;
 padding: 2rem;
 width: 40%;
-height: 20%;
+min-height: 20%;
+max-height: 80vh;
 background-color: #3e3d3fff;
 color: white;
+overflow-y: auto;
 
 span {
   font-size: 4rem;
@@ -33,6 +35,25 @@ span {
 div {
   display: flex;
   gap: 1rem;
+}
+
+/* Scrollbar personalizada */
+&::-webkit-scrollbar {
+  width: 8px;
+}
+
+&::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 10px;
+}
+
+&::-webkit-scrollbar-thumb {
+  background: rgba(139, 92, 246, 0.5);
+  border-radius: 10px;
+}
+
+&::-webkit-scrollbar-thumb:hover {
+  background: rgba(139, 92, 246, 0.7);
 }
 `
 
@@ -147,5 +168,71 @@ export const Input = styled.input`
   /* Remove setas do input number no Firefox */
   &[type='number'] {
     -moz-appearance: textfield;
+  }
+`
+
+export const HistoricoContainer = styled.div`
+  width: 100%;
+  max-height: 300px;
+  overflow-y: auto;
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 12px;
+
+  /* Scrollbar personalizada */
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 10px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: rgba(139, 92, 246, 0.4);
+    border-radius: 10px;
+  }
+
+  &::-webkit-scrollbar-thumb:hover {
+    background: rgba(139, 92, 246, 0.6);
+  }
+
+  h3 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+    color: #8b5cf6;
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  li {
+    background: rgba(139, 92, 246, 0.1);
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    border: 2px solid #8b5cf6;
+    transition: all 0.2s ease;
+    min-width: 60px;
+    text-align: center;
+
+    &:hover {
+      background: rgba(139, 92, 246, 0.2);
+      transform: scale(1.1);
+    }
+
+    span {
+      font-size: 1.2rem;
+      font-weight: 500;
+      text-shadow: none;
+    }
   }
 `

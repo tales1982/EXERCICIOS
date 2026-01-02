@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   Button,
   Section,
@@ -10,7 +11,8 @@ import {
   TasksList,
   TaskItem,
   TipBox,
-  Input
+  Input,
+  HistoricoContainer
 } from "./app.styled";
 import { useAppSelector, useAppDispatch } from './store'
 import { addNumero } from "./store/historicoSlice";
@@ -19,8 +21,11 @@ import { addNumero } from "./store/historicoSlice";
 
 
 function App() {
+  const [valor, setValor] = useState('');
+  const dispatch = useAppDispatch();
+  const historico = useAppSelector((state) => state.historico.historico)
 
-const dispatch = useAppDispatch()
+
 
   return (
     <Section>
@@ -47,18 +52,24 @@ const dispatch = useAppDispatch()
       </HeaderContainer>
 
       <SectionExer>
-        <span>{}</span>
         <div>
-          <Input type="number" placeholder="Digite um valor" />
-          <Button onClick={() => dispatch(addNumero())}>Adicionar</Button>
+          <Input type="number" placeholder="Digite um valor" value={valor} onChange={(e) => setValor(e.target.value)} />
+          <Button onClick={() => {
+            dispatch(addNumero(Number(valor)));
+            setValor('');
+          }}>Adicionar</Button>
         </div>
 
-        <div>
+        <HistoricoContainer>
           <h3>Histórico de Valores:</h3>
           <ul>
-            {/* Lista de histórico será exibida aqui */}
+            {historico.map((item, index) => (
+              <li key={index}>
+                <span>{item}</span>
+              </li>
+            ))}
           </ul>
-        </div>
+        </HistoricoContainer>
       </SectionExer>
     </Section>
   );

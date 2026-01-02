@@ -14,8 +14,8 @@ const historicoSlice = createSlice({
     name:'historico',
     initialState: initialState,
     reducers:{
-        addNumero:(state, action) => {
-            state.historico.push(state.valor)
+        addNumero:(state, action: PayloadAction<number>) => {
+            state.historico.push(action.payload)
         }
     }
 })

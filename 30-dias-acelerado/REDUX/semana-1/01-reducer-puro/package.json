@@ -1,0 +1,11 @@
+{
+  "name": "exer-01",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "type": "module",
+  "dependencies": {
+    "@reduxjs/toolkit": "^2.11.2",
+    "typescript": "^5.9.3"
+  }
+}

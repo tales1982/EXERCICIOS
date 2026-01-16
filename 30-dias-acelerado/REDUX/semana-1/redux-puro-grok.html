@@ -1,0 +1,541 @@
+htmlDownloadCopy code<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reducer Puro: Construa Lógica de Estado Antes do React</title>
+    <style>
+        :root {
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #1a1a1a;
+            --text-primary: #e8e8e8;
+            --text-secondary: #b0b0b0;
+            --neon-primary: #00ff88;
+            --neon-secondary: #ff00ff;
+            --neon-glow: 0 0 20px rgba(0, 255, 136, 0.5);
+            --shadow-soft: 0 8px 32px rgba(0, 0, 0, 0.6);
+            --border: 1px solid rgba(0, 255, 136, 0.2);
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        [data-theme="light"] {
+            --bg-primary: #f5f5f5;
+            --bg-secondary: #e0e0e0;
+            --text-primary: #1a1a1a;
+            --text-secondary: #555;
+            --neon-primary: #0066cc;
+            --neon-secondary: #cc0066;
+            --neon-glow: 0 0 20px rgba(0, 102, 204, 0.5);
+            --shadow-soft: 0 8px 32px rgba(0, 0, 0, 0.1);
+            --border: 1px solid rgba(0, 102, 204, 0.2);
+        }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            transition: var(--transition);
+        }
+        header {
+            background: var(--bg-secondary);
+            padding: 1rem 2rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: var(--border);
+            box-shadow: var(--shadow-soft);
+        }
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        h1 {
+            font-size: 2rem;
+            background: linear-gradient(135deg, var(--neon-primary), var(--neon-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 1.1rem;
+            margin-top: 0.5rem;
+        }
+        .theme-toggle {
+            background: var(--bg-secondary);
+            border: var(--border);
+            color: var(--text-primary);
+            padding: 0.8rem 1.5rem;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: var(--transition);
+            box-shadow: var(--shadow-soft);
+        }
+        .theme-toggle:hover {
+            box-shadow: var(--neon-glow);
+            transform: translateY(-2px);
+        }
+        nav {
+            background: rgba(26, 26, 26, 0.9);
+            backdrop-filter: blur(10px);
+            padding: 1rem 0;
+            position: sticky;
+            top: 80px;
+            z-index: 99;
+            border-bottom: var(--border);
+        }
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            overflow-x: auto;
+            gap: 1rem;
+            padding: 0 2rem;
+        }
+        .nav-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            transition: var(--transition);
+            white-space: nowrap;
+            font-weight: 500;
+        }
+        .nav-link:hover, .nav-link.active {
+            color: var(--neon-primary);
+            background: rgba(0, 255, 136, 0.1);
+            box-shadow: var(--neon-glow);
+        }
+        main {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+        section {
+            margin-bottom: 4rem;
+            padding: 2rem;
+            background: var(--bg-secondary);
+            border-radius: 20px;
+            box-shadow: var(--shadow-soft);
+            border: var(--border);
+            transition: var(--transition);
+        }
+        section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.7);
+        }
+        h2 {
+            font-size: 1.8rem;
+            margin-bottom: 1rem;
+            position: relative;
+        }
+        h2::before {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 50px;
+            height: 3px;
+            background: linear-gradient(90deg, var(--neon-primary), var(--neon-secondary));
+        }
+        .badge {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--neon-primary), var(--neon-secondary));
+            color: #000;
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin-left: 1rem;
+            box-shadow: var(--neon-glow);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        ul {
+            list-style: none;
+            padding-left: 0;
+        }
+        li {
+            padding: 0.8rem 0;
+            border-left: 3px solid transparent;
+            padding-left: 1rem;
+            transition: var(--transition);
+        }
+        li:hover {
+            border-left-color: var(--neon-primary);
+            background: rgba(0, 255, 136, 0.05);
+        }
+        .checklist li::before {
+            content: '□';
+            margin-right: 1rem;
+            font-size: 1.2rem;
+            color: var(--neon-primary);
+        }
+        .scenario {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin: 1rem 0;
+            border-left: 4px solid var(--neon-secondary);
+        }
+        .flashcards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+        .flashcard {
+            perspective: 1000px;
+            height: 200px;
+        }
+        .flashcard-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.6s;
+            transform-style: preserve-3d;
+        }
+        .flashcard.flipped .flashcard-inner {
+            transform: rotateY(180deg);
+        }
+        .flashcard-front, .flashcard-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 1.5rem;
+            border-radius: 12px;
+            box-shadow: var(--shadow-soft);
+            border: var(--border);
+        }
+        .flashcard-front {
+            background: linear-gradient(135deg, var(--neon-primary), var(--neon-secondary));
+            color: #000;
+        }
+        .flashcard-back {
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            transform: rotateY(180deg);
+        }
+        .copy-btn {
+            background: var(--neon-primary);
+            color: #000;
+            border: none;
+            padding: 0.8rem 2rem;
+            border-radius: 25px;
+            font-weight: bold;
+            cursor: pointer;
+            margin: 2rem auto;
+            display: block;
+            box-shadow: var(--neon-glow);
+            transition: var(--transition);
+        }
+        .copy-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 0 30px var(--neon-primary);
+        }
+        @media (max-width: 768px) {
+            .header-content, .nav-container {
+                flex-direction: column;
+                gap: 1rem;
+            }
+            main {
+                padding: 0 1rem;
+                margin: 1rem;
+            }
+            section {
+                padding: 1.5rem;
+            }
+            h1 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <div>
+                <h1>Reducer Puro</h1>
+                <p class="subtitle">Construa a lógica de estado antes de conectar no React</p>
+            </div>
+            <button class="theme-toggle" id="themeToggle">☀️ Modo Claro</button>
+        </div>
+    </header>
+    <nav>
+        <div class="nav-container" id="navLinks">
+            <a href="#inicio" class="nav-link active">Início</a>
+            <a href="#o-que-e" class="nav-link">O que é?</a>
+            <a href="#exercicio" class="nav-link">Exercício</a>
+            <a href="#checklist" class="nav-link">Checklist</a>
+            <a href="#testes" class="nav-link">Testes</a>
+            <a href="#erros" class="nav-link">Erros Comuns</a>
+            <a href="#flashcards" class="nav-link">Flashcards</a>
+            <a href="#proximo" class="nav-link">Próximo</a>
+        </div>
+    </nav>
+    <main>
+        <section id="inicio">
+            <h2>Objetivo <span class="badge">Objetivo</span></h2>
+            <p>Aprenda a criar um <strong>reducer puro</strong> (sem React ou qualquer framework). O foco é construir a lógica de gerenciamento de estado de forma simples, previsível e testável. Depois, você conecta isso a uma store e, por fim, ao React.</p>
+        </section>
+
+        <section id="o-que-e">
+            <h2>O que é um reducer puro? <span class="badge">Regras</span></h2>
+            <p>Um reducer é uma <strong>função pura</strong> que recebe o <strong>estado atual</strong> e uma <strong>ação</strong>, e retorna um <strong>novo estado</strong>.</p>
+            <ul>
+                <li><strong>(estado atual + action) → novo estado</strong></li>
+                <li><strong>Sem mutação:</strong> Nunca altere o estado original. Sempre crie um novo objeto/array.</li>
+                <li><strong>Sem efeitos colaterais:</strong> Não faça chamadas de API, localStorage ou nada externo. Só lógica pura.</li>
+                <li><strong>Mesmas entradas = mesma saída:</strong> Previsível e testável.</li>
+            </ul>
+        </section>
+
+        <section id="exercicio">
+            <h2>Exercício Guiado <span class="badge">Prática</span></h2>
+            <p>Crie um reducer para um <strong>Carrinho de Compras</strong>. Siga estes passos <em>sem olhar código pronto</em>:</p>
+            <ol>
+                <li><strong>Defina o formato do estado (state shape):</strong><br>
+                    Exemplo: { items: [], total: 0, cupom: null }. Pense em id, nome, preco, quantidade.</li>
+                <li><strong>Liste ações:</strong>
+                    <ul>
+                        <li>ADICIONAR_ITEM: Adiciona ou incrementa item.</li>
+                        <li>REMOVER_ITEM: Remove item pelo ID.</li>
+                        <li>ALTERAR_QUANTIDADE: Aumenta/diminui quantidade (mín 1).</li>
+                        <li>APLICAR_CUPOM: Aplica desconto se válido (ex: "DESCONTO10").</li>
+                        <li>LIMPAR_CARRINHO: Zera tudo.</li>
+                    </ul>
+                </li>
+                <li><strong>Para cada ação, descreva a mudança:</strong>
+                    <ul>
+                        <li>ADICIONAR_ITEM: Se existe, +quantidade; senão, adiciona novo. Atualiza total.</li>
+                        <li>REMOVER_ITEM: Filtra item fora. Atualiza total.</li>
+                        <li>ALTERAR_QUANTIDADE: Atualiza qtd (mín 1), recalcula total.</li>
+                        <li>APLICAR_CUPOM: Se válido, aplica desconto % no total; senão, ignora.</li>
+                        <li>LIMPAR_CARRINHO: Retorna estado inicial.</li>
+                    </ul>
+                </li>
+            </ol>
+        </section>
+
+        <section id="checklist">
+            <h2>Critérios de Aceitação <span class="badge">Checklist</span></h2>
+            <ul class="checklist">
+                <li>Estado inicial vazio e bem definido (items: [], total: 0, cupom: null).</li>
+                <li>Ações com nomes claros (ex: { type: 'ADICIONAR_ITEM', payload: {id: 1, nome: '...', preco: 10} }).</li>
+                <li>Todas atualizações imutáveis: use spread (...state), map(), filter(), etc.</li>
+                <li>Casos de borda: qtd mínima 1, remover se qtd=0, cupom inválido ignora, total sempre recalculado.</li>
+                <li>Reducer retorna estado default se action.type desconhecida.</li>
+            </ul>
+        </section>
+
+        <section id="testes">
+            <h2>Testes Mentais <span class="badge">Validação</span></h2>
+            <div class="scenario">
+                <strong>Estado: {items: [], total: 0}</strong> + <strong>ADICIONAR_ITEM {id:1, nome:'Maçã', preco:5}</strong> → <strong>{items: [{id:1,nome:'Maçã',preco:5,qtd:1}], total:5}</strong>
+            </div>
+            <div class="scenario">
+                <strong>Estado: acima</strong> + <strong>ADICIONAR_ITEM {id:1,...}</strong> → <strong>qtd:2, total:10</strong>
+            </div>
+            <div class="scenario">
+                <strong>Estado: total=10</strong> + <strong>ALTERAR_QUANTIDADE {id:1, qtd:0}</strong> → <strong>qtd:1 (borda), total=5</strong>
+            </div>
+            <div class="scenario">
+                <strong>Estado: total=10</strong> + <strong>APLICAR_CUPOM 'INVALIDO'</strong> → <strong>cupom:null, total=10 (ignora)</strong>
+            </div>
+            <div class="scenario">
+                <strong>Estado: cheio</strong> + <strong>LIMPAR_CARRINHO</strong> → <strong>{items:[], total:0, cupom:null}</strong>
+            </div>
+        </section>
+
+        <section id="erros">
+            <h2>Erros Comuns <span class="badge">Evite</span></h2>
+            <ul>
+                <li><strong>Mutar estado:</strong> state.items.push() → ❌ Use [...state.items, newItem].</li>
+                <li><strong>Misturar API/localStorage:</strong> Reducer é puro! Chame API fora.</li>
+                <li><strong>Actions vagas:</strong> {type: 'UPDATE'} → ❌ Use {type: 'ALTERAR_QUANTIDADE', payload: {...}}.</li>
+                <li><strong>Não tratar default:</strong> switch sem default → pode quebrar.</li>
+                <li><strong>Recalcular total errado:</strong> Sempre some preco * qtd de todos items.</li>
+            </ul>
+        </section>
+
+        <section id="flashcards">
+            <h2>Flashcards (Estilo Anki) <span class="badge">Memorize</span></h2>
+            <p>Clique para virar. Use para revisar!</p>
+            <div class="flashcards">
+                <div class="flashcard" data-front="O que é um reducer puro?" data-back="(estado atual + action) → novo estado. Função pura.">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front">O que é um reducer puro?</div>
+                        <div class="flashcard-back">(estado atual + action) → novo estado. Função pura.</div>
+                    </div>
+                </div>
+                <div class="flashcard" data-front="Regra #1 de reducer?" data-back="Sem mutação: sempre novo estado.">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front">Regra #1 de reducer?</div>
+                        <div class="flashcard-back">Sem mutação: sempre novo estado.</div>
+                    </div>
+                </div>
+                <div class="flashcard" data-front="Sem efeitos colaterais significa?" data-back="Sem API, localStorage, console.log. Só lógica.">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front">Sem efeitos colaterais significa?</div>
+                        <div class="flashcard-back">Sem API, localStorage, console.log. Só lógica.</div>
+                    </div>
+                </div>
+                <div class="flashcard" data-front="Pureza: mesmas entradas?" data-back="Mesma saída sempre. Previsível.">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front">Pureza: mesmas entradas?</div>
+                        <div class="flashcard-back">Mesma saída sempre. Previsível.</div>
+                    </div>
+                </div>
+                <div class="flashcard" data-front="State shape no carrinho?" data-back="{items: [], total: 0, cupom: null}">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front">State shape no carrinho?</div>
+                        <div class="flashcard-back">{items: [], total: 0, cupom: null}</div>
+                    </div>
+                </div>
+                <div class="flashcard" data-front="Action ADICIONAR_ITEM payload?" data-back="{id, nome, preco}">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front">Action ADICIONAR_ITEM payload?</div>
+                        <div class="flashcard-back">{id, nome, preco}</div>
+                    </div>
+                </div>
+                <div class="flashcard" data-front="Como imutável adicionar item?" data-back="Se existe: map e +qtd; senão [...items, new].">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front">Como imutável adicionar item?</div>
+                        <div class="flashcard-back">Se existe: map e +qtd; senão [...items, new].</div>
+                    </div>
+                </div>
+                <div class="flashcard" data-front="Remover imutável?" data-back="items.filter(item => item.id !== payload.id)">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front">Remover imutável?</div>
+                        <div class="flashcard-back">items.filter(item => item.id !== payload.id)</div>
+                    </div>
+                </div>
+                <div class="flashcard" data-front="Borda: qtd=0?" data-back="Mín 1. Não remover.">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front">Borda: qtd=0?</div>
+                        <div class="flashcard-back">Mín 1. Não remover.</div>
+                    </div>
+                </div>
+                <div class="flashcard" data-front="Cupom inválido?" data-back="Ignora. Não aplica.">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front">Cupom inválido?</div>
+                        <div class="flashcard-back">Ignora. Não aplica.</div>
+                    </div>
+                </div>
+                <div class="flashcard" data-front="Sempre recalcular?" data-back="Total: sum(preco * qtd de todos items).">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front">Sempre recalcular?</div>
+                        <div class="flashcard-back">Total: sum(preco * qtd de todos items).</div>
+                    </div>
+                </div>
+                <div class="flashcard" data-front="Default case no switch?" data-back="return state;">
+                    <div class="flashcard-inner">
+                        <div class="flashcard-front">Default case no switch?</div>
+                        <div class="flashcard-back">return state;</div>
+                    </div>
+                </div>
+            </div>
+            <button class="copy-btn" id="copyFlashcards">Copiar Flashcards</button>
+        </section>
+
+        <section id="proximo">
+            <h2>Próximo Passo <span class="badge">Avance</span></h2>
+            <p>Ótimo! Com o reducer puro pronto e testado mentalmente:</p>
+            <ol>
+                <li>Conecte-o a uma <strong>store simples</strong> (objeto com estado e dispatch).</li>
+                <li>Depois, integre no <strong>React com useReducer</strong> ou Redux.</li>
+            </ol>
+            <p>Agora, pause e <strong>implemente o reducer no seu editor</strong> seguindo o exercício!</p>
+        </section>
+    </main>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const body = document.body;
+            const toggle = document.getElementById('themeToggle');
+            const navLinks = document.querySelectorAll('.nav-link');
+            const flashcards = document.querySelectorAll('.flashcard');
+            const copyBtn = document.getElementById('copyFlashcards');
+
+            // Theme toggle
+            const currentTheme = localStorage.getItem('theme') || 'dark';
+            if (currentTheme === 'light') {
+                body.setAttribute('data-theme', 'light');
+                toggle.textContent = '🌙 Modo Escuro';
+            }
+            toggle.addEventListener('click', () => {
+                const isLight = body.getAttribute('data-theme') === 'light';
+                body.setAttribute('data-theme', isLight ? 'dark' : 'light');
+                toggle.textContent = isLight ? '☀️ Modo Claro' : '🌙 Modo Escuro';
+                localStorage.setItem('theme', isLight ? 'dark' : 'light');
+            });
+
+            // Nav smooth scroll and active
+            navLinks.forEach(link => {
+                link.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    const target = document.querySelector(link.getAttribute('href'));
+                    target.scrollIntoView({ behavior: 'smooth' });
+                    navLinks.forEach(l => l.classList.remove('active'));
+                    link.classList.add('active');
+                });
+            });
+
+            // Flashcard flip
+            flashcards.forEach(card => {
+                card.addEventListener('click', () => {
+                    card.classList.toggle('flipped');
+                });
+            });
+
+            // Copy flashcards
+            copyBtn.addEventListener('click', async () => {
+                let content = '';
+                flashcards.forEach((card, i) => {
+                    const front = card.querySelector('.flashcard-front').textContent;
+                    const back = card.querySelector('.flashcard-back').textContent;
+                    content += `${i+1}. Frente: ${front}\nVerso: ${back}\n\n`;
+                });
+                try {
+                    await navigator.clipboard.writeText(content);
+                    copyBtn.textContent = 'Copiado!';
+                    setTimeout(() => { copyBtn.textContent = 'Copiar Flashcards'; }, 2000);
+                } catch (err) {
+                    console.error('Erro ao copiar:', err);
+                }
+            });
+
+            // Active nav on scroll
+            window.addEventListener('scroll', () => {
+                let current = '';
+                const sections = document.querySelectorAll('section');
+                const scrollPos = window.scrollY + 100;
+                sections.forEach(sec => {
+                    if (scrollPos > sec.offsetTop) {
+                        current = sec.getAttribute('id');
+                    }
+                });
+                navLinks.forEach(link => {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href') === `#${current}`) {
+                        link.classList.add('active');
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

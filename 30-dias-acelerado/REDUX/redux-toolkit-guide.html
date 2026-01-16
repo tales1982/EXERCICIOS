@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Redux Toolkit + TypeScript - Guia Completo</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .glow { filter: drop-shadow(0 0 8px currentColor); }
+    .transition-box { transition: all 0.3s ease; }
+    pre { tab-size: 2; }
+    .code-block { font-family: 'Fira Code', 'Courier New', monospace; }
+    .tab-active { border-bottom: 2px solid #3B82F6; color: #3B82F6; }
+    .tab-inactive { border-bottom: 2px solid transparent; color: #94A3B8; }
+    html { scroll-behavior: smooth; }
+  </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+  
+  <!-- Navigation -->
+  <nav class="sticky top-0 z-50 bg-slate-900/90 backdrop-blur border-b border-slate-700">
+    <div class="max-w-6xl mx-auto px-4 py-3 flex items-center justify-between">
+      <h1 class="text-xl font-bold text-white">Redux Toolkit + TypeScript</h1>
+      <div class="flex gap-4 text-sm">
+        <a href="#diagrama" class="text-slate-400 hover:text-white transition">Diagrama</a>
+        <a href="#conceitos" class="text-slate-400 hover:text-white transition">Conceitos</a>
+        <a href="#setup" class="text-slate-400 hover:text-white transition">Setup</a>
+        <a href="#implementacao" class="text-slate-400 hover:text-white transition">Implementação</a>
+        <a href="#hooks" class="text-slate-400 hover:text-white transition">Hooks</a>
+        <a href="#async" class="text-slate-400 hover:text-white transition">Async</a>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero Section -->
+  <header class="text-center py-12 px-4">
+    <h1 class="text-5xl font-bold text-white mb-4">Fluxo Redux</h1>
+    <p class="text-slate-400 text-xl mb-2">Guia Completo com TypeScript e Redux Toolkit</p>
+    <p class="text-slate-500">A forma moderna e recomendada de usar Redux no React</p>
+  </header>
+
+  <!-- Main Diagram Section -->
+  <section id="diagrama" class="px-4 pb-12">
+    <div class="max-w-4xl mx-auto">
+      <div class="relative w-full">
+        <svg viewBox="0 0 800 500" class="w-full" id="diagram">
+          <defs>
+            <filter id="glow">
+              <feGaussianBlur stdDeviation="3" result="coloredBlur"/>
+              <feMerge>
+                <feMergeNode in="coloredBlur"/>
+                <feMergeNode in="SourceGraphic"/>
+              </feMerge>
+            </filter>
+            <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+              <polygon points="0 0, 10 3.5, 0 7" fill="#64748B" />
+            </marker>
+            <marker id="arrowhead-blue" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+              <polygon points="0 0, 10 3.5, 0 7" fill="#3B82F6" />
+            </marker>
+            <marker id="arrowhead-amber" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+              <polygon points="0 0, 10 3.5, 0 7" fill="#F59E0B" />
+            </marker>
+            <marker id="arrowhead-purple" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+              <polygon points="0 0, 10 3.5, 0 7" fill="#8B5CF6" />
+            </marker>
+            <marker id="arrowhead-green" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+              <polygon points="0 0, 10 3.5, 0 7" fill="#10B981" />
+            </marker>
+          </defs>
+
+          <!-- Connection Lines -->
+          <path id="line-0" d="M 200 150 L 400 150" stroke="#475569" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+          <path id="line-1" d="M 600 150 L 600 250" stroke="#475569" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+          <path id="line-2" d="M 600 350 L 400 350" stroke="#475569" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+          <path id="line-3" d="M 200 350 L 200 150" stroke="#475569" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+
+          <!-- Labels -->
+          <text x="300" y="135" fill="#94A3B8" font-size="14" text-anchor="middle">dispatch(action)</text>
+          <text x="640" y="210" fill="#94A3B8" font-size="14">processa</text>
+          <text x="500" y="385" fill="#94A3B8" font-size="14" text-anchor="middle">retorna novo state</text>
+          <text x="120" y="250" fill="#94A3B8" font-size="14">useSelector()</text>
+
+          <!-- VIEW Box -->
+          <g id="box-view" class="transition-box cursor-pointer" onclick="setStep(0)">
+            <rect id="rect-view" x="100" y="100" width="200" height="100" rx="12" fill="#1E293B" stroke="#334155" stroke-width="2"/>
+            <text x="200" y="140" fill="white" font-size="18" font-weight="bold" text-anchor="middle">VIEW</text>
+            <text x="200" y="165" fill="#94A3B8" font-size="12" text-anchor="middle">Componente React</text>
+            <text x="200" y="185" fill="#60A5FA" font-size="11" text-anchor="middle">useSelector + useDispatch</text>
+          </g>
+
+          <!-- ACTION Box -->
+          <g id="box-action" class="transition-box cursor-pointer" onclick="setStep(1)">
+            <rect id="rect-action" x="500" y="100" width="200" height="100" rx="12" fill="#1E293B" stroke="#334155" stroke-width="2"/>
+            <text x="600" y="140" fill="white" font-size="18" font-weight="bold" text-anchor="middle">ACTION</text>
+            <text x="600" y="165" fill="#94A3B8" font-size="12" text-anchor="middle">{ type, payload }</text>
+            <text x="600" y="185" fill="#FBBF24" font-size="11" text-anchor="middle">createSlice actions</text>
+          </g>
+
+          <!-- REDUCER Box -->
+          <g id="box-reducer" class="transition-box cursor-pointer" onclick="setStep(2)">
+            <rect id="rect-reducer" x="500" y="250" width="200" height="100" rx="12" fill="#1E293B" stroke="#334155" stroke-width="2"/>
+            <text x="600" y="290" fill="white" font-size="18" font-weight="bold" text-anchor="middle">REDUCER</text>
+            <text x="600" y="315" fill="#94A3B8" font-size="12" text-anchor="middle">(state, action) → state</text>
+            <text x="600" y="335" fill="#A78BFA" font-size="11" text-anchor="middle">createSlice reducers</text>
+          </g>
+
+          <!-- STORE Box -->
+          <g id="box-store" class="transition-box cursor-pointer" onclick="setStep(3)">
+            <rect id="rect-store" x="100" y="250" width="200" height="100" rx="12" fill="#1E293B" stroke="#334155" stroke-width="2"/>
+            <text x="200" y="290" fill="white" font-size="18" font-weight="bold" text-anchor="middle">STORE</text>
+            <text x="200" y="315" fill="#94A3B8" font-size="12" text-anchor="middle">Estado Global</text>
+            <text x="200" y="335" fill="#34D399" font-size="11" text-anchor="middle">configureStore</text>
+          </g>
+
+          <!-- Center -->
+          <text x="400" y="250" fill="#64748B" font-size="14" text-anchor="middle" font-style="italic">Fluxo Unidirecional</text>
+        </svg>
+      </div>
+
+      <!-- Controls -->
+      <div class="flex justify-center gap-4 mt-6">
+        <button id="btn-animate" onclick="toggleAnimation()" class="px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-semibold transition-all">
+          ▶ Animar Fluxo
+        </button>
+        <button onclick="nextStep()" class="px-6 py-3 bg-slate-700 hover:bg-slate-600 text-white rounded-lg font-semibold transition-all">
+          Próximo Passo →
+        </button>
+      </div>
+
+      <!-- Step Description -->
+      <div class="mt-6 bg-slate-800/50 backdrop-blur rounded-xl p-6 border border-slate-700">
+        <h3 id="step-title" class="text-xl font-bold text-white mb-2">Passo 1: View (UI)</h3>
+        <p id="step-description" class="text-slate-300"></p>
+        <div class="mt-4 grid grid-cols-4 gap-2">
+          <button onclick="setStep(0)" class="step-btn p-2 rounded text-xs font-medium transition-all bg-blue-500 text-white" data-step="0">VIEW</button>
+          <button onclick="setStep(1)" class="step-btn p-2 rounded text-xs font-medium transition-all bg-slate-700 text-slate-400" data-step="1">ACTION</button>
+          <button onclick="setStep(2)" class="step-btn p-2 rounded text-xs font-medium transition-all bg-slate-700 text-slate-400" data-step="2">REDUCER</button>
+          <button onclick="setStep(3)" class="step-btn p-2 rounded text-xs font-medium transition-all bg-slate-700 text-slate-400" data-step="3">STORE</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Conceitos Section -->
+  <section id="conceitos" class="px-4 py-12 bg-slate-800/30">
+    <div class="max-w-4xl mx-auto">
+      <h2 class="text-3xl font-bold text-white mb-8 text-center">📚 Conceitos Fundamentais</h2>
+      
+      <div class="grid md:grid-cols-2 gap-6">
+        <!-- Store -->
+        <div class="bg-slate-800/50 rounded-xl p-6 border border-emerald-500/30">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-10 h-10 bg-emerald-500 rounded-lg flex items-center justify-center text-white font-bold">S</div>
+            <h3 class="text-xl font-bold text-emerald-400">Store</h3>
+          </div>
+          <p class="text-slate-300 mb-4">O <strong>Store</strong> é o objeto que contém todo o estado da aplicação. É a "única fonte da verdade" (Single Source of Truth).</p>
+          <ul class="text-slate-400 text-sm space-y-2">
+            <li>✓ Armazena o estado global</li>
+            <li>✓ Permite acesso via <code class="text-emerald-400">getState()</code></li>
+            <li>✓ Permite atualizações via <code class="text-emerald-400">dispatch(action)</code></li>
+            <li>✓ Registra listeners via <code class="text-emerald-400">subscribe()</code></li>
+          </ul>
+        </div>
+
+        <!-- Action -->
+        <div class="bg-slate-800/50 rounded-xl p-6 border border-amber-500/30">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-10 h-10 bg-amber-500 rounded-lg flex items-center justify-center text-white font-bold">A</div>
+            <h3 class="text-xl font-bold text-amber-400">Action</h3>
+          </div>
+          <p class="text-slate-300 mb-4">Uma <strong>Action</strong> é um objeto que descreve "o que aconteceu". É a única forma de enviar dados para o store.</p>
+          <ul class="text-slate-400 text-sm space-y-2">
+            <li>✓ Objeto com propriedade <code class="text-amber-400">type</code> obrigatória</li>
+            <li>✓ Pode ter <code class="text-amber-400">payload</code> com dados extras</li>
+            <li>✓ Criadas automaticamente pelo createSlice</li>
+            <li>✓ Despachadas via <code class="text-amber-400">dispatch()</code></li>
+          </ul>
+        </div>
+
+        <!-- Reducer -->
+        <div class="bg-slate-800/50 rounded-xl p-6 border border-purple-500/30">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-10 h-10 bg-purple-500 rounded-lg flex items-center justify-center text-white font-bold">R</div>
+            <h3 class="text-xl font-bold text-purple-400">Reducer</h3>
+          </div>
+          <p class="text-slate-300 mb-4">Um <strong>Reducer</strong> é uma função pura que recebe o estado atual e uma action, retornando o novo estado.</p>
+          <ul class="text-slate-400 text-sm space-y-2">
+            <li>✓ Função pura: <code class="text-purple-400">(state, action) => newState</code></li>
+            <li>✓ Nunca modifica o estado diretamente</li>
+            <li>✓ Com Immer (RTK): pode "mutar" de forma segura</li>
+            <li>✓ Deve ser previsível e sem side effects</li>
+          </ul>
+        </div>
+
+        <!-- Dispatch -->
+        <div class="bg-slate-800/50 rounded-xl p-6 border border-blue-500/30">
+          <div class="flex items-center gap-3 mb-4">
+            <div class="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center text-white font-bold">D</div>
+            <h3 class="text-xl font-bold text-blue-400">Dispatch</h3>
+          </div>
+          <p class="text-slate-300 mb-4"><strong>Dispatch</strong> é o método que envia actions para o store. É a única forma de disparar mudanças de estado.</p>
+          <ul class="text-slate-400 text-sm space-y-2">
+            <li>✓ <code class="text-blue-400">store.dispatch(action)</code></li>
+            <li>✓ No React: <code class="text-blue-400">useDispatch()</code> hook</li>
+            <li>✓ Pode despachar actions síncronas</li>
+            <li>✓ Com thunks: actions assíncronas</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- 3 Princípios -->
+      <div class="mt-12">
+        <h3 class="text-2xl font-bold text-white mb-6 text-center">🎯 Os 3 Princípios do Redux</h3>
+        <div class="grid md:grid-cols-3 gap-4">
+          <div class="bg-gradient-to-br from-blue-500/20 to-blue-600/10 rounded-xl p-5 border border-blue-500/30">
+            <h4 class="font-bold text-blue-400 mb-2">1. Single Source of Truth</h4>
+            <p class="text-slate-400 text-sm">O estado de toda a aplicação é armazenado em uma única store. Facilita debugging e persistência.</p>
+          </div>
+          <div class="bg-gradient-to-br from-purple-500/20 to-purple-600/10 rounded-xl p-5 border border-purple-500/30">
+            <h4 class="font-bold text-purple-400 mb-2">2. State é Read-Only</h4>
+            <p class="text-slate-400 text-sm">A única forma de mudar o estado é emitindo uma action. Garante previsibilidade e rastreabilidade.</p>
+          </div>
+          <div class="bg-gradient-to-br from-emerald-500/20 to-emerald-600/10 rounded-xl p-5 border border-emerald-500/30">
+            <h4 class="font-bold text-emerald-400 mb-2">3. Pure Functions</h4>
+            <p class="text-slate-400 text-sm">Mudanças são feitas por reducers puros. Mesma entrada = mesma saída, sempre.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Setup Section -->
+  <section id="setup" class="px-4 py-12">
+    <div class="max-w-4xl mx-auto">
+      <h2 class="text-3xl font-bold text-white mb-8 text-center">⚙️ Setup do Projeto</h2>
+      
+      <div class="bg-slate-800/50 rounded-xl p-6 border border-slate-700 mb-6">
+        <h3 class="text-lg font-bold text-white mb-4">📦 1. Instalação</h3>
+        <pre class="bg-slate-900 p-4 rounded-lg overflow-x-auto">
+<code class="text-slate-300 code-block"><span class="text-slate-500"># Criar projeto React com TypeScript</span>
+<span class="text-emerald-400">npx</span> create-react-app my-app --template typescript
+
+<span class="text-slate-500"># OU com Vite (recomendado - mais rápido)</span>
+<span class="text-emerald-400">npm</span> create vite@latest my-app -- --template react-ts
+
+<span class="text-slate-500"># Instalar Redux Toolkit e React-Redux</span>
+<span class="text-emerald-400">npm</span> install @reduxjs/toolkit react-redux
+
+<span class="text-slate-500"># Tipos TypeScript (já incluídos no RTK)</span>
+<span class="text-emerald-400">npm</span> install -D @types/react-redux</code></pre>
+      </div>
+
+      <div class="bg-slate-800/50 rounded-xl p-6 border border-slate-700 mb-6">
+        <h3 class="text-lg font-bold text-white mb-4">📁 2. Estrutura de Pastas Recomendada</h3>
+        <pre class="bg-slate-900 p-4 rounded-lg overflow-x-auto">
+<code class="text-slate-300 code-block">src/
+├── app/
+│   ├── <span class="text-emerald-400">store.ts</span>          <span class="text-slate-500"># Configuração da store</span>
+│   └── <span class="text-emerald-400">hooks.ts</span>          <span class="text-slate-500"># Hooks tipados (useAppDispatch, useAppSelector)</span>
+├── features/
+│   ├── counter/
+│   │   ├── <span class="text-amber-400">counterSlice.ts</span>  <span class="text-slate-500"># Slice do counter (actions + reducer)</span>
+│   │   └── <span class="text-blue-400">Counter.tsx</span>      <span class="text-slate-500"># Componente</span>
+│   └── todos/
+│       ├── <span class="text-amber-400">todosSlice.ts</span>    <span class="text-slate-500"># Slice dos todos</span>
+│       └── <span class="text-blue-400">TodoList.tsx</span>     <span class="text-slate-500"># Componente</span>
+├── <span class="text-purple-400">App.tsx</span>
+└── <span class="text-purple-400">main.tsx</span>              <span class="text-slate-500"># Entry point com Provider</span></code></pre>
+      </div>
+
+      <div class="bg-gradient-to-r from-amber-500/20 to-orange-500/20 rounded-xl p-6 border border-amber-500/30">
+        <h3 class="text-lg font-bold text-amber-400 mb-3">💡 Por que Redux Toolkit?</h3>
+        <p class="text-slate-300 mb-4">O Redux Toolkit (RTK) é a forma oficial e recomendada de usar Redux. Ele simplifica drasticamente o código:</p>
+        <div class="grid md:grid-cols-2 gap-4 text-sm">
+          <div>
+            <h4 class="text-red-400 font-semibold mb-2">❌ Redux Clássico</h4>
+            <ul class="text-slate-400 space-y-1">
+              <li>• Action types como constantes</li>
+              <li>• Action creators manuais</li>
+              <li>• Switch/case em reducers</li>
+              <li>• Imutabilidade manual (...spread)</li>
+              <li>• Configuração complexa</li>
+            </ul>
+          </div>
+          <div>
+            <h4 class="text-emerald-400 font-semibold mb-2">✅ Redux Toolkit</h4>
+            <ul class="text-slate-400 space-y-1">
+              <li>• Actions geradas automaticamente</li>
+              <li>• createSlice = actions + reducer</li>
+              <li>• Immer integrado (mutações seguras)</li>
+              <li>• configureStore pronto para uso</li>
+              <li>• TypeScript nativo</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Implementação Section -->
+  <section id="implementacao" class="px-4 py-12 bg-slate-800/30">
+    <div class="max-w-4xl mx-auto">
+      <h2 class="text-3xl font-bold text-white mb-8 text-center">🚀 Implementação Completa</h2>
+
+      <!-- Store -->
+      <div class="bg-slate-800/50 rounded-xl p-6 border border-emerald-500/30 mb-6">
+        <div class="flex items-center gap-3 mb-4">
+          <span class="bg-emerald-500 text-white px-3 py-1 rounded-full text-sm font-bold">PASSO 1</span>
+          <h3 class="text-xl font-bold text-white">Configurar a Store</h3>
+        </div>
+        <p class="text-slate-400 mb-4">Arquivo: <code class="text-emerald-400">src/app/store.ts</code></p>
+        <pre class="bg-slate-900 p-4 rounded-lg overflow-x-auto">
+<code class="text-slate-300 code-block"><span class="text-purple-400">import</span> { configureStore } <span class="text-purple-400">from</span> <span class="text-emerald-400">'@reduxjs/toolkit'</span>;
+<span class="text-purple-400">import</span> counterReducer <span class="text-purple-400">from</span> <span class="text-emerald-400">'../features/counter/counterSlice'</span>;
+<span class="text-purple-400">import</span> todosReducer <span class="text-purple-400">from</span> <span class="text-emerald-400">'../features/todos/todosSlice'</span>;
+
+<span class="text-slate-500">// Cria a store com os reducers</span>
+<span class="text-purple-400">export const</span> store = <span class="text-yellow-400">configureStore</span>({
+  <span class="text-blue-400">reducer</span>: {
+    <span class="text-slate-500">// Cada slice adiciona seu reducer aqui</span>
+    counter: counterReducer,
+    todos: todosReducer,
+  },
+  <span class="text-slate-500">// Middleware já inclui redux-thunk por padrão</span>
+});
+
+<span class="text-slate-500">// Tipos inferidos automaticamente do TypeScript</span>
+<span class="text-purple-400">export type</span> <span class="text-amber-400">RootState</span> = <span class="text-blue-400">ReturnType</span>&lt;<span class="text-purple-400">typeof</span> store.getState&gt;;
+<span class="text-purple-400">export type</span> <span class="text-amber-400">AppDispatch</span> = <span class="text-purple-400">typeof</span> store.dispatch;</code></pre>
+      </div>
+
+      <!-- Hooks Tipados -->
+      <div class="bg-slate-800/50 rounded-xl p-6 border border-blue-500/30 mb-6">
+        <div class="flex items-center gap-3 mb-4">
+          <span class="bg-blue-500 text-white px-3 py-1 rounded-full text-sm font-bold">PASSO 2</span>
+          <h3 class="text-xl font-bold text-white">Hooks Tipados</h3>
+        </div>
+        <p class="text-slate-400 mb-4">Arquivo: <code class="text-blue-400">src/app/hooks.ts</code></p>
+        <pre class="bg-slate-900 p-4 rounded-lg overflow-x-auto">
+<code class="text-slate-300 code-block"><span class="text-purple-400">import</span> { useDispatch, useSelector } <span class="text-purple-400">from</span> <span class="text-emerald-400">'react-redux'</span>;
+<span class="text-purple-400">import type</span> { <span class="text-amber-400">RootState</span>, <span class="text-amber-400">AppDispatch</span> } <span class="text-purple-400">from</span> <span class="text-emerald-400">'./store'</span>;
+
+<span class="text-slate-500">// Hooks tipados - USE ESTES em vez dos originais!</span>
+<span class="text-purple-400">export const</span> <span class="text-yellow-400">useAppDispatch</span> = useDispatch.<span class="text-yellow-400">withTypes</span>&lt;<span class="text-amber-400">AppDispatch</span>&gt;();
+<span class="text-purple-400">export const</span> <span class="text-yellow-400">useAppSelector</span> = useSelector.<span class="text-yellow-400">withTypes</span>&lt;<span class="text-amber-400">RootState</span>&gt;();
+
+<span class="text-slate-500">// Benefícios:
+// ✓ Autocomplete do estado
+// ✓ Type checking automático
+// ✓ Erros em tempo de compilação</span></code></pre>
+      </div>
+
+      <!-- Slice -->
+      <div class="bg-slate-800/50 rounded-xl p-6 border border-amber-500/30 mb-6">
+        <div class="flex items-center gap-3 mb-4">
+          <span class="bg-amber-500 text-white px-3 py-1 rounded-full text-sm font-bold">PASSO 3</span>
+          <h3 class="text-xl font-bold text-white">Criar um Slice</h3>
+        </div>
+        <p class="text-slate-400 mb-4">Arquivo: <code class="text-amber-400">src/features/counter/counterSlice.ts</code></p>
+        <pre class="bg-slate-900 p-4 rounded-lg overflow-x-auto">
+<code class="text-slate-300 code-block"><span class="text-purple-400">import</span> { createSlice, <span class="text-amber-400">PayloadAction</span> } <span class="text-purple-400">from</span> <span class="text-emerald-400">'@reduxjs/toolkit'</span>;
+
+<span class="text-slate-500">// 1. Definir interface do estado</span>
+<span class="text-purple-400">interface</span> <span class="text-amber-400">CounterState</span> {
+  value: <span class="text-blue-400">number</span>;
+  status: <span class="text-emerald-400">'idle'</span> | <span class="text-emerald-400">'loading'</span> | <span class="text-emerald-400">'failed'</span>;
+}
+
+<span class="text-slate-500">// 2. Estado inicial tipado</span>
+<span class="text-purple-400">const</span> initialState: <span class="text-amber-400">CounterState</span> = {
+  value: <span class="text-purple-400">0</span>,
+  status: <span class="text-emerald-400">'idle'</span>,
+};
+
+<span class="text-slate-500">// 3. Criar o slice (actions + reducer juntos!)</span>
+<span class="text-purple-400">export const</span> counterSlice = <span class="text-yellow-400">createSlice</span>({
+  <span class="text-blue-400">name</span>: <span class="text-emerald-400">'counter'</span>,  <span class="text-slate-500">// Prefixo das actions</span>
+  initialState,
+  <span class="text-blue-400">reducers</span>: {
+    <span class="text-slate-500">// Cada função aqui é uma action + reducer</span>
+    
+    <span class="text-yellow-400">increment</span>: (state) => {
+      <span class="text-slate-500">// Immer permite "mutação" segura!</span>
+      state.value += <span class="text-purple-400">1</span>;
+    },
+    
+    <span class="text-yellow-400">decrement</span>: (state) => {
+      state.value -= <span class="text-purple-400">1</span>;
+    },
+    
+    <span class="text-slate-500">// PayloadAction para actions com dados</span>
+    <span class="text-yellow-400">incrementByAmount</span>: (state, action: <span class="text-amber-400">PayloadAction</span>&lt;<span class="text-blue-400">number</span>&gt;) => {
+      state.value += action.payload;
+    },
+    
+    <span class="text-yellow-400">reset</span>: (state) => {
+      state.value = <span class="text-purple-400">0</span>;
+    },
+  },
+});
+
+<span class="text-slate-500">// 4. Exportar actions (geradas automaticamente!)</span>
+<span class="text-purple-400">export const</span> { increment, decrement, incrementByAmount, reset } = counterSlice.actions;
+
+<span class="text-slate-500">// 5. Selector para acessar o estado</span>
+<span class="text-purple-400">export const</span> <span class="text-yellow-400">selectCount</span> = (state: <span class="text-amber-400">RootState</span>) => state.counter.value;
+<span class="text-purple-400">export const</span> <span class="text-yellow-400">selectStatus</span> = (state: <span class="text-amber-400">RootState</span>) => state.counter.status;
+
+<span class="text-slate-500">// 6. Exportar reducer para a store</span>
+<span class="text-purple-400">export default</span> counterSlice.reducer;</code></pre>
+      </div>
+
+      <!-- Provider -->
+      <div class="bg-slate-800/50 rounded-xl p-6 border border-purple-500/30 mb-6">
+        <div class="flex items-center gap-3 mb-4">
+          <span class="bg-purple-500 text-white px-3 py-1 rounded-full text-sm font-bold">PASSO 4</span>
+          <h3 class="text-xl font-bold text-white">Configurar Provider</h3>
+        </div>
+        <p class="text-slate-400 mb-4">Arquivo: <code class="text-purple-400">src/main.tsx</code></p>
+        <pre class="bg-slate-900 p-4 rounded-lg overflow-x-auto">
+<code class="text-slate-300 code-block"><span class="text-purple-400">import</span> React <span class="text-purple-400">from</span> <span class="text-emerald-400">'react'</span>;
+<span class="text-purple-400">import</span> ReactDOM <span class="text-purple-400">from</span> <span class="text-emerald-400">'react-dom/client'</span>;
+<span class="text-purple-400">import</span> { <span class="text-amber-400">Provider</span> } <span class="text-purple-400">from</span> <span class="text-emerald-400">'react-redux'</span>;
+<span class="text-purple-400">import</span> { store } <span class="text-purple-400">from</span> <span class="text-emerald-400">'./app/store'</span>;
+<span class="text-purple-400">import</span> App <span class="text-purple-400">from</span> <span class="text-emerald-400">'./App'</span>;
+<span class="text-purple-400">import</span> <span class="text-emerald-400">'./index.css'</span>;
+
+ReactDOM.<span class="text-yellow-400">createRoot</span>(document.getElementById(<span class="text-emerald-400">'root'</span>)!).<span class="text-yellow-400">render</span>(
+  &lt;<span class="text-blue-400">React.StrictMode</span>&gt;
+    <span class="text-slate-500">{/* Provider disponibiliza a store para toda a app */}</span>
+    &lt;<span class="text-amber-400">Provider</span> <span class="text-purple-400">store</span>={store}&gt;
+      &lt;<span class="text-blue-400">App</span> /&gt;
+    &lt;/<span class="text-amber-400">Provider</span>&gt;
+  &lt;/<span class="text-blue-400">React.StrictMode</span>&gt;
+);</code></pre>
+      </div>
+
+      <!-- Componente -->
+      <div class="bg-slate-800/50 rounded-xl p-6 border border-pink-500/30">
+        <div class="flex items-center gap-3 mb-4">
+          <span class="bg-pink-500 text-white px-3 py-1 rounded-full text-sm font-bold">PASSO 5</span>
+          <h3 class="text-xl font-bold text-white">Usar no Componente</h3>
+        </div>
+        <p class="text-slate-400 mb-4">Arquivo: <code class="text-pink-400">src/features/counter/Counter.tsx</code></p>
+        <pre class="bg-slate-900 p-4 rounded-lg overflow-x-auto">
+<code class="text-slate-300 code-block"><span class="text-purple-400">import</span> React, { useState } <span class="text-purple-400">from</span> <span class="text-emerald-400">'react'</span>;
+<span class="text-purple-400">import</span> { <span class="text-yellow-400">useAppSelector</span>, <span class="text-yellow-400">useAppDispatch</span> } <span class="text-purple-400">from</span> <span class="text-emerald-400">'../../app/hooks'</span>;
+<span class="text-purple-400">import</span> {
+  increment,
+  decrement,
+  incrementByAmount,
+  reset,
+  selectCount,
+} <span class="text-purple-400">from</span> <span class="text-emerald-400">'./counterSlice'</span>;
+
+<span class="text-purple-400">export function</span> <span class="text-yellow-400">Counter</span>(): <span class="text-amber-400">JSX.Element</span> {
+  <span class="text-slate-500">// Ler estado da store</span>
+  <span class="text-purple-400">const</span> count = <span class="text-yellow-400">useAppSelector</span>(selectCount);
+  
+  <span class="text-slate-500">// Obter dispatch para enviar actions</span>
+  <span class="text-purple-400">const</span> dispatch = <span class="text-yellow-400">useAppDispatch</span>();
+  
+  <span class="text-slate-500">// Estado local para input</span>
+  <span class="text-purple-400">const</span> [amount, setAmount] = <span class="text-yellow-400">useState</span>&lt;<span class="text-blue-400">string</span>&gt;(<span class="text-emerald-400">'5'</span>);
+
+  <span class="text-purple-400">return</span> (
+    &lt;<span class="text-blue-400">div</span> <span class="text-purple-400">className</span>=<span class="text-emerald-400">"counter"</span>&gt;
+      &lt;<span class="text-blue-400">h2</span>&gt;Contador: {count}&lt;/<span class="text-blue-400">h2</span>&gt;
+      
+      &lt;<span class="text-blue-400">div</span> <span class="text-purple-400">className</span>=<span class="text-emerald-400">"buttons"</span>&gt;
+        <span class="text-slate-500">{/* Dispatch de action simples */}</span>
+        &lt;<span class="text-blue-400">button</span> <span class="text-purple-400">onClick</span>={() => dispatch(<span class="text-yellow-400">decrement</span>())}&gt;
+          - Decrementar
+        &lt;/<span class="text-blue-400">button</span>&gt;
+        
+        &lt;<span class="text-blue-400">button</span> <span class="text-purple-400">onClick</span>={() => dispatch(<span class="text-yellow-400">increment</span>())}&gt;
+          + Incrementar
+        &lt;/<span class="text-blue-400">button</span>&gt;
+      &lt;/<span class="text-blue-400">div</span>&gt;
+      
+      &lt;<span class="text-blue-400">div</span> <span class="text-purple-400">className</span>=<span class="text-emerald-400">"custom-amount"</span>&gt;
+        &lt;<span class="text-blue-400">input</span>
+          <span class="text-purple-400">type</span>=<span class="text-emerald-400">"number"</span>
+          <span class="text-purple-400">value</span>={amount}
+          <span class="text-purple-400">onChange</span>={(e) => setAmount(e.target.value)}
+        /&gt;
+        
+        <span class="text-slate-500">{/* Dispatch com payload */}</span>
+        &lt;<span class="text-blue-400">button</span> <span class="text-purple-400">onClick</span>={() => dispatch(<span class="text-yellow-400">incrementByAmount</span>(Number(amount)))}&gt;
+          Adicionar {amount}
+        &lt;/<span class="text-blue-400">button</span>&gt;
+      &lt;/<span class="text-blue-400">div</span>&gt;
+      
+      &lt;<span class="text-blue-400">button</span> <span class="text-purple-400">onClick</span>={() => dispatch(<span class="text-yellow-400">reset</span>())}&gt;
+        🔄 Reset
+      &lt;/<span class="text-blue-400">button</span>&gt;
+    &lt;/<span class="text-blue-400">div</span>&gt;
+  );
+}</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- Hooks Section -->
+  <section id="hooks" class="px-4 py-12">
+    <div class="max-w-4xl mx-auto">
+      <h2 class="text-3xl font-bold text-white mb-8 text-center">🪝 Hooks do React-Redux</h2>
+      
+      <div class="grid md:grid-cols-2 gap-6">
+        <!-- useSelector -->
+        <div class="bg-slate-800/50 rounded-xl p-6 border border-cyan-500/30">
+          <h3 class="text-xl font-bold text-cyan-400 mb-4">useAppSelector</h3>
+          <p class="text-slate-300 mb-4">Extrai dados do estado da store.</p>
+          <pre class="bg-slate-900 p-4 rounded-lg overflow-x-auto text-sm">
+<code class="text-slate-300 code-block"><span class="text-slate-500">// Com selector definido no slice</span>
+<span class="text-purple-400">const</span> count = <span class="text-yellow-400">useAppSelector</span>(selectCount);
+
+<span class="text-slate-500">// Inline selector</span>
+<span class="text-purple-400">const</span> count = <span class="text-yellow-400">useAppSelector</span>(
+  (state) => state.counter.value
+);
+
+<span class="text-slate-500">// Múltiplos valores</span>
+<span class="text-purple-400">const</span> { value, status } = <span class="text-yellow-400">useAppSelector</span>(
+  (state) => state.counter
+);</code></pre>
+        </div>
+
+        <!-- useDispatch -->
+        <div class="bg-slate-800/50 rounded-xl p-6 border border-rose-500/30">
+          <h3 class="text-xl font-bold text-rose-400 mb-4">useAppDispatch</h3>
+          <p class="text-slate-300 mb-4">Retorna a função dispatch da store.</p>
+          <pre class="bg-slate-900 p-4 rounded-lg overflow-x-auto text-sm">
+<code class="text-slate-300 code-block"><span class="text-purple-400">const</span> dispatch = <span class="text-yellow-400">useAppDispatch</span>();
+
+<span class="text-slate-500">// Despachar action</span>
+dispatch(<span class="text-yellow-400">increment</span>());
+
+<span class="text-slate-500">// Com payload</span>
+dispatch(<span class="text-yellow-400">incrementByAmount</span>(<span class="text-purple-400">10</span>));
+
+<span class="text-slate-500">// Async thunk</span>
+dispatch(<span class="text-yellow-400">fetchTodos</span>());
+
+<span class="text-slate-500">// Em handler</span>
+<span class="text-purple-400">const</span> handleClick = () => {
+  dispatch(<span class="text-yellow-400">increment</span>());
+};</code></pre>
+        </div>
+      </div>
+
+      <!-- Memoization -->
+      <div class="mt-6 bg-gradient-to-r from-yellow-500/20 to-amber-500/20 rounded-xl p-6 border border-yellow-500/30">
+        <h3 class="text-lg font-bold text-yellow-400 mb-3">⚡ Dica de Performance: Selectors Memoizados</h3>
+        <p class="text-slate-300 mb-4">Para cálculos derivados, use <code class="text-yellow-400">createSelector</code> para evitar re-renders desnecessários:</p>
+        <pre class="bg-slate-900 p-4 rounded-lg overflow-x-auto">
+<code class="text-slate-300 code-block"><span class="text-purple-400">import</span> { createSelector } <span class="text-purple-400">from</span> <span class="text-emerald-400">'@reduxjs/toolkit'</span>;
+
+<span class="text-slate-500">// Selector base</span>
+<span class="text-purple-400">const</span> selectTodos = (state: <span class="text-amber-400">RootState</span>) => state.todos.items;
+
+<span class="text-slate-500">// Selector memoizado - só recalcula quando todos mudam</span>
+<span class="text-purple-400">export const</span> <span class="text-yellow-400">selectCompletedTodos</span> = <span class="text-yellow-400">createSelector</span>(
+  [selectTodos],
+  (todos) => todos.<span class="text-yellow-400">filter</span>((todo) => todo.completed)
+);
+
+<span class="text-slate-500">// Uso no componente</span>
+<span class="text-purple-400">const</span> completedTodos = <span class="text-yellow-400">useAppSelector</span>(selectCompletedTodos);</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- Async Section -->
+  <section id="async" class="px-4 py-12 bg-slate-800/30">
+    <div class="max-w-4xl mx-auto">
+      <h2 class="text-3xl font-bold text-white mb-8 text-center">⚡ Operações Assíncronas (Thunks)</h2>
+      
+      <p class="text-slate-300 text-center mb-8 max-w-2xl mx-auto">
+        Para chamadas de API e outras operações assíncronas, use <code class="text-purple-400">createAsyncThunk</code>. 
+        Ele gera automaticamente actions para <span class="text-amber-400">pending</span>, <span class="text-emerald-400">fulfilled</span> e <span class="text-red-400">rejected</span>.
+      </p>
+
+      <div class="bg-slate-800/50 rounded-xl p-6 border border-slate-700 mb-6">
+        <h3 class="text-lg font-bold text-white mb-4">📡 Exemplo: Fetch de Dados com API</h3>
+        <pre class="bg-slate-900 p-4 rounded-lg overflow-x-auto">
+<code class="text-slate-300 code-block"><span class="text-purple-400">import</span> { createSlice, createAsyncThunk, <span class="text-amber-400">PayloadAction</span> } <span class="text-purple-400">from</span> <span class="text-emerald-400">'@reduxjs/toolkit'</span>;
+
+<span class="text-slate-500">// Interfaces TypeScript</span>
+<span class="text-purple-400">interface</span> <span class="text-amber-400">Todo</span> {
+  id: <span class="text-blue-400">number</span>;
+  title: <span class="text-blue-400">string</span>;
+  completed: <span class="text-blue-400">boolean</span>;
+}
+
+<span class="text-purple-400">interface</span> <span class="text-amber-400">TodosState</span> {
+  items: <span class="text-amber-400">Todo</span>[];
+  status: <span class="text-emerald-400">'idle'</span> | <span class="text-emerald-400">'loading'</span> | <span class="text-emerald-400">'succeeded'</span> | <span class="text-emerald-400">'failed'</span>;
+  error: <span class="text-blue-400">string</span> | <span class="text-blue-400">null</span>;
+}
+
+<span class="text-slate-500">// Estado inicial</span>
+<span class="text-purple-400">const</span> initialState: <span class="text-amber-400">TodosState</span> = {
+  items: [],
+  status: <span class="text-emerald-400">'idle'</span>,
+  error: <span class="text-blue-400">null</span>,
+};
+
+<span class="text-slate-500">// 🔥 Async Thunk - gera 3 actions automaticamente!</span>
+<span class="text-purple-400">export const</span> <span class="text-yellow-400">fetchTodos</span> = <span class="text-yellow-400">createAsyncThunk</span>&lt;<span class="text-amber-400">Todo</span>[]&gt;(
+  <span class="text-emerald-400">'todos/fetchTodos'</span>,  <span class="text-slate-500">// Action type prefix</span>
+  <span class="text-purple-400">async</span> () => {
+    <span class="text-purple-400">const</span> response = <span class="text-purple-400">await</span> <span class="text-yellow-400">fetch</span>(<span class="text-emerald-400">'https://jsonplaceholder.typicode.com/todos?_limit=10'</span>);
+    <span class="text-purple-400">return</span> response.<span class="text-yellow-400">json</span>();
+  }
+);
+
+<span class="text-slate-500">// Thunk com parâmetros</span>
+<span class="text-purple-400">export const</span> <span class="text-yellow-400">addTodo</span> = <span class="text-yellow-400">createAsyncThunk</span>&lt;<span class="text-amber-400">Todo</span>, <span class="text-blue-400">string</span>&gt;(
+  <span class="text-emerald-400">'todos/addTodo'</span>,
+  <span class="text-purple-400">async</span> (title: <span class="text-blue-400">string</span>) => {
+    <span class="text-purple-400">const</span> response = <span class="text-purple-400">await</span> <span class="text-yellow-400">fetch</span>(<span class="text-emerald-400">'https://jsonplaceholder.typicode.com/todos'</span>, {
+      method: <span class="text-emerald-400">'POST'</span>,
+      headers: { <span class="text-emerald-400">'Content-Type'</span>: <span class="text-emerald-400">'application/json'</span> },
+      body: JSON.<span class="text-yellow-400">stringify</span>({ title, completed: <span class="text-purple-400">false</span> }),
+    });
+    <span class="text-purple-400">return</span> response.<span class="text-yellow-400">json</span>();
+  }
+);
+
+<span class="text-slate-500">// Slice com extraReducers para thunks</span>
+<span class="text-purple-400">const</span> todosSlice = <span class="text-yellow-400">createSlice</span>({
+  name: <span class="text-emerald-400">'todos'</span>,
+  initialState,
+  reducers: {
+    <span class="text-slate-500">// Actions síncronas</span>
+    <span class="text-yellow-400">toggleTodo</span>: (state, action: <span class="text-amber-400">PayloadAction</span>&lt;<span class="text-blue-400">number</span>&gt;) => {
+      <span class="text-purple-400">const</span> todo = state.items.<span class="text-yellow-400">find</span>((t) => t.id === action.payload);
+      <span class="text-purple-400">if</span> (todo) todo.completed = !todo.completed;
+    },
+    <span class="text-yellow-400">removeTodo</span>: (state, action: <span class="text-amber-400">PayloadAction</span>&lt;<span class="text-blue-400">number</span>&gt;) => {
+      state.items = state.items.<span class="text-yellow-400">filter</span>((t) => t.id !== action.payload);
+    },
+  },
+  <span class="text-slate-500">// Handlers para thunks assíncronos</span>
+  <span class="text-blue-400">extraReducers</span>: (builder) => {
+    builder
+      <span class="text-slate-500">// fetchTodos</span>
+      .<span class="text-yellow-400">addCase</span>(fetchTodos.<span class="text-amber-400">pending</span>, (state) => {
+        state.status = <span class="text-emerald-400">'loading'</span>;
+        state.error = <span class="text-blue-400">null</span>;
+      })
+      .<span class="text-yellow-400">addCase</span>(fetchTodos.<span class="text-emerald-400">fulfilled</span>, (state, action) => {
+        state.status = <span class="text-emerald-400">'succeeded'</span>;
+        state.items = action.payload;
+      })
+      .<span class="text-yellow-400">addCase</span>(fetchTodos.<span class="text-red-400">rejected</span>, (state, action) => {
+        state.status = <span class="text-emerald-400">'failed'</span>;
+        state.error = action.error.message ?? <span class="text-emerald-400">'Erro desconhecido'</span>;
+      })
+      <span class="text-slate-500">// addTodo</span>
+      .<span class="text-yellow-400">addCase</span>(addTodo.<span class="text-emerald-400">fulfilled</span>, (state, action) => {
+        state.items.<span class="text-yellow-400">push</span>(action.payload);
+      });
+  },
+});
+
+<span class="text-purple-400">export const</span> { toggleTodo, removeTodo } = todosSlice.actions;
+<span class="text-purple-400">export default</span> todosSlice.reducer;</code></pre>
+      </div>
+
+      <!-- Usando no componente -->
+      <div class="bg-slate-800/50 rounded-xl p-6 border border-slate-700">
+        <h3 class="text-lg font-bold text-white mb-4">🎨 Usando no Componente</h3>
+        <pre class="bg-slate-900 p-4 rounded-lg overflow-x-auto">
+<code class="text-slate-300 code-block"><span class="text-purple-400">import</span> React, { useEffect, useState } <span class="text-purple-400">from</span> <span class="text-emerald-400">'react'</span>;
+<span class="text-purple-400">import</span> { useAppSelector, useAppDispatch } <span class="text-purple-400">from</span> <span class="text-emerald-400">'../../app/hooks'</span>;
+<span class="text-purple-400">import</span> { fetchTodos, addTodo, toggleTodo, removeTodo } <span class="text-purple-400">from</span> <span class="text-emerald-400">'./todosSlice'</span>;
+
+<span class="text-purple-400">export function</span> <span class="text-yellow-400">TodoList</span>(): <span class="text-amber-400">JSX.Element</span> {
+  <span class="text-purple-400">const</span> dispatch = <span class="text-yellow-400">useAppDispatch</span>();
+  <span class="text-purple-400">const</span> { items, status, error } = <span class="text-yellow-400">useAppSelector</span>((state) => state.todos);
+  <span class="text-purple-400">const</span> [newTitle, setNewTitle] = <span class="text-yellow-400">useState</span>(<span class="text-emerald-400">''</span>);
+
+  <span class="text-slate-500">// Fetch na montagem do componente</span>
+  <span class="text-yellow-400">useEffect</span>(() => {
+    <span class="text-purple-400">if</span> (status === <span class="text-emerald-400">'idle'</span>) {
+      dispatch(<span class="text-yellow-400">fetchTodos</span>());
+    }
+  }, [status, dispatch]);
+
+  <span class="text-purple-400">const</span> <span class="text-yellow-400">handleSubmit</span> = (e: React.FormEvent) => {
+    e.<span class="text-yellow-400">preventDefault</span>();
+    <span class="text-purple-400">if</span> (newTitle.trim()) {
+      dispatch(<span class="text-yellow-400">addTodo</span>(newTitle));
+      setNewTitle(<span class="text-emerald-400">''</span>);
+    }
+  };
+
+  <span class="text-slate-500">// Renderização condicional baseada no status</span>
+  <span class="text-purple-400">if</span> (status === <span class="text-emerald-400">'loading'</span>) <span class="text-purple-400">return</span> &lt;<span class="text-blue-400">div</span>&gt;⏳ Carregando...&lt;/<span class="text-blue-400">div</span>&gt;;
+  <span class="text-purple-400">if</span> (status === <span class="text-emerald-400">'failed'</span>) <span class="text-purple-400">return</span> &lt;<span class="text-blue-400">div</span>&gt;❌ Erro: {error}&lt;/<span class="text-blue-400">div</span>&gt;;
+
+  <span class="text-purple-400">return</span> (
+    &lt;<span class="text-blue-400">div</span>&gt;
+      &lt;<span class="text-blue-400">form</span> <span class="text-purple-400">onSubmit</span>={handleSubmit}&gt;
+        &lt;<span class="text-blue-400">input</span>
+          <span class="text-purple-400">value</span>={newTitle}
+          <span class="text-purple-400">onChange</span>={(e) => setNewTitle(e.target.value)}
+          <span class="text-purple-400">placeholder</span>=<span class="text-emerald-400">"Nova tarefa..."</span>
+        /&gt;
+        &lt;<span class="text-blue-400">button</span> <span class="text-purple-400">type</span>=<span class="text-emerald-400">"submit"</span>&gt;Adicionar&lt;/<span class="text-blue-400">button</span>&gt;
+      &lt;/<span class="text-blue-400">form</span>&gt;
+      
+      &lt;<span class="text-blue-400">ul</span>&gt;
+        {items.<span class="text-yellow-400">map</span>((todo) => (
+          &lt;<span class="text-blue-400">li</span> <span class="text-purple-400">key</span>={todo.id}&gt;
+            &lt;<span class="text-blue-400">input</span>
+              <span class="text-purple-400">type</span>=<span class="text-emerald-400">"checkbox"</span>
+              <span class="text-purple-400">checked</span>={todo.completed}
+              <span class="text-purple-400">onChange</span>={() => dispatch(<span class="text-yellow-400">toggleTodo</span>(todo.id))}
+            /&gt;
+            &lt;<span class="text-blue-400">span</span>&gt;{todo.title}&lt;/<span class="text-blue-400">span</span>&gt;
+            &lt;<span class="text-blue-400">button</span> <span class="text-purple-400">onClick</span>={() => dispatch(<span class="text-yellow-400">removeTodo</span>(todo.id))}&gt;🗑️&lt;/<span class="text-blue-400">button</span>&gt;
+          &lt;/<span class="text-blue-400">li</span>&gt;
+        ))}
+      &lt;/<span class="text-blue-400">ul</span>&gt;
+    &lt;/<span class="text-blue-400">div</span>&gt;
+  );
+}</code></pre>
+      </div>
+
+      <!-- Fluxo Async -->
+      <div class="mt-8 bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-xl p-6 border border-purple-500/30">
+        <h3 class="text-lg font-bold text-purple-400 mb-4">🔄 Fluxo do createAsyncThunk</h3>
+        <div class="flex flex-wrap justify-center gap-4 text-center">
+          <div class="bg-slate-800 rounded-lg p-4 w-32">
+            <div class="text-2xl mb-2">🚀</div>
+            <div class="text-amber-400 font-bold text-sm">pending</div>
+            <div class="text-slate-500 text-xs">Iniciou request</div>
+          </div>
+          <div class="text-slate-500 self-center text-2xl">→</div>
+          <div class="bg-slate-800 rounded-lg p-4 w-32">
+            <div class="text-2xl mb-2">✅</div>
+            <div class="text-emerald-400 font-bold text-sm">fulfilled</div>
+            <div class="text-slate-500 text-xs">Sucesso!</div>
+          </div>
+          <div class="text-slate-500 self-center text-2xl">/</div>
+          <div class="bg-slate-800 rounded-lg p-4 w-32">
+            <div class="text-2xl mb-2">❌</div>
+            <div class="text-red-400 font-bold text-sm">rejected</div>
+            <div class="text-slate-500 text-xs">Erro!</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Best Practices -->
+  <section class="px-4 py-12">
+    <div class="max-w-4xl mx-auto">
+      <h2 class="text-3xl font-bold text-white mb-8 text-center">✅ Boas Práticas</h2>
+      
+      <div class="grid md:grid-cols-2 gap-6">
+        <div class="bg-emerald-500/10 border border-emerald-500/30 rounded-xl p-5">
+          <h4 class="text-emerald-400 font-bold mb-3">✅ FAÇA</h4>
+          <ul class="text-slate-300 text-sm space-y-2">
+            <li>✓ Use Redux Toolkit (não Redux vanilla)</li>
+            <li>✓ Use hooks tipados (useAppSelector/Dispatch)</li>
+            <li>✓ Organize por features (não por tipo)</li>
+            <li>✓ Mantenha estado normalizado</li>
+            <li>✓ Use createSelector para derivações</li>
+            <li>✓ Coloque lógica nos reducers</li>
+            <li>✓ Use createAsyncThunk para async</li>
+          </ul>
+        </div>
+        <div class="bg-red-500/10 border border-red-500/30 rounded-xl p-5">
+          <h4 class="text-red-400 font-bold mb-3">❌ EVITE</h4>
+          <ul class="text-slate-300 text-sm space-y-2">
+            <li>✗ Mutar estado fora do slice</li>
+            <li>✗ Colocar tudo na store (use local state)</li>
+            <li>✗ Criar actions/reducers separados</li>
+            <li>✗ useSelector com objetos novos inline</li>
+            <li>✗ Side effects nos reducers</li>
+            <li>✗ Duplicar dados na store</li>
+            <li>✗ Ignorar TypeScript types</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Quando usar Redux -->
+      <div class="mt-8 bg-slate-800/50 rounded-xl p-6 border border-slate-700">
+        <h3 class="text-xl font-bold text-white mb-4">🤔 Quando usar Redux?</h3>
+        <div class="grid md:grid-cols-2 gap-6">
+          <div>
+            <h4 class="text-emerald-400 font-semibold mb-2">✅ Use Redux quando:</h4>
+            <ul class="text-slate-400 text-sm space-y-1">
+              <li>• Estado compartilhado por muitos componentes</li>
+              <li>• Estado que muda frequentemente</li>
+              <li>• Lógica complexa de atualização</li>
+              <li>• App de médio/grande porte</li>
+              <li>• Precisa de time-travel debugging</li>
+            </ul>
+          </div>
+          <div>
+            <h4 class="text-amber-400 font-semibold mb-2">⚠️ NÃO precisa de Redux para:</h4>
+            <ul class="text-slate-400 text-sm space-y-1">
+              <li>• Estado local de um componente</li>
+              <li>• Estado de formulários simples</li>
+              <li>• Apps pequenas/simples</li>
+              <li>• Dados que não são compartilhados</li>
+              <li>• Cache de servidor (use React Query)</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="px-4 py-8 border-t border-slate-700">
+    <div class="max-w-4xl mx-auto text-center">
+      <p class="text-slate-400 mb-4">
+        📚 Documentação oficial: 
+        <a href="https://redux-toolkit.js.org/" target="_blank" class="text-blue-400 hover:underline">Redux Toolkit</a> |
+        <a href="https://react-redux.js.org/" target="_blank" class="text-blue-400 hover:underline">React Redux</a>
+      </p>
+      <p class="text-slate-500 text-sm">Criado para estudo de Redux + TypeScript + React</p>
+    </div>
+  </footer>
+
+  <script>
+    let activeStep = 0;
+    let isAnimating = false;
+    let animationInterval = null;
+
+    const steps = [
+      { 
+        label: 'View (UI)', 
+        description: 'O componente React usa useAppSelector() para ler dados da store e useAppDispatch() para obter a função dispatch. Quando o usuário interage (clica, digita, etc), o componente despacha uma action.'
+      },
+      { 
+        label: 'Action', 
+        description: 'Uma action é um objeto com type (string que identifica a ação) e payload (dados opcionais). Com createSlice, as actions são criadas automaticamente a partir dos reducers definidos.'
+      },
+      { 
+        label: 'Reducer', 
+        description: 'O reducer é uma função pura que recebe (state, action) e retorna o novo estado. Com Redux Toolkit e Immer, você pode "mutar" o state diretamente - o Immer cuida da imutabilidade por baixo dos panos.'
+      },
+      { 
+        label: 'Store', 
+        description: 'A store armazena o estado global da aplicação. Quando o reducer retorna um novo estado, a store notifica todos os componentes inscritos via subscribe(), causando re-render onde necessário.'
+      }
+    ];
+
+    const boxConfigs = {
+      view: { activeColor: '#3B82F6', activeBorder: '#60A5FA' },
+      action: { activeColor: '#F59E0B', activeBorder: '#FBBF24' },
+      reducer: { activeColor: '#8B5CF6', activeBorder: '#A78BFA' },
+      store: { activeColor: '#10B981', activeBorder: '#34D399' }
+    };
+
+    function updateDiagram() {
+      const boxes = ['view', 'action', 'reducer', 'store'];
+      boxes.forEach(box => {
+        const rect = document.getElementById(`rect-${box}`);
+        rect.setAttribute('fill', '#1E293B');
+        rect.setAttribute('stroke', '#334155');
+        rect.removeAttribute('filter');
+      });
+
+      for (let i = 0; i < 4; i++) {
+        const line = document.getElementById(`line-${i}`);
+        line.setAttribute('stroke', '#475569');
+        line.setAttribute('stroke-width', '2');
+        line.setAttribute('marker-end', 'url(#arrowhead)');
+      }
+
+      const activeBox = boxes[activeStep];
+      const rect = document.getElementById(`rect-${activeBox}`);
+      const config = boxConfigs[activeBox];
+      rect.setAttribute('fill', config.activeColor);
+      rect.setAttribute('stroke', config.activeBorder);
+      rect.setAttribute('filter', 'url(#glow)');
+
+      const line = document.getElementById(`line-${activeStep}`);
+      const markerColors = ['blue', 'amber', 'purple', 'green'];
+      line.setAttribute('stroke', config.activeColor);
+      line.setAttribute('stroke-width', '3');
+      line.setAttribute('marker-end', `url(#arrowhead-${markerColors[activeStep]})`);
+
+      document.querySelectorAll('.step-btn').forEach((btn, index) => {
+        btn.className = index === activeStep 
+          ? 'step-btn p-2 rounded text-xs font-medium transition-all bg-blue-500 text-white'
+          : 'step-btn p-2 rounded text-xs font-medium transition-all bg-slate-700 text-slate-400 hover:bg-slate-600';
+      });
+
+      document.getElementById('step-title').textContent = `Passo ${activeStep + 1}: ${steps[activeStep].label}`;
+      document.getElementById('step-description').textContent = steps[activeStep].description;
+    }
+
+    function setStep(step) {
+      activeStep = step;
+      updateDiagram();
+    }
+
+    function nextStep() {
+      activeStep = (activeStep + 1) % 4;
+      updateDiagram();
+    }
+
+    function toggleAnimation() {
+      isAnimating = !isAnimating;
+      const btn = document.getElementById('btn-animate');
+      
+      if (isAnimating) {
+        btn.textContent = '⏹ Parar';
+        btn.className = 'px-6 py-3 bg-red-500 hover:bg-red-600 text-white rounded-lg font-semibold transition-all';
+        animationInterval = setInterval(nextStep, 2000);
+      } else {
+        btn.textContent = '▶ Animar Fluxo';
+        btn.className = 'px-6 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-semibold transition-all';
+        clearInterval(animationInterval);
+      }
+    }
+
+    updateDiagram();
+  </script>
+</body>
+</html>

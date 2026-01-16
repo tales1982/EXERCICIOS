@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reducer Puro: Exercício Prático</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0a0e27;
+            --bg-secondary: #151b3d;
+            --bg-card: #1a2145;
+            --text-primary: #e8eaf6;
+            --text-secondary: #9fa8da;
+            --accent-cyan: #00e5ff;
+            --accent-magenta: #ff1744;
+            --accent-green: #69f0ae;
+            --accent-purple: #b388ff;
+            --shadow: rgba(0, 229, 255, 0.1);
+            --border: rgba(255, 255, 255, 0.1);
+        }
+
+        body.light-mode {
+            --bg-primary: #f5f7fa;
+            --bg-secondary: #ffffff;
+            --bg-card: #ffffff;
+            --text-primary: #1a2145;
+            --text-secondary: #5a6b8c;
+            --accent-cyan: #0097a7;
+            --accent-magenta: #d32f2f;
+            --accent-green: #00c853;
+            --accent-purple: #7c4dff;
+            --shadow: rgba(0, 0, 0, 0.08);
+            --border: rgba(0, 0, 0, 0.08);
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.7;
+            transition: background 0.3s, color 0.3s;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-card) 100%);
+            padding: 3rem 2rem;
+            border-radius: 16px;
+            margin-bottom: 2rem;
+            box-shadow: 0 8px 32px var(--shadow);
+            border: 1px solid var(--border);
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            right: -10%;
+            width: 300px;
+            height: 300px;
+            background: radial-gradient(circle, var(--accent-cyan) 0%, transparent 70%);
+            opacity: 0.1;
+            border-radius: 50%;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, var(--accent-cyan) 0%, var(--accent-purple) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            position: relative;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            font-weight: 400;
+        }
+
+        nav {
+            background: var(--bg-secondary);
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 16px var(--shadow);
+            border: 1px solid var(--border);
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .nav-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        nav a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: all 0.3s;
+            font-size: 0.95rem;
+            border: 1px solid transparent;
+        }
+
+        nav a:hover {
+            color: var(--accent-cyan);
+            background: rgba(0, 229, 255, 0.1);
+            border-color: var(--accent-cyan);
+        }
+
+        .theme-toggle {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            transition: all 0.3s;
+        }
+
+        .theme-toggle:hover {
+            background: var(--accent-cyan);
+            color: var(--bg-primary);
+            border-color: var(--accent-cyan);
+        }
+
+        section {
+            background: var(--bg-card);
+            padding: 2.5rem;
+            border-radius: 16px;
+            margin-bottom: 2rem;
+            box-shadow: 0 8px 32px var(--shadow);
+            border: 1px solid var(--border);
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            margin-bottom: 1.5rem;
+            color: var(--accent-cyan);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.3rem 0.8rem;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge.objetivo {
+            background: rgba(0, 229, 255, 0.2);
+            color: var(--accent-cyan);
+            border: 1px solid var(--accent-cyan);
+        }
+
+        .badge.regras {
+            background: rgba(255, 23, 68, 0.2);
+            color: var(--accent-magenta);
+            border: 1px solid var(--accent-magenta);
+        }
+
+        .badge.checklist {
+            background: rgba(105, 240, 174, 0.2);
+            color: var(--accent-green);
+            border: 1px solid var(--accent-green);
+        }
+
+        .badge.proximo {
+            background: rgba(179, 136, 255, 0.2);
+            color: var(--accent-purple);
+            border: 1px solid var(--accent-purple);
+        }
+
+        .card {
+            background: var(--bg-secondary);
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            border: 1px solid var(--border);
+            transition: all 0.3s;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px var(--shadow);
+        }
+
+        .card h3 {
+            color: var(--accent-purple);
+            margin-bottom: 0.8rem;
+            font-size: 1.2rem;
+        }
+
+        ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        ul li {
+            padding: 0.6rem 0;
+            padding-left: 1.5rem;
+            position: relative;
+        }
+
+        ul li::before {
+            content: '▹';
+            position: absolute;
+            left: 0;
+            color: var(--accent-cyan);
+            font-weight: bold;
+        }
+
+        .checklist-item {
+            display: flex;
+            align-items: start;
+            gap: 1rem;
+            padding: 1rem;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            margin-bottom: 0.8rem;
+            border: 1px solid var(--border);
+        }
+
+        .checklist-item input[type="checkbox"] {
+            margin-top: 0.2rem;
+            width: 20px;
+            height: 20px;
+            accent-color: var(--accent-green);
+            cursor: pointer;
+        }
+
+        .test-scenario {
+            background: var(--bg-secondary);
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            border-left: 4px solid var(--accent-magenta);
+        }
+
+        .test-scenario .label {
+            font-weight: 600;
+            color: var(--accent-cyan);
+            margin-right: 0.5rem;
+        }
+
+        .test-scenario p {
+            margin: 0.5rem 0;
+        }
+
+        .error-card {
+            background: linear-gradient(135deg, rgba(255, 23, 68, 0.1) 0%, rgba(255, 23, 68, 0.05) 100%);
+            padding: 1.5rem;
+            border-radius: 12px;
+            margin-bottom: 1rem;
+            border: 1px solid rgba(255, 23, 68, 0.3);
+        }
+
+        .error-card h4 {
+            color: var(--accent-magenta);
+            margin-bottom: 0.5rem;
+        }
+
+        .flashcard {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            border: 1px solid var(--border);
+            transition: all 0.3s;
+        }
+
+        .flashcard:hover {
+            border-color: var(--accent-purple);
+        }
+
+        .flashcard-front {
+            font-weight: 600;
+            color: var(--accent-cyan);
+            margin-bottom: 0.8rem;
+            font-size: 1.05rem;
+        }
+
+        .flashcard-back {
+            color: var(--text-secondary);
+        }
+
+        .copy-btn {
+            background: linear-gradient(135deg, var(--accent-cyan) 0%, var(--accent-purple) 100%);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 4px 16px rgba(0, 229, 255, 0.3);
+            margin-top: 1rem;
+        }
+
+        .copy-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 229, 255, 0.4);
+        }
+
+        .copy-btn:active {
+            transform: translateY(0);
+        }
+
+        .highlight {
+            background: rgba(0, 229, 255, 0.1);
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            color: var(--accent-cyan);
+            font-weight: 500;
+        }
+
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+
+            .container {
+                padding: 1rem;
+            }
+
+            section {
+                padding: 1.5rem;
+            }
+
+            nav {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .nav-links {
+                flex-direction: column;
+            }
+
+            nav a {
+                text-align: center;
+            }
+        }
+
+        .divider {
+            height: 2px;
+            background: linear-gradient(90deg, transparent 0%, var(--accent-cyan) 50%, transparent 100%);
+            margin: 2rem 0;
+            opacity: 0.3;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Reducer Puro: Exercício Prático</h1>
+            <p class="subtitle">Construa a lógica de estado antes de conectar no React</p>
+        </header>
+
+        <nav>
+            <div class="nav-links">
+                <a href="#conceito">Conceito</a>
+                <a href="#exercicio">Exercício</a>
+                <a href="#criterios">Critérios</a>
+                <a href="#testes">Testes</a>
+                <a href="#erros">Erros Comuns</a>
+                <a href="#flashcards">Flashcards</a>
+                <a href="#proximo">Próximo Passo</a>
+            </div>
+            <button class="theme-toggle" onclick="toggleTheme()">🌓 Alternar Tema</button>
+        </nav>
+
+        <section id="conceito">
+            <h2><span class="badge regras">Regras</span> O que é um Reducer Puro</h2>
+            <p style="margin-bottom: 1.5rem;">Um reducer puro é uma <strong>função simples</strong> que recebe o estado atual e uma ação, e retorna um novo estado. É a base de qualquer sistema de gerenciamento de estado previsível.</p>
+
+            <div class="card">
+                <h3>Fórmula Fundamental</h3>
+                <p style="font-size: 1.1rem; text-align: center; padding: 1rem; background: var(--bg-primary); border-radius: 8px; margin-top: 1rem;">
+                    <span class="highlight">Estado Atual</span> + <span class="highlight">Ação</span> = <span class="highlight">Novo Estado</span>
+                </p>
+            </div>
+
+            <div class="divider"></div>
+
+            <h3 style="color: var(--accent-purple); margin-bottom: 1rem;">Regras Essenciais</h3>
+            <div class="grid-2">
+                <div class="card">
+                    <h3>1. Sem Mutação</h3>
+                    <p>Nunca modifique o estado original. Sempre crie uma nova versão do estado com as mudanças desejadas. O estado antigo deve permanecer intocado.</p>
+                </div>
+
+                <div class="card">
+                    <h3>2. Sem Efeitos Colaterais</h3>
+                    <p>Não faça chamadas de API, não acesse localStorage, não gere números aleatórios, não use Date.now(). O reducer deve ser totalmente previsível.</p>
+                </div>
+
+                <div class="card">
+                    <h3>3. Determinístico</h3>
+                    <p>Mesmas entradas sempre produzem a mesma saída. Se você passar o mesmo estado e a mesma ação, o resultado deve ser idêntico sempre.</p>
+                </div>
+
+                <div class="card">
+                    <h3>4. Função Pura</h3>
+                    <p>O reducer depende apenas de seus parâmetros (estado e ação). Não acessa variáveis externas ou globais, não depende de contexto externo.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="exercicio">
+            <h2><span class="badge objetivo">Exercício</span> Carrinho de Compras</h2>
+            <p style="margin-bottom: 1.5rem;">Vamos construir a lógica de um carrinho de compras passo a passo, <strong>sem escrever código ainda</strong>. O objetivo é pensar na estrutura de dados e nas transformações.</p>
+
+            <div class="card">
+                <h3>Passo 1: Definir o Formato do Estado (State Shape)</h3>
+                <p style="margin-bottom: 1rem;">Antes de qualquer coisa, precisamos definir como o estado será representado. Para um carrinho de compras, considere:</p>
+                <ul>
+                    <li>Uma lista de itens no carrinho (cada item tem: id do produto, nome, preço unitário, quantidade)</li>
+                    <li>Código do cupom aplicado (se houver)</li>
+                    <li>Percentual de desconto do cupom (se válido)</li>
+                    <li>Subtotal (soma dos itens)</li>
+                    <li>Desconto aplicado (em valor monetário)</li>
+                    <li>Total final</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <h3>Passo 2: Listar as Ações Possíveis</h3>
+                <p style="margin-bottom: 1rem;">Quais transformações o usuário pode fazer no carrinho? Liste as ações:</p>
+                <ul>
+                    <li><strong>ADICIONAR_ITEM:</strong> Adiciona um novo produto ao carrinho (ou incrementa quantidade se já existe)</li>
+                    <li><strong>REMOVER_ITEM:</strong> Remove completamente um produto do carrinho</li>
+                    <li><strong>ALTERAR_QUANTIDADE:</strong> Muda a quantidade de um item específico (aumentar ou diminuir)</li>
+                    <li><strong>APLICAR_CUPOM:</strong> Valida e aplica um código de cupom ao carrinho</li>
+                    <li><strong>LIMPAR_CARRINHO:</strong> Remove todos os itens e reseta o estado</li>
+                </ul>
+            </div>
+
+            <div class="divider"></div>
+
+            <h3 style="color: var(--accent-cyan); margin-bottom: 1rem;">Passo 3: Descrever as Transformações</h3>
+            <p style="margin-bottom: 1.5rem;">Para cada ação, descreva exatamente como o estado deve mudar:</p>
+
+            <div class="card">
+                <h3>ADICIONAR_ITEM</h3>
+                <ul>
+                    <li>Verificar se o item já existe na lista (comparar por id do produto)</li>
+                    <li>Se existe: criar nova lista com a quantidade do item incrementada em 1</li>
+                    <li>Se não existe: criar nova lista com o item adicionado ao final</li>
+                    <li>Recalcular subtotal, desconto e total</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <h3>REMOVER_ITEM</h3>
+                <ul>
+                    <li>Criar nova lista de itens sem o item que possui o id especificado</li>
+                    <li>Se a lista ficar vazia, considerar remover o cupom também</li>
+                    <li>Recalcular subtotal, desconto e total</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <h3>ALTERAR_QUANTIDADE</h3>
+                <ul>
+                    <li>Localizar o item pelo id na lista</li>
+                    <li>Criar nova lista com a quantidade atualizada para esse item</li>
+                    <li>Se a nova quantidade for 0 ou menor, remover o item da lista</li>
+                    <li>Garantir quantidade mínima de 1 (se não for remoção)</li>
+                    <li>Recalcular subtotal, desconto e total</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <h3>APLICAR_CUPOM</h3>
+                <ul>
+                    <li>Receber o código do cupom e validar contra uma lista de cupons válidos</li>
+                    <li>Se válido: atualizar o código do cupom no estado e aplicar o percentual de desconto</li>
+                    <li>Se inválido: não alterar o estado (ou retornar o estado atual inalterado)</li>
+                    <li>Recalcular desconto e total com o novo percentual</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <h3>LIMPAR_CARRINHO</h3>
+                <ul>
+                    <li>Retornar para o estado inicial: lista de itens vazia</li>
+                    <li>Remover código de cupom e zerar desconto</li>
+                    <li>Zerar subtotal e total</li>
+                </ul>
+            </div>
+        </section>
+
+        <section id="criterios">
+            <h2><span class="badge checklist">Checklist</span> Critérios de Aceitação</h2>
+            <p style="margin-bottom: 1.5rem;">Use esta checklist para validar se seu reducer está correto e completo. Marque cada item conforme implementa:</p>
+
+            <div class="checklist-item">
+                <input type="checkbox" id="c1">
+                <label for="c1"><strong>Estado inicial bem definido:</strong> O reducer possui um estado inicial completo com todos os campos necessários (lista vazia, sem cupom, valores zerados).</label>
+            </div>
+
+            <div class="checklist-item">
+                <input type="checkbox" id="c2">
+                <label for="c2"><strong>Ações com nomes descritivos:</strong> Todas as ações têm nomes em MAIÚSCULAS com substantivo + verbo (ex: ADICIONAR_ITEM, não apenas ADD).</label>
+            </div>
+
+            <div class="checklist-item">
+                <input type="checkbox" id="c3">
+                <label for="c3"><strong>Imutabilidade garantida:</strong> Nenhuma operação modifica o estado original. Sempre retorna novo objeto/array usando técnicas de cópia (spread, map, filter).</label>
+            </div>
+
+            <div class="checklist-item">
+                <input type="checkbox" id="c4">
+                <label for="c4"><strong>Caso padrão tratado:</strong> O reducer retorna o estado atual inalterado quando recebe uma ação desconhecida.</label>
+            </div>
+
+            <div class="checklist-item">
+                <input type="checkbox" id="c5">
+                <label for="c5"><strong>Quantidade mínima respeitada:</strong> Não permite quantidade menor que 1 (a não ser que seja para remover o item completamente).</label>
+            </div>
+
+            <div class="checklist-item">
+                <input type="checkbox" id="c6">
+                <label for="c6"><strong>Remoção quando quantidade zero:</strong> Se alterar quantidade para 0 ou menos, o item é removido da lista.</label>
+            </div>
+
+            <div class="checklist-item">
+                <input type="checkbox" id="c7">
+                <label for="c7"><strong>Validação de cupom:</strong> Cupons inválidos não alteram o estado. Apenas cupons da lista de válidos são aplicados.</label>
+            </div>
+
+            <div class="checklist-item">
+                <input type="checkbox" id="c8">
+                <label for="c8"><strong>Cálculos corretos:</strong> Subtotal, desconto e total são recalculados corretamente após cada ação que afeta os valores.</label>
+            </div>
+
+            <div class="checklist-item">
+                <input type="checkbox" id="c9">
+                <label for="c9"><strong>Idempotência ao adicionar:</strong> Adicionar o mesmo item duas vezes não cria duplicatas, apenas incrementa a quantidade.</label>
+            </div>
+
+            <div class="checklist-item">
+                <input type="checkbox" id="c10">
+                <label for="c10"><strong>Carrinho vazio limpa cupom:</strong> Ao esvaziar o carrinho (manualmente ou removendo último item), considerar remover o cupom aplicado.</label>
+            </div>
+
+            <div class="checklist-item">
+                <input type="checkbox" id="c11">
+                <label for="c11"><strong>Sem efeitos colaterais:</strong> O reducer não faz nenhuma chamada externa, não acessa APIs, não usa localStorage, não gera valores aleatórios.</label>
+            </div>
+
+            <div class="checklist-item">
+                <input type="checkbox" id="c12">
+                <label for="c12"><strong>Testabilidade:</strong> Cada ação pode ser testada de forma isolada passando estado + ação e verificando o resultado.</label>
+            </div>
+        </section>
+
+        <section id="testes">
+            <h2><span class="badge objetivo">Testes</span> Testes Mentais</h2>
+            <p style="margin-bottom: 1.5rem;">Execute estes cenários mentalmente para validar sua lógica. Para cada um, trace o estado antes, a ação e o estado esperado depois:</p>
+
+            <div class="test-scenario">
+                <p><span class="label">Cenário 1:</span></p>
+                <p><strong>Dado:</strong> Carrinho vazio (lista de itens = [])</p>
+                <p><strong>Ação:</strong> ADICIONAR_ITEM com produto "Notebook" (id: 1, preço: 3000, quantidade inicial: 1)</p>
+                <p><strong>Resultado esperado:</strong> Lista de itens com 1 elemento [{ id: 1, nome: "Notebook", preco: 3000, quantidade: 1 }], subtotal = 3000, total = 3000</p>
+            </div>
+
+            <div class="test-scenario">
+                <p><span class="label">Cenário 2:</span></p>
+                <p><strong>Dado:</strong> Carrinho com 1 Notebook (quantidade: 1)</p>
+                <p><strong>Ação:</strong> ADICIONAR_ITEM com o mesmo produto "Notebook" (id: 1)</p>
+                <p><strong>Resultado esperado:</strong> Lista continua com 1 elemento, mas quantidade = 2, subtotal = 6000, total = 6000 (não duplica o item!)</p>
+            </div>
+
+            <div class="test-scenario">
+                <p><span class="label">Cenário 3:</span></p>
+                <p><strong>Dado:</strong> Carrinho com 1 Mouse (id: 2, quantidade: 3, preço: 50)</p>
+                <p><strong>Ação:</strong> ALTERAR_QUANTIDADE do Mouse para 0</p>
+                <p><strong>Resultado esperado:</strong> Lista de itens vazia [], subtotal = 0, total = 0 (item removido automaticamente)</p>
+            </div>
+
+            <div class="test-scenario">
+                <p><span class="label">Cenário 4:</span></p>
+                <p><strong>Dado:</strong> Carrinho com subtotal de 500</p>
+                <p><strong>Ação:</strong> APLICAR_CUPOM com código "DESC10" (desconto de 10%)</p>
+                <p><strong>Resultado esperado:</strong> Cupom aplicado = "DESC10", desconto = 50, total = 450</p>
+            </div>
+
+            <div class="test-scenario">
+                <p><span class="label">Cenário 5:</span></p>
+                <p><strong>Dado:</strong> Carrinho com 2 itens e cupom aplicado</p>
+                <p><strong>Ação:</strong> APLICAR_CUPOM com código "INVALIDO123" (não existe na lista de cupons válidos)</p>
+                <p><strong>Resultado esperado:</strong> Estado permanece inalterado (cupom anterior continua, ou nenhum cupom se não havia)</p>
+            </div>
+        </section>
+
+        <section id="erros">
+            <h2><span class="badge regras">Atenção</span> Erros Comuns</h2>
+            <p style="margin-bottom: 1.5rem;">Evite estas armadilhas ao implementar seu reducer:</p>
+
+            <div class="error-card">
+                <h4>❌ Mutação Direta do Estado</h4>
+                <p>Modificar o array ou objeto original (usando push, splice, ou atribuição direta de propriedades). Isso quebra a previsibilidade e causa bugs difíceis de rastrear.</p>
+                <p style="margin-top: 0.5rem; color: var(--accent-green);"><strong>Solução:</strong> Sempre use spread operator (...), map, filter, ou Object.assign para criar novas versões.</p>
+            </div>
+
+            <div class="error-card">
+                <h4>❌ Misturar Lógica de Apresentação</h4>
+                <p>Fazer chamadas de API, acessar localStorage, ou executar qualquer operação assíncrona dentro do reducer. Reducers devem ser síncronos e puros.</p>
+                <p style="margin-top: 0.5rem; color: var(--accent-green);"><strong>Solução:</strong> Mova toda lógica assíncrona para fora (middlewares, thunks, ou componentes).</p>
+            </div>
+
+            <div class="error-card">
+                <h4>❌ Ações com Nomes Vagos</h4>
+                <p>Usar nomes genéricos como "UPDATE", "CHANGE", "SET" sem contexto específico. Isso dificulta entender o que a ação faz.</p>
+                <p style="margin-top: 0.5rem; color: var(--accent-green);"><strong>Solução:</strong> Use nomes descritivos e específicos: ADICIONAR_ITEM_AO_CARRINHO, ALTERAR_QUANTIDADE_ITEM.</p>
+            </div>
+
+            <div class="error-card">
+                <h4>❌ Não Retornar Estado no Caso Padrão</h4>
+                <p>Esquecer de retornar o estado atual quando a ação não é reconhecida. Isso pode causar estado undefined.</p>
+                <p style="margin-top: 0.5rem; color: var(--accent-green);"><strong>Solução:</strong> Sempre tenha um caso default que retorna o estado inalterado.</p>
+            </div>
+
+            <div class="error-card">
+                <h4>❌ Lógica Complexa Demais</h4>
+                <p>Colocar toda a lógica de negócio dentro do reducer, tornando-o difícil de testar e manter.</p>
+                <p style="margin-top: 0.5rem; color: var(--accent-green);"><strong>Solução:</strong> Extraia cálculos complexos para funções auxiliares puras separadas.</p>
+            </div>
+
+            <div class="error-card">
+                <h4>❌ Esquecer de Recalcular Totais</h4>
+                <p>Modificar a lista de itens mas esquecer de recalcular subtotal, desconto e total, deixando o estado inconsistente.</p>
+                <p style="margin-top: 0.5rem; color: var(--accent-green);"><strong>Solução:</strong> Crie uma função auxiliar que sempre recalcula os totais após qualquer mudança nos itens.</p>
+            </div>
+        </section>
+
+        <section id="flashcards">
+            <h2><span class="badge proximo">Flashcards</span> Template para Estudo</h2>
+            <p style="margin-bottom: 1.5rem;">Use estes flashcards para memorizar os conceitos fundamentais. Copie e cole no Anki ou revise diretamente aqui:</p>
+
+            <div class="flashcard">
+                <div class="flashcard-front">1. O que é um reducer puro?</div>
+                <div class="flashcard-back">Uma função que recebe o estado atual e uma ação, e retorna um novo estado sem modificar o original. É determinístico, sem efeitos colaterais e depende apenas dos parâmetros.</div>
+            </div>
+
+            <div class="flashcard">
+                <div class="flashcard-front">2. Quais são as 3 regras fundamentais de um reducer puro?</div>
+                <div class="flashcard-back">1) Sem mutação do estado original, 2) Sem efeitos colaterais (API, localStorage, random), 3) Determinístico (mesmas entradas = mesma saída).</div>
+            </div>
+
+            <div class="flashcard">
+                <div class="flashcard-front">3. Por que não podemos usar push() ou splice() dentro de um reducer?</div>
+                <div class="flashcard-back">Porque push() e splice() modificam o array original, violando a regra de imutabilidade. Devemos usar métodos que retornam novos arrays como map(), filter() ou spread operator.</div>
+            </div>
+
+            <div class="flashcard">
+                <div class="flashcard-front">4. O que deve acontecer quando um reducer recebe uma ação desconhecida?</div>
+                <div class="flashcard-back">O reducer deve retornar o estado atual inalterado. Sempre ter um caso default que retorna o estado sem modificações.</div>
+            </div>
+
+            <div class="flashcard">
+                <div class="flashcard-front">5. Como garantir imutabilidade ao adicionar um item a uma lista?</div>
+                <div class="flashcard-back">Usar spread operator para criar novo array: [...estadoAntigo.itens, novoItem]. Nunca usar push() diretamente no array original.</div>
+            </div>
+
+            <div class="flashcard">
+                <div class="flashcard-front">6. Como garantir imutabilidade ao remover um item de uma lista?</div>
+                <div class="flashcard-back">Usar filter() para criar novo array sem o item: estadoAntigo.itens.filter(item => item.id !== idParaRemover).</div>
+            </div>
+
+            <div class="flashcard">
+                <div class="flashcard-front">7. Como garantir imutabilidade ao atualizar a quantidade de um item?</div>
+                <div class="flashcard-back">Usar map() para criar novo array com o item modificado: itens.map(item => item.id === targetId ? {...item, quantidade: novaQuantidade} : item).</div>
+            </div>
+
+            <div class="flashcard">
+                <div class="flashcard-front">8. Por que não devemos fazer chamadas de API dentro de um reducer?</div>
+                <div class="flashcard-back">Porque chamadas de API são assíncronas e não-determinísticas (podem falhar, demorar, retornar dados diferentes). Reducers devem ser síncronos e previsíveis.</div>
+            </div>
+
+            <div class="flashcard">
+                <div class="flashcard-front">9. O que é idempotência no contexto de adicionar itens ao carrinho?</div>
+                <div class="flashcard-back">Ao adicionar um item que já existe, devemos incrementar a quantidade do item existente, não criar uma duplicata. O resultado é previsível independente de quantas vezes a ação é disparada.</div>
+            </div>
+
+            <div class="flashcard">
+                <div class="flashcard-front">10. Qual é a vantagem de ter funções auxiliares puras para cálculos?</div>
+                <div class="flashcard-back">Funções auxiliares puras podem ser testadas isoladamente, reutilizadas em diferentes partes do código, e mantêm o reducer mais limpo e focado na lógica de transformação do estado.</div>
+            </div>
+
+            <div class="flashcard">
+                <div class="flashcard-front">11. Como tratar o caso de quantidade zero ao alterar quantidade?</div>
+                <div class="flashcard-back">Se a nova quantidade for 0 ou menor, o item deve ser removido completamente da lista usando filter(). Não manter itens com quantidade zero.</div>
+            </div>
+
+            <div class="flashcard">
+                <div class="flashcard-front">12. Como validar cupons dentro de um reducer puro?</div>
+                <div class="flashcard-back">Verificar se o código do cupom existe em uma lista de cupons válidos (constante ou passada como parte do estado). Se inválido, retornar o estado inalterado. Se válido, aplicar o desconto correspondente.</div>
+            </div>
+
+            <button class="copy-btn" onclick="copyFlashcards()">📋 Copiar Flashcards para a Área de Transferência</button>
+        </section>
+
+        <section id="proximo">
+            <h2><span class="badge proximo">Próximo Passo</span> Da Lógica Pura ao React</h2>
+            <p style="margin-bottom: 1.5rem;">Agora que você construiu a lógica de estado pura, é hora de integrá-la em uma aplicação real:</p>
+
+            <div class="card">
+                <h3>Fase 1: Testar o Reducer Isoladamente</h3>
+                <p>Antes de conectar no React, escreva testes unitários para seu reducer. Teste cada ação com diferentes estados iniciais e valide os resultados esperados.</p>
+                <ul>
+                    <li>Teste o estado inicial</li>
+                    <li>Teste cada ação individualmente</li>
+                    <li>Teste casos de borda (lista vazia, item inexistente, cupom inválido)</li>
+                    <li>Teste múltiplas ações em sequência</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <h3>Fase 2: Criar uma Store</h3>
+                <p>Encapsule seu reducer em uma "store" - um objeto que mantém o estado e expõe métodos para despachar ações e se inscrever para mudanças.</p>
+                <ul>
+                    <li>Criar função createStore que recebe o reducer</li>
+                    <li>Implementar método getState() para acessar estado atual</li>
+                    <li>Implementar método dispatch(action) para modificar estado</li>
+                    <li>Implementar método subscribe(listener) para reagir a mudanças</li>
+                </ul>
+            </div>
+
+            <div class="card">
+                <h3>Fase 3: Conectar no React</h3>
+                <p>Finalmente, conecte sua store aos componentes React usando Context API ou bibliotecas como Redux/Zustand.</p>
+                <ul>
+                    <li>Criar um Context para compartilhar a store</li>
+                    <li>Usar useReducer hook (ou conectar Redux)</li>
+                    <li>Criar hooks customizados para acessar estado e dispatch</li>
+                    <li>Criar action creators para facilitar o dispatch de ações</li>
+                </ul>
+            </div>
+
+            <div class="divider"></div>
+
+            <div class="card" style="background: linear-gradient(135deg, rgba(0, 229, 255, 0.1) 0%, rgba(179, 136, 255, 0.1) 100%); border: 2px solid var(--accent-cyan);">
+                <h3 style="color: var(--accent-cyan);">💡 Lição Principal</h3>
+                <p style="font-size: 1.1rem;">Construir a lógica de estado de forma isolada e pura <strong>antes</strong> de conectar no React torna seu código mais testável, reutilizável e fácil de debugar. O reducer não precisa saber que está sendo usado no React - ele é apenas uma função JavaScript pura.</p>
+            </div>
+        </section>
+
+        <footer style="text-align: center; padding: 2rem; color: var(--text-secondary); margin-top: 2rem;">
+            <p>Construa lógica sólida primeiro, adicione interface depois 🚀</p>
+        </footer>
+    </div>
+
+    <script>
+        function toggleTheme() {
+            document.body.classList.toggle('light-mode');
+            const isLight = document.body.classList.contains('light-mode');
+            localStorage.setItem('theme', isLight ? 'light' : 'dark');
+        }
+
+        // Carregar tema salvo
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedTheme = localStorage.getItem('theme');
+            if (savedTheme === 'light') {
+                document.body.classList.add('light-mode');
+            }
+        });
+
+        function copyFlashcards() {
+            const flashcards = [
+                {front: "O que é um reducer puro?", back: "Uma função que recebe o estado atual e uma ação, e retorna um novo estado sem modificar o original. É determinístico, sem efeitos colaterais e depende apenas dos parâmetros."},
+                {front: "Quais são as 3 regras fundamentais de um reducer puro?", back: "1) Sem mutação do estado original, 2) Sem efeitos colaterais (API, localStorage, random), 3) Determinístico (mesmas entradas = mesma saída)."},
+                {front: "Por que não podemos usar push() ou splice() dentro de um reducer?", back: "Porque push() e splice() modificam o array original, violando a regra de imutabilidade. Devemos usar métodos que retornam novos arrays como map(), filter() ou spread operator."},
+                {front: "O que deve acontecer quando um reducer recebe uma ação desconhecida?", back: "O reducer deve retornar o estado atual inalterado. Sempre ter um caso default que retorna o estado sem modificações."},
+                {front: "Como garantir imutabilidade ao adicionar um item a uma lista?", back: "Usar spread operator para criar novo array: [...estadoAntigo.itens, novoItem]. Nunca usar push() diretamente no array original."},
+                {front: "Como garantir imutabilidade ao remover um item de uma lista?", back: "Usar filter() para criar novo array sem o item: estadoAntigo.itens.filter(item => item.id !== idParaRemover)."},
+                {front: "Como garantir imutabilidade ao atualizar a quantidade de um item?", back: "Usar map() para criar novo array com o item modificado: itens.map(item => item.id === targetId ? {...item, quantidade: novaQuantidade} : item)."},
+                {front: "Por que não devemos fazer chamadas de API dentro de um reducer?", back: "Porque chamadas de API são assíncronas e não-determinísticas (podem falhar, demorar, retornar dados diferentes). Reducers devem ser síncronos e previsíveis."},
+                {front: "O que é idempotência no contexto de adicionar itens ao carrinho?", back: "Ao adicionar um item que já existe, devemos incrementar a quantidade do item existente, não criar uma duplicata. O resultado é previsível independente de quantas vezes a ação é disparada."},
+                {front: "Qual é a vantagem de ter funções auxiliares puras para cálculos?", back: "Funções auxiliares puras podem ser testadas isoladamente, reutilizadas em diferentes partes do código, e mantêm o reducer mais limpo e focado na lógica de transformação do estado."},
+                {front: "Como tratar o caso de quantidade zero ao alterar quantidade?", back: "Se a nova quantidade for 0 ou menor, o item deve ser removido completamente da lista usando filter(). Não manter itens com quantidade zero."},
+                {front: "Como validar cupons dentro de um reducer puro?", back: "Verificar se o código do cupom existe em uma lista de cupons válidos (constante ou passada como parte do estado). Se inválido, retornar o estado inalterado. Se válido, aplicar o desconto correspondente."}
+            ];
+
+            let text = "FLASHCARDS - REDUCER PURO\n\n";
+            flashcards.forEach((card, index) => {
+                text += `${index + 1}. FRENTE: ${card.front}\n`;
+                text += `   VERSO: ${card.back}\n\n`;
+            });
+
+            navigator.clipboard.writeText(text).then(() => {
+                const btn = document.querySelector('.copy-btn');
+                const originalText = btn.textContent;
+                btn.textContent = '✅ Copiado!';
+                btn.style.background = 'linear-gradient(135deg, var(--accent-green) 0%, var(--accent-cyan) 100%)';
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.style.background = 'linear-gradient(135deg, var(--accent-cyan) 0%, var(--accent-purple) 100%)';
+                }, 2000);
+            }).catch(err => {
+                alert('Erro ao copiar. Por favor, selecione manualmente o texto.');
+                console.error('Erro ao copiar:', err);
+            });
+        }
+
+        // Smooth scroll para âncoras
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

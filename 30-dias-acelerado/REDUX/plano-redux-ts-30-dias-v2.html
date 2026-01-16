@@ -1,0 +1,1529 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧠 Plano Neuro-Otimizado: Redux + TypeScript</title>
+    <style>
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --secondary: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --dark: #1e1b4b;
+            --light: #f8fafc;
+            --gray: #64748b;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(135deg, #0f0c29, #302b63, #24243e);
+            min-height: 100vh;
+            color: var(--light);
+            line-height: 1.7;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            padding: 3rem 0;
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.2), rgba(16, 185, 129, 0.2));
+            border-radius: 20px;
+            margin-bottom: 3rem;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(90deg, #6366f1, #10b981);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .header .subtitle {
+            color: var(--gray);
+            font-size: 1.2rem;
+        }
+
+        .goal-badge {
+            display: inline-block;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            padding: 0.5rem 1.5rem;
+            border-radius: 50px;
+            margin-top: 1rem;
+            font-weight: bold;
+        }
+
+        /* Progress Bar */
+        .progress-section {
+            background: rgba(255,255,255,0.05);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .progress-bar {
+            height: 30px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 15px;
+            overflow: hidden;
+            margin-top: 1rem;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            border-radius: 15px;
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        /* Techniques Section */
+        .techniques-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 3rem;
+        }
+
+        .technique-card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 15px;
+            padding: 1.5rem;
+            border: 1px solid rgba(255,255,255,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .technique-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 40px rgba(99, 102, 241, 0.3);
+        }
+
+        .technique-card .icon {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .technique-card h3 {
+            color: var(--primary);
+            margin-bottom: 0.5rem;
+        }
+
+        .technique-card p {
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        .technique-card .how-to {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .technique-card .how-to h4 {
+            color: var(--secondary);
+            font-size: 0.85rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Week Sections */
+        .week-section {
+            background: rgba(255,255,255,0.03);
+            border-radius: 20px;
+            margin-bottom: 2rem;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .week-header {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.3), rgba(99, 102, 241, 0.1));
+            padding: 1.5rem 2rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: background 0.3s;
+        }
+
+        .week-header:hover {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.4), rgba(99, 102, 241, 0.2));
+        }
+
+        .week-header h2 {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .week-badge {
+            background: var(--primary);
+            padding: 0.3rem 0.8rem;
+            border-radius: 20px;
+            font-size: 0.8rem;
+        }
+
+        .week-content {
+            padding: 2rem;
+            display: none;
+        }
+
+        .week-content.active {
+            display: block;
+        }
+
+        .toggle-icon {
+            font-size: 1.5rem;
+            transition: transform 0.3s;
+        }
+
+        .week-section.open .toggle-icon {
+            transform: rotate(180deg);
+        }
+
+        /* Day Cards */
+        .days-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .day-card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            padding: 1.5rem;
+            border-left: 4px solid var(--primary);
+        }
+
+        .day-card.review {
+            border-left-color: var(--warning);
+        }
+
+        .day-card.practice {
+            border-left-color: var(--secondary);
+        }
+
+        .day-card.rest {
+            border-left-color: var(--gray);
+            opacity: 0.7;
+        }
+
+        .day-card h4 {
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .day-type {
+            font-size: 0.7rem;
+            padding: 0.2rem 0.5rem;
+            border-radius: 10px;
+            background: var(--primary);
+        }
+
+        .day-card.review .day-type {
+            background: var(--warning);
+        }
+
+        .day-card.practice .day-type {
+            background: var(--secondary);
+        }
+
+        .day-card ul {
+            list-style: none;
+            margin-top: 1rem;
+        }
+
+        .day-card li {
+            padding: 0.5rem 0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+        }
+
+        .day-card li:last-child {
+            border-bottom: none;
+        }
+
+        .day-card li input[type="checkbox"] {
+            margin-top: 0.3rem;
+            width: 18px;
+            height: 18px;
+            accent-color: var(--secondary);
+        }
+
+        /* Feynman Section */
+        .feynman-box {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(16, 185, 129, 0.05));
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+            border: 1px solid rgba(16, 185, 129, 0.3);
+        }
+
+        .feynman-box h4 {
+            color: var(--secondary);
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .feynman-prompt {
+            background: rgba(0,0,0,0.2);
+            padding: 1rem;
+            border-radius: 8px;
+            font-style: italic;
+            color: var(--gray);
+        }
+
+        /* Active Recall Box */
+        .recall-box {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.2), rgba(245, 158, 11, 0.05));
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+            border: 1px solid rgba(245, 158, 11, 0.3);
+        }
+
+        .recall-box h4 {
+            color: var(--warning);
+            margin-bottom: 1rem;
+        }
+
+        .recall-questions {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .recall-question {
+            background: rgba(0,0,0,0.2);
+            padding: 0.8rem 1rem;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .recall-question:hover {
+            background: rgba(0,0,0,0.4);
+        }
+
+        .recall-answer {
+            display: none;
+            padding: 1rem;
+            background: rgba(16, 185, 129, 0.1);
+            border-radius: 8px;
+            margin-top: 0.5rem;
+            border-left: 3px solid var(--secondary);
+        }
+
+        /* Spaced Repetition Calendar */
+        .sr-calendar {
+            background: rgba(255,255,255,0.05);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-top: 2rem;
+        }
+
+        .sr-calendar h3 {
+            margin-bottom: 1.5rem;
+            color: var(--primary);
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 0.5rem;
+        }
+
+        .calendar-day {
+            aspect-ratio: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+            font-size: 0.8rem;
+            position: relative;
+        }
+
+        .calendar-day.new {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.4), rgba(99, 102, 241, 0.2));
+            border: 1px solid var(--primary);
+        }
+
+        .calendar-day.review {
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.4), rgba(245, 158, 11, 0.2));
+            border: 1px solid var(--warning);
+        }
+
+        .calendar-day.practice {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.4), rgba(16, 185, 129, 0.2));
+            border: 1px solid var(--secondary);
+        }
+
+        .calendar-day.rest {
+            opacity: 0.4;
+        }
+
+        .calendar-day-number {
+            font-weight: bold;
+            font-size: 1rem;
+        }
+
+        .calendar-day-label {
+            font-size: 0.6rem;
+            text-transform: uppercase;
+        }
+
+        /* Legend */
+        .legend {
+            display: flex;
+            gap: 2rem;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 5px;
+        }
+
+        .legend-color.new { background: var(--primary); }
+        .legend-color.review { background: var(--warning); }
+        .legend-color.practice { background: var(--secondary); }
+
+        /* Interleaving Schedule */
+        .interleaving-section {
+            background: rgba(255,255,255,0.05);
+            border-radius: 15px;
+            padding: 2rem;
+            margin-top: 2rem;
+        }
+
+        .interleaving-example {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .interleave-block {
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 0.85rem;
+        }
+
+        .interleave-block.topic-a { background: rgba(99, 102, 241, 0.3); }
+        .interleave-block.topic-b { background: rgba(16, 185, 129, 0.3); }
+        .interleave-block.topic-c { background: rgba(245, 158, 11, 0.3); }
+
+        /* Tips Section */
+        .tips-section {
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.1), rgba(16, 185, 129, 0.1));
+            border-radius: 15px;
+            padding: 2rem;
+            margin-top: 3rem;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+
+        .tips-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 1.5rem;
+        }
+
+        .tip-card {
+            background: rgba(0,0,0,0.2);
+            padding: 1.5rem;
+            border-radius: 12px;
+        }
+
+        .tip-card h4 {
+            color: var(--secondary);
+            margin-bottom: 0.5rem;
+        }
+
+        /* Code Examples */
+        .code-block {
+            background: #1a1a2e;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+            overflow-x: auto;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.85rem;
+        }
+
+        .code-block code {
+            color: #a5b4fc;
+        }
+
+        .code-comment { color: #6b7280; }
+        .code-keyword { color: #c084fc; }
+        .code-string { color: #34d399; }
+        .code-function { color: #60a5fa; }
+
+        /* Stats */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+
+        .stat-card {
+            background: rgba(255,255,255,0.05);
+            padding: 1.5rem;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-label {
+            color: var(--gray);
+            font-size: 0.85rem;
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 3rem;
+            color: var(--gray);
+            border-top: 1px solid rgba(255,255,255,0.1);
+            margin-top: 3rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+            
+            .header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .techniques-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .calendar-grid {
+                gap: 0.25rem;
+            }
+            
+            .calendar-day {
+                font-size: 0.7rem;
+            }
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .week-content.active {
+            animation: fadeIn 0.3s ease;
+        }
+
+        /* Print styles */
+        @media print {
+            body {
+                background: white;
+                color: black;
+            }
+            
+            .week-content {
+                display: block !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1>🧠 Plano Neuro-Otimizado</h1>
+            <p class="subtitle">Redux + TypeScript em React</p>
+            <div class="goal-badge">🎯 Meta: Top 1% em 30 dias</div>
+        </header>
+
+        <!-- Stats -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number">30</div>
+                <div class="stat-label">Dias de Treino</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">4</div>
+                <div class="stat-label">Técnicas Científicas</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">10x</div>
+                <div class="stat-label">Aceleração Esperada</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">90%</div>
+                <div class="stat-label">Taxa de Retenção</div>
+            </div>
+        </div>
+
+        <!-- Progress Section -->
+        <section class="progress-section">
+            <h3>📊 Seu Progresso</h3>
+            <p style="color: var(--gray); margin-top: 0.5rem;">Marque as tarefas completadas para acompanhar</p>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill" style="width: 0%">0%</div>
+            </div>
+            <p style="text-align: center; margin-top: 1rem; color: var(--gray);">
+                <span id="completedTasks">0</span> / <span id="totalTasks">0</span> tarefas completadas
+            </p>
+        </section>
+
+        <!-- Techniques Explanation -->
+        <section>
+            <h2 style="margin-bottom: 1.5rem;">🔬 As 4 Técnicas Científicas</h2>
+            <div class="techniques-grid">
+                <div class="technique-card">
+                    <div class="icon">🔄</div>
+                    <h3>Repetições Espaçadas</h3>
+                    <p>Revisar no momento exato antes de esquecer. Intervalos: 1→3→7→14→30 dias.</p>
+                    <div class="how-to">
+                        <h4>Como aplicar:</h4>
+                        <p>Cada conceito novo será revisado nos dias marcados como "REVISÃO" no calendário.</p>
+                    </div>
+                </div>
+                <div class="technique-card">
+                    <div class="icon">🔀</div>
+                    <h3>Interleaving</h3>
+                    <p>Misturar tópicos relacionados na mesma sessão para criar conexões mais profundas.</p>
+                    <div class="how-to">
+                        <h4>Como aplicar:</h4>
+                        <p>Em cada sessão, alternar entre 2-3 tópicos diferentes em vez de focar em um só.</p>
+                    </div>
+                </div>
+                <div class="technique-card">
+                    <div class="icon">👨‍🏫</div>
+                    <h3>Técnica de Feynman</h3>
+                    <p>Explicar como se ensinasse a uma criança de 10 anos. Se travar, não entendeu.</p>
+                    <div class="how-to">
+                        <h4>Como aplicar:</h4>
+                        <p>Ao final de cada dia, escrever uma explicação simples do que aprendeu.</p>
+                    </div>
+                </div>
+                <div class="technique-card">
+                    <div class="icon">🧪</div>
+                    <h3>Recuperação Ativa</h3>
+                    <p>Testar-se é 3x mais eficaz que reler. Feche o material e tente lembrar.</p>
+                    <div class="how-to">
+                        <h4>Como aplicar:</h4>
+                        <p>Antes de estudar algo novo, responder as perguntas de recall sem olhar.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Spaced Repetition Calendar -->
+        <section class="sr-calendar">
+            <h3>📅 Calendário de 30 Dias - Visão Geral</h3>
+            <div class="calendar-grid">
+                <div class="calendar-day new"><span class="calendar-day-number">1</span><span class="calendar-day-label">Novo</span></div>
+                <div class="calendar-day new"><span class="calendar-day-number">2</span><span class="calendar-day-label">Novo</span></div>
+                <div class="calendar-day review"><span class="calendar-day-number">3</span><span class="calendar-day-label">Rev D1</span></div>
+                <div class="calendar-day new"><span class="calendar-day-number">4</span><span class="calendar-day-label">Novo</span></div>
+                <div class="calendar-day review"><span class="calendar-day-number">5</span><span class="calendar-day-label">Rev D2</span></div>
+                <div class="calendar-day new"><span class="calendar-day-number">6</span><span class="calendar-day-label">Novo</span></div>
+                <div class="calendar-day rest"><span class="calendar-day-number">7</span><span class="calendar-day-label">Rest</span></div>
+                <div class="calendar-day new"><span class="calendar-day-number">8</span><span class="calendar-day-label">Novo</span></div>
+                <div class="calendar-day review"><span class="calendar-day-number">9</span><span class="calendar-day-label">Rev</span></div>
+                <div class="calendar-day new"><span class="calendar-day-number">10</span><span class="calendar-day-label">Novo</span></div>
+                <div class="calendar-day practice"><span class="calendar-day-number">11</span><span class="calendar-day-label">Prática</span></div>
+                <div class="calendar-day review"><span class="calendar-day-number">12</span><span class="calendar-day-label">Rev</span></div>
+                <div class="calendar-day new"><span class="calendar-day-number">13</span><span class="calendar-day-label">Novo</span></div>
+                <div class="calendar-day rest"><span class="calendar-day-number">14</span><span class="calendar-day-label">Rest</span></div>
+                <div class="calendar-day new"><span class="calendar-day-number">15</span><span class="calendar-day-label">Novo</span></div>
+                <div class="calendar-day review"><span class="calendar-day-number">16</span><span class="calendar-day-label">Rev</span></div>
+                <div class="calendar-day practice"><span class="calendar-day-number">17</span><span class="calendar-day-label">Prática</span></div>
+                <div class="calendar-day new"><span class="calendar-day-number">18</span><span class="calendar-day-label">Novo</span></div>
+                <div class="calendar-day review"><span class="calendar-day-number">19</span><span class="calendar-day-label">Rev</span></div>
+                <div class="calendar-day new"><span class="calendar-day-number">20</span><span class="calendar-day-label">Novo</span></div>
+                <div class="calendar-day rest"><span class="calendar-day-number">21</span><span class="calendar-day-label">Rest</span></div>
+                <div class="calendar-day practice"><span class="calendar-day-number">22</span><span class="calendar-day-label">Prática</span></div>
+                <div class="calendar-day review"><span class="calendar-day-number">23</span><span class="calendar-day-label">Rev</span></div>
+                <div class="calendar-day practice"><span class="calendar-day-number">24</span><span class="calendar-day-label">Prática</span></div>
+                <div class="calendar-day new"><span class="calendar-day-number">25</span><span class="calendar-day-label">Novo</span></div>
+                <div class="calendar-day review"><span class="calendar-day-number">26</span><span class="calendar-day-label">Rev</span></div>
+                <div class="calendar-day practice"><span class="calendar-day-number">27</span><span class="calendar-day-label">Prática</span></div>
+                <div class="calendar-day rest"><span class="calendar-day-number">28</span><span class="calendar-day-label">Rest</span></div>
+                <div class="calendar-day practice"><span class="calendar-day-number">29</span><span class="calendar-day-label">Projeto</span></div>
+                <div class="calendar-day practice"><span class="calendar-day-number">30</span><span class="calendar-day-label">Final</span></div>
+            </div>
+            <div class="legend">
+                <div class="legend-item"><div class="legend-color new"></div> Conteúdo Novo</div>
+                <div class="legend-item"><div class="legend-color review"></div> Revisão Espaçada</div>
+                <div class="legend-item"><div class="legend-color practice"></div> Prática/Projeto</div>
+            </div>
+        </section>
+
+        <!-- SEMANA 1 -->
+        <section class="week-section">
+            <div class="week-header" onclick="toggleWeek(this)">
+                <h2>
+                    <span class="week-badge">SEMANA 1</span>
+                    Fundamentos do Redux
+                </h2>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="week-content">
+                <p style="color: var(--gray); margin-bottom: 1.5rem;">
+                    <strong>Objetivo:</strong> Entender o "porquê" do Redux e dominar o fluxo unidirecional de dados.
+                </p>
+
+                <div class="days-grid">
+                    <!-- Dia 1 -->
+                    <div class="day-card">
+                        <h4>📚 Dia 1 - Por que Redux existe? <span class="day-type">NOVO</span></h4>
+                        <p style="color: var(--gray); font-size: 0.85rem;">~2 horas</p>
+                        <ul>
+                            <li><input type="checkbox" class="task-checkbox"> Entender o problema: "prop drilling hell"</li>
+                            <li><input type="checkbox" class="task-checkbox"> Estudar: Estado global vs local</li>
+                            <li><input type="checkbox" class="task-checkbox"> Conceito: "Single Source of Truth"</li>
+                            <li><input type="checkbox" class="task-checkbox"> Desenhar diagrama do fluxo Redux</li>
+                        </ul>
+                    </div>
+
+                    <!-- Dia 2 -->
+                    <div class="day-card">
+                        <h4>📚 Dia 2 - Store, Actions, Reducers <span class="day-type">NOVO</span></h4>
+                        <p style="color: var(--gray); font-size: 0.85rem;">~2.5 horas</p>
+                        <ul>
+                            <li><input type="checkbox" class="task-checkbox"> Conceito: Store (o "banco de dados" do frontend)</li>
+                            <li><input type="checkbox" class="task-checkbox"> Conceito: Actions (os "pedidos" de mudança)</li>
+                            <li><input type="checkbox" class="task-checkbox"> Conceito: Reducers (as "regras" de mudança)</li>
+                            <li><input type="checkbox" class="task-checkbox"> Criar primeiro reducer puro (sem React)</li>
+                        </ul>
+                    </div>
+
+                    <!-- Dia 3 -->
+                    <div class="day-card review">
+                        <h4>🔄 Dia 3 - Revisão + Imutabilidade <span class="day-type">REVISÃO</span></h4>
+                        <p style="color: var(--gray); font-size: 0.85rem;">~2 horas</p>
+                        <ul>
+                            <li><input type="checkbox" class="task-checkbox"> <strong>RECALL:</strong> Desenhar fluxo Redux de memória</li>
+                            <li><input type="checkbox" class="task-checkbox"> Revisar Store/Actions/Reducers</li>
+                            <li><input type="checkbox" class="task-checkbox"> NOVO: Por que imutabilidade importa</li>
+                            <li><input type="checkbox" class="task-checkbox"> Praticar: spread operator e Object.assign</li>
+                        </ul>
+                    </div>
+
+                    <!-- Dia 4 -->
+                    <div class="day-card">
+                        <h4>📚 Dia 4 - TypeScript + Redux <span class="day-type">NOVO</span></h4>
+                        <p style="color: var(--gray); font-size: 0.85rem;">~2.5 horas</p>
+                        <ul>
+                            <li><input type="checkbox" class="task-checkbox"> Tipar Actions (PayloadAction)</li>
+                            <li><input type="checkbox" class="task-checkbox"> Tipar State (RootState)</li>
+                            <li><input type="checkbox" class="task-checkbox"> Tipar Reducers</li>
+                            <li><input type="checkbox" class="task-checkbox"> Criar types centralizados</li>
+                        </ul>
+                    </div>
+
+                    <!-- Dia 5 -->
+                    <div class="day-card review">
+                        <h4>🔄 Dia 5 - Revisão Dia 1-2 + Dispatch <span class="day-type">REVISÃO</span></h4>
+                        <p style="color: var(--gray); font-size: 0.85rem;">~2 horas</p>
+                        <ul>
+                            <li><input type="checkbox" class="task-checkbox"> <strong>RECALL:</strong> Explicar Redux para iniciante</li>
+                            <li><input type="checkbox" class="task-checkbox"> NOVO: dispatch() e subscribe()</li>
+                            <li><input type="checkbox" class="task-checkbox"> Criar mini-app Redux puro (sem React)</li>
+                            <li><input type="checkbox" class="task-checkbox"> Testar no console do navegador</li>
+                        </ul>
+                    </div>
+
+                    <!-- Dia 6 -->
+                    <div class="day-card">
+                        <h4>📚 Dia 6 - Redux com React <span class="day-type">NOVO</span></h4>
+                        <p style="color: var(--gray); font-size: 0.85rem;">~2.5 horas</p>
+                        <ul>
+                            <li><input type="checkbox" class="task-checkbox"> Instalar @reduxjs/toolkit e react-redux</li>
+                            <li><input type="checkbox" class="task-checkbox"> Provider: conectando React ao Redux</li>
+                            <li><input type="checkbox" class="task-checkbox"> useSelector: lendo estado</li>
+                            <li><input type="checkbox" class="task-checkbox"> useDispatch: disparando ações</li>
+                        </ul>
+                    </div>
+
+                    <!-- Dia 7 -->
+                    <div class="day-card rest">
+                        <h4>😴 Dia 7 - Descanso Ativo <span class="day-type">REST</span></h4>
+                        <p style="color: var(--gray); font-size: 0.85rem;">~30 min</p>
+                        <ul>
+                            <li><input type="checkbox" class="task-checkbox"> Revisar anotações da semana (leitura leve)</li>
+                            <li><input type="checkbox" class="task-checkbox"> Assistir 1 vídeo sobre Redux (passivo)</li>
+                            <li><input type="checkbox" class="task-checkbox"> Deixar cérebro consolidar!</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Feynman da Semana 1 -->
+                <div class="feynman-box">
+                    <h4>👨‍🏫 Exercício Feynman da Semana</h4>
+                    <p>Escreva uma explicação simples respondendo:</p>
+                    <div class="feynman-prompt">
+                        "Imagine que você tem uma loja de brinquedos. Explique como o Redux seria usado para controlar o estoque da loja, usando os termos: Store (armazém), Actions (pedidos), Reducers (funcionário do estoque), e Dispatch (enviar pedido)."
+                    </div>
+                </div>
+
+                <!-- Active Recall -->
+                <div class="recall-box">
+                    <h4>🧪 Perguntas de Recuperação Ativa (responda SEM olhar)</h4>
+                    <div class="recall-questions">
+                        <div class="recall-question" onclick="toggleAnswer(this)">
+                            1. Qual é a diferença entre estado local e estado global?
+                            <div class="recall-answer">Estado local vive dentro de um componente (useState). Estado global é acessível por qualquer componente da aplicação (Redux store). Use global quando múltiplos componentes precisam do mesmo dado.</div>
+                        </div>
+                        <div class="recall-question" onclick="toggleAnswer(this)">
+                            2. Por que reducers precisam ser "puros" e imutáveis?
+                            <div class="recall-answer">Funções puras sempre retornam o mesmo output para o mesmo input, sem efeitos colaterais. Imutabilidade permite que o Redux detecte mudanças comparando referências (===), tornando o app previsível e debugável.</div>
+                        </div>
+                        <div class="recall-question" onclick="toggleAnswer(this)">
+                            3. Desenhe de memória o fluxo: UI → ? → ? → ? → UI
+                            <div class="recall-answer">UI → dispatch(action) → Reducer processa → Store atualiza → UI re-renderiza com novo estado</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SEMANA 2 -->
+        <section class="week-section">
+            <div class="week-header" onclick="toggleWeek(this)">
+                <h2>
+                    <span class="week-badge">SEMANA 2</span>
+                    Redux Toolkit & Slices
+                </h2>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="week-content">
+                <p style="color: var(--gray); margin-bottom: 1.5rem;">
+                    <strong>Objetivo:</strong> Dominar Redux Toolkit (a forma moderna) e criar slices tipados.
+                </p>
+
+                <div class="days-grid">
+                    <!-- Dia 8 -->
+                    <div class="day-card">
+                        <h4>📚 Dia 8 - createSlice <span class="day-type">NOVO</span></h4>
+                        <p style="color: var(--gray); font-size: 0.85rem;">~2.5 horas</p>
+                        <ul>
+                            <li><input type="checkbox" class="task-checkbox"> O que é createSlice e por que usar</li>
+                            <li><input type="checkbox" class="task-checkbox"> Anatomia de um slice: name, initialState, reducers</li>
+                            <li><input type="checkbox" class="task-checkbox"> Action creators automáticos</li>
+                            <li><input type="checkbox" class="task-checkbox"> Criar slice de contador tipado</li>
+                        </ul>
+                    </div>
+
+                    <!-- Dia 9 -->
+                    <div class="day-card review">
+                        <h4>🔄 Dia 9 - Revisão S1 + configureStore <span class="day-type">REVISÃO</span></h4>
+                        <p style="color: var(--gray); font-size: 0.85rem;">~2 horas</p>
+                        <ul>
+                            <li><input type="checkbox" class="task-checkbox"> <strong>RECALL:</strong> Semana 1 (5 min olhos fechados)</li>
+                            <li><input type="checkbox" class="task-checkbox"> configureStore vs createStore</li>
+                            <li><input type="checkbox" class="task-checkbox"> DevTools integrado</li>
+                            <li><input type="checkbox" class="task-checkbox"> Combinar múltiplos slices</li>
+                        </ul>
+                    </div>
+
+                    <!-- Dia 10 -->
+                    <div class="day-card">
+                        <h4>📚 Dia 10 - PayloadAction & Tipagem <span class="day-type">NOVO</span></h4>
+                        <p style="color: var(--gray); font-size: 0.85rem;">~2.5 horas</p>
+                        <ul>
+                            <li><input type="checkbox" class="task-checkbox"> PayloadAction<T> para actions tipadas</li>
+                            <li><input type="checkbox" class="task-checkbox"> Inferir RootState e AppDispatch</li>
+                            <li><input type="checkbox" class="task-checkbox"> Criar hooks tipados (useAppSelector, useAppDispatch)</li>
+                            <li><input type="checkbox" class="task-checkbox"> Prática: Todo List tipada</li>
+                        </ul>
+                    </div>
+
+                    <!-- Dia 11 -->
+                    <div class="day-card practice">
+                        <h4>💻 Dia 11 - Projeto Prático 1 <span class="day-type">PRÁTICA</span></h4>
+                        <p style="color: var(--gray); font-size: 0.85rem;">~3 horas</p>
+                        <ul>
+                            <li><input type="checkbox" class="task-checkbox"> Criar app de Carrinho de Compras</li>
+                            <li><input type="checkbox" class="task-checkbox"> Slice: cartSlice (add, remove, updateQty)</li>
+                            <li><input type="checkbox" class="task-checkbox"> Slice: productsSlice (lista de produtos)</li>
+                            <li><input type="checkbox" class="task-checkbox"> Calcular total com selector</li>
+                        </ul>
+                    </div>
+
+                    <!-- Dia 12 -->
+                    <div class="day-card review">
+                        <h4>🔄 Dia 12 - Revisão + Selectors <span class="day-type">REVISÃO</span></h4>
+                        <p style="color: var(--gray); font-size: 0.85rem;">~2 horas</p>
+                        <ul>
+                            <li><input type="checkbox" class="task-checkbox"> <strong>RECALL:</strong> createSlice de memória</li>
+                            <li><input type="checkbox" class="task-checkbox"> NOVO: createSelector (memoização)</li>
+                            <li><input type="checkbox" class="task-checkbox"> Selectors derivados</li>
+                            <li><input type="checkbox" class="task-checkbox"> Otimização de performance</li>
+                        </ul>
+                    </div>
+
+                    <!-- Dia 13 -->
+                    <div class="day-card">
+                        <h4>📚 Dia 13 - Prepare & Extra Reducers <span class="day-type">NOVO</span></h4>
+                        <p style="color: var(--gray); font-size: 0.85rem;">~2 horas</p>
+                        <ul>
+                            <li><input type="checkbox" class="task-checkbox"> prepare callback para transformar payload</li>
+                            <li><input type="checkbox" class="task-checkbox"> extraReducers: respondendo a outras actions</li>
+                            <li><input type="checkbox" class="task-checkbox"> builder.addCase pattern</li>
+                            <li><input type="checkbox" class="task-checkbox"> Prática: adicionar timestamps automáticos</li>
+                        </ul>
+                    </div>
+
+                    <!-- Dia 14 -->
+                    <div class="day-card rest">
+                        <h4>😴 Dia 14 - Descanso Ativo <span class="day-type">REST</span></h4>
+                        <p style="color: var(--gray); font-size: 0.85rem;">~30 min</p>
+                        <ul>
+                            <li><input type="checkbox" class="task-checkbox"> Revisar código do Carrinho</li>
+                            <li><input type="checkbox" class="task-checkbox"> Ler docs do RTK (leitura leve)</li>
+                            <li><input type="checkbox" class="task-checkbox"> Consolidação cerebral!</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Código Exemplo -->
+                <div style="margin-top: 1.5rem;">
+                    <h4 style="color: var(--secondary); margin-bottom: 1rem;">📝 Padrão de Slice Tipado (memorize!)</h4>
+                    <div class="code-block">
+<code><span class="code-keyword">import</span> { createSlice, PayloadAction } <span class="code-keyword">from</span> <span class="code-string">'@reduxjs/toolkit'</span>;
+
+<span class="code-comment">// 1. Definir tipos</span>
+<span class="code-keyword">interface</span> CartItem {
+  id: string;
+  name: string;
+  price: number;
+  quantity: number;
+}
+
+<span class="code-keyword">interface</span> CartState {
+  items: CartItem[];
+  loading: boolean;
+}
+
+<span class="code-comment">// 2. Estado inicial tipado</span>
+<span class="code-keyword">const</span> initialState: CartState = {
+  items: [],
+  loading: false,
+};
+
+<span class="code-comment">// 3. Criar slice</span>
+<span class="code-keyword">const</span> cartSlice = <span class="code-function">createSlice</span>({
+  name: <span class="code-string">'cart'</span>,
+  initialState,
+  reducers: {
+    <span class="code-function">addItem</span>(state, action: PayloadAction&lt;CartItem&gt;) {
+      state.items.push(action.payload); <span class="code-comment">// Immer permite "mutação"</span>
+    },
+    <span class="code-function">removeItem</span>(state, action: PayloadAction&lt;string&gt;) {
+      state.items = state.items.filter(item => item.id !== action.payload);
+    },
+  },
+});
+
+<span class="code-keyword">export const</span> { addItem, removeItem } = cartSlice.actions;
+<span class="code-keyword">export default</span> cartSlice.reducer;</code>
+                    </div>
+                </div>
+
+                <!-- Feynman -->
+                <div class="feynman-box">
+                    <h4>👨‍🏫 Exercício Feynman da Semana</h4>
+                    <div class="feynman-prompt">
+                        "Explique createSlice como se fosse uma 'fábrica de departamentos'. Cada slice é um departamento (vendas, estoque, RH). A fábrica automaticamente cria os formulários de requisição (actions) e treina o funcionário (reducer) baseado nas regras que você define."
+                    </div>
+                </div>
+
+                <!-- Active Recall -->
+                <div class="recall-box">
+                    <h4>🧪 Perguntas de Recuperação Ativa</h4>
+                    <div class="recall-questions">
+                        <div class="recall-question" onclick="toggleAnswer(this)">
+                            1. Qual a vantagem de createSlice sobre reducer manual?
+                            <div class="recall-answer">createSlice: 1) Gera action creators automaticamente, 2) Usa Immer para "mutações" seguras, 3) Menos boilerplate, 4) Melhor tipagem TypeScript.</div>
+                        </div>
+                        <div class="recall-question" onclick="toggleAnswer(this)">
+                            2. Por que podemos "mutar" state dentro do createSlice?
+                            <div class="recall-answer">Por baixo, Redux Toolkit usa Immer, que intercepta as "mutações" e cria um novo objeto imutável automaticamente. Parece mutação, mas não é!</div>
+                        </div>
+                        <div class="recall-question" onclick="toggleAnswer(this)">
+                            3. Para que serve createSelector?
+                            <div class="recall-answer">Memoização! Evita recalcular valores derivados se os inputs não mudaram. Ex: calcular total do carrinho só quando items mudam.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SEMANA 3 -->
+        <section class="week-section">
+            <div class="week-header" onclick="toggleWeek(this)">
+                <h2>
+                    <span class="week-badge">SEMANA 3</span>
+                    Async: Thunks & RTK Query
+                </h2>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="week-content">
+                <p style="color: var(--gray); margin-bottom: 1.5rem;">
+                    <strong>Objetivo:</strong> Dominar operações assíncronas com createAsyncThunk e RTK Query.
+                </p>
+
+                <div class="days-grid">
+                    <!-- Dia 15 -->
+                    <div class="day-card">
+                        <h4>📚 Dia 15 - createAsyncThunk <span class="day-type">NOVO</span></h4>
+                        <p style="color: var(--gray); font-size: 0.85rem;">~2.5 horas</p>
+                        <ul>
+                            <li><input type="checkbox" class="task-checkbox"> O problema: reducers são síncronos</li>
+                            <li><input type="checkbox" class="task-checkbox"> Anatomia do createAsyncThunk</li>
+                            <li><input type="checkbox" class="task-checkbox"> Estados: pending, fulfilled, rejected</li>
+                            <li><input type="checkbox" class="task-checkbox"> extraReducers com builder pattern</li>
+                        </ul>
+                    </div>
+
+                    <!-- Dia 16 -->
+                    <div class="day-card review">
+                        <h4>🔄 Dia 16 - Revisão + Thunk Tipado <span class="day-type">REVISÃO</span></h4>
+                        <p style="color: var(--gray); font-size: 0.85rem;">~2 horas</p>
+                        <ul>
+                            <li><input type="checkbox" class="task-checkbox"> <strong>RECALL:</strong> Fluxo async no Redux</li>
+                            <li><input type="checkbox" class="task-checkbox"> Tipar thunk: AsyncThunkConfig</li>
+                            <li><input type="checkbox" class="task-checkbox"> Tratar erros com rejectWithValue</li>
+                            <li><input type="checkbox" class="task-checkbox"> Prática: fetch de usuários da API</li>
+                        </ul>
+                    </div>
+
+                    <!-- Dia 17 -->
+                    <div class="day-card practice">
+                        <h4>💻 Dia 17 - Projeto Prático 2 <span class="day-type">PRÁTICA</span></h4>
+                        <p style="color: var(--gray); font-size: 0.85rem;">~3 horas</p>
+                        <ul>
+                            <li><input type="checkbox" class="task-checkbox"> App de Posts com JSONPlaceholder API</li>
+                            <li><input type="checkbox" class="task-checkbox"> CRUD completo com thunks</li>
+                            <li><input type="checkbox" class="task-checkbox"> Estados de loading por operação</li>
+                            <li><input type="checkbox" class="task-checkbox"> Tratamento de erros na UI</li>
+                        </ul>
+                    </div>
+
+                    <!-- Dia 18 -->
+                    <div class="day-card">
+                        <h4>📚 Dia 18 - RTK Query Fundamentos <span class="day-type">NOVO</span></h4>
+                        <p style="color: var(--gray); font-size: 0.85rem;">~2.5 horas</p>
+                        <ul>
+                            <li><input type="checkbox" class="task-checkbox"> Por que RTK Query? (data fetching simplificado)</li>
+                            <li><input type="checkbox" class="task-checkbox"> createApi e endpoints</li>
+                            <li><input type="checkbox" class="task-checkbox"> Queries vs Mutations</li>
+                            <li><input type="checkbox" class="task-checkbox"> Hooks auto-gerados</li>
+                        </ul>
+                    </div>
+
+                    <!-- Dia 19 -->
+                    <div class="day-card review">
+                        <h4>🔄 Dia 19 - Revisão + Cache <span class="day-type">REVISÃO</span></h4>
+                        <p style="color: var(--gray); font-size: 0.85rem;">~2 horas</p>
+                        <ul>
+                            <li><input type="checkbox" class="task-checkbox"> <strong>RECALL:</strong> Thunks vs RTK Query</li>
+                            <li><input type="checkbox" class="task-checkbox"> Cache automático e invalidação</li>
+                            <li><input type="checkbox" class="task-checkbox"> providesTags e invalidatesTags</li>
+                            <li><input type="checkbox" class="task-checkbox"> Refetch strategies</li>
+                        </ul>
+                    </div>
+
+                    <!-- Dia 20 -->
+                    <div class="day-card">
+                        <h4>📚 Dia 20 - RTK Query Avançado <span class="day-type">NOVO</span></h4>
+                        <p style="color: var(--gray); font-size: 0.85rem;">~2.5 horas</p>
+                        <ul>
+                            <li><input type="checkbox" class="task-checkbox"> Transformar respostas (transformResponse)</li>
+                            <li><input type="checkbox" class="task-checkbox"> Paginação e scroll infinito</li>
+                            <li><input type="checkbox" class="task-checkbox"> Optimistic updates</li>
+                            <li><input type="checkbox" class="task-checkbox"> Tipagem completa</li>
+                        </ul>
+                    </div>
+
+                    <!-- Dia 21 -->
+                    <div class="day-card rest">
+                        <h4>😴 Dia 21 - Descanso Ativo <span class="day-type">REST</span></h4>
+                        <p style="color: var(--gray); font-size: 0.85rem;">~30 min</p>
+                        <ul>
+                            <li><input type="checkbox" class="task-checkbox"> Revisar diferenças Thunks vs RTK Query</li>
+                            <li><input type="checkbox" class="task-checkbox"> Assistir vídeo sobre RTK Query</li>
+                            <li><input type="checkbox" class="task-checkbox"> Descanso!</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Código Thunk -->
+                <div style="margin-top: 1.5rem;">
+                    <h4 style="color: var(--secondary); margin-bottom: 1rem;">📝 createAsyncThunk Pattern</h4>
+                    <div class="code-block">
+<code><span class="code-keyword">import</span> { createAsyncThunk, createSlice } <span class="code-keyword">from</span> <span class="code-string">'@reduxjs/toolkit'</span>;
+
+<span class="code-comment">// 1. Criar thunk tipado</span>
+<span class="code-keyword">export const</span> fetchUsers = <span class="code-function">createAsyncThunk</span>&lt;
+  User[],           <span class="code-comment">// Return type</span>
+  void,             <span class="code-comment">// Argument type</span>
+  { rejectValue: string }  <span class="code-comment">// ThunkAPI config</span>
+&gt;(
+  <span class="code-string">'users/fetchUsers'</span>,
+  <span class="code-keyword">async</span> (_, { rejectWithValue }) => {
+    <span class="code-keyword">try</span> {
+      <span class="code-keyword">const</span> response = <span class="code-keyword">await</span> fetch(<span class="code-string">'/api/users'</span>);
+      <span class="code-keyword">return</span> response.json();
+    } <span class="code-keyword">catch</span> (err) {
+      <span class="code-keyword">return</span> rejectWithValue(<span class="code-string">'Erro ao buscar usuários'</span>);
+    }
+  }
+);
+
+<span class="code-comment">// 2. Usar em extraReducers</span>
+<span class="code-keyword">const</span> usersSlice = <span class="code-function">createSlice</span>({
+  name: <span class="code-string">'users'</span>,
+  initialState: { data: [], loading: false, error: null },
+  reducers: {},
+  extraReducers: (builder) => {
+    builder
+      .<span class="code-function">addCase</span>(fetchUsers.pending, (state) => {
+        state.loading = true;
+      })
+      .<span class="code-function">addCase</span>(fetchUsers.fulfilled, (state, action) => {
+        state.loading = false;
+        state.data = action.payload;
+      })
+      .<span class="code-function">addCase</span>(fetchUsers.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload;
+      });
+  },
+});</code>
+                    </div>
+                </div>
+
+                <!-- RTK Query Example -->
+                <div style="margin-top: 1.5rem;">
+                    <h4 style="color: var(--secondary); margin-bottom: 1rem;">📝 RTK Query Pattern</h4>
+                    <div class="code-block">
+<code><span class="code-keyword">import</span> { createApi, fetchBaseQuery } <span class="code-keyword">from</span> <span class="code-string">'@reduxjs/toolkit/query/react'</span>;
+
+<span class="code-keyword">export const</span> api = <span class="code-function">createApi</span>({
+  reducerPath: <span class="code-string">'api'</span>,
+  baseQuery: <span class="code-function">fetchBaseQuery</span>({ baseUrl: <span class="code-string">'/api'</span> }),
+  tagTypes: [<span class="code-string">'Post'</span>],
+  endpoints: (builder) => ({
+    <span class="code-comment">// Query: buscar dados</span>
+    getPosts: builder.<span class="code-function">query</span>&lt;Post[], void&gt;({
+      query: () => <span class="code-string">'posts'</span>,
+      providesTags: [<span class="code-string">'Post'</span>],
+    }),
+    <span class="code-comment">// Mutation: modificar dados</span>
+    addPost: builder.<span class="code-function">mutation</span>&lt;Post, Partial&lt;Post&gt;&gt;({
+      query: (body) => ({
+        url: <span class="code-string">'posts'</span>,
+        method: <span class="code-string">'POST'</span>,
+        body,
+      }),
+      invalidatesTags: [<span class="code-string">'Post'</span>], <span class="code-comment">// Refetch automático!</span>
+    }),
+  }),
+});
+
+<span class="code-comment">// Hooks auto-gerados</span>
+<span class="code-keyword">export const</span> { useGetPostsQuery, useAddPostMutation } = api;</code>
+                    </div>
+                </div>
+
+                <!-- Feynman -->
+                <div class="feynman-box">
+                    <h4>👨‍🏫 Exercício Feynman da Semana</h4>
+                    <div class="feynman-prompt">
+                        "Explique Thunks como um 'mensageiro especial'. O reducer normal só aceita mensagens simples (ações). Mas quando precisa fazer algo demorado (buscar dados), envia um mensageiro (thunk) que vai, espera, e só depois entrega a mensagem final com o resultado."
+                    </div>
+                </div>
+
+                <!-- Active Recall -->
+                <div class="recall-box">
+                    <h4>🧪 Perguntas de Recuperação Ativa</h4>
+                    <div class="recall-questions">
+                        <div class="recall-question" onclick="toggleAnswer(this)">
+                            1. Quais são os 3 estados de um createAsyncThunk?
+                            <div class="recall-answer">pending (iniciou), fulfilled (sucesso), rejected (erro). Cada um é uma action que você pode tratar em extraReducers.</div>
+                        </div>
+                        <div class="recall-question" onclick="toggleAnswer(this)">
+                            2. Qual a diferença entre Query e Mutation no RTK Query?
+                            <div class="recall-answer">Query: buscar dados (GET), cacheia automaticamente. Mutation: modificar dados (POST/PUT/DELETE), pode invalidar cache.</div>
+                        </div>
+                        <div class="recall-question" onclick="toggleAnswer(this)">
+                            3. Como funciona invalidação de cache no RTK Query?
+                            <div class="recall-answer">providesTags marca quais tags uma query fornece. invalidatesTags em mutations invalida essas tags, forçando refetch automático.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SEMANA 4 -->
+        <section class="week-section">
+            <div class="week-header" onclick="toggleWeek(this)">
+                <h2>
+                    <span class="week-badge">SEMANA 4</span>
+                    Projeto Final & Padrões Avançados
+                </h2>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="week-content">
+                <p style="color: var(--gray); margin-bottom: 1.5rem;">
+                    <strong>Objetivo:</strong> Aplicar tudo em projeto real + padrões avançados para top 1%.
+                </p>
+
+                <div class="days-grid">
+                    <!-- Dia 22 -->
+                    <div class="day-card practice">
+                        <h4>💻 Dia 22 - Setup Projeto Final <span class="day-type">PRÁTICA</span></h4>
+                        <p style="color: var(--gray); font-size: 0.85rem;">~3 horas</p>
+                        <ul>
+                            <li><input type="checkbox" class="task-checkbox"> Definir escopo: Dashboard E-commerce</li>
+                            <li><input type="checkbox" class="task-checkbox"> Estrutura de pastas escalável</li>
+                            <li><input type="checkbox" class="task-checkbox"> Configurar store com múltiplos slices</li>
+                            <li><input type="checkbox" class="task-checkbox"> Setup RTK Query para API</li>
+                        </ul>
+                    </div>
+
+                    <!-- Dia 23 -->
+                    <div class="day-card review">
+                        <h4>🔄 Dia 23 - Revisão Geral + Auth <span class="day-type">REVISÃO</span></h4>
+                        <p style="color: var(--gray); font-size: 0.85rem;">~2.5 horas</p>
+                        <ul>
+                            <li><input type="checkbox" class="task-checkbox"> <strong>RECALL:</strong> Todas as semanas</li>
+                            <li><input type="checkbox" class="task-checkbox"> Implementar authSlice</li>
+                            <li><input type="checkbox" class="task-checkbox"> Middleware para auth headers</li>
+                            <li><input type="checkbox" class="task-checkbox"> Protected routes pattern</li>
+                        </ul>
+                    </div>
+
+                    <!-- Dia 24 -->
+                    <div class="day-card practice">
+                        <h4>💻 Dia 24 - Features do Dashboard <span class="day-type">PRÁTICA</span></h4>
+                        <p style="color: var(--gray); font-size: 0.85rem;">~3 horas</p>
+                        <ul>
+                            <li><input type="checkbox" class="task-checkbox"> Produtos: CRUD completo</li>
+                            <li><input type="checkbox" class="task-checkbox"> Carrinho: persistência</li>
+                            <li><input type="checkbox" class="task-checkbox"> Filtros e busca</li>
+                            <li><input type="checkbox" class="task-checkbox"> Paginação com RTK Query</li>
+                        </ul>
+                    </div>
+
+                    <!-- Dia 25 -->
+                    <div class="day-card">
+                        <h4>📚 Dia 25 - Padrões Avançados <span class="day-type">NOVO</span></h4>
+                        <p style="color: var(--gray); font-size: 0.85rem;">~2.5 horas</p>
+                        <ul>
+                            <li><input type="checkbox" class="task-checkbox"> Entity Adapter para normalização</li>
+                            <li><input type="checkbox" class="task-checkbox"> Listener middleware</li>
+                            <li><input type="checkbox" class="task-checkbox"> Middleware customizado</li>
+                            <li><input type="checkbox" class="task-checkbox"> Testes com MSW</li>
+                        </ul>
+                    </div>
+
+                    <!-- Dia 26 -->
+                    <div class="day-card review">
+                        <h4>🔄 Dia 26 - Revisão + Otimização <span class="day-type">REVISÃO</span></h4>
+                        <p style="color: var(--gray); font-size: 0.85rem;">~2 horas</p>
+                        <ul>
+                            <li><input type="checkbox" class="task-checkbox"> <strong>RECALL:</strong> Entity Adapter</li>
+                            <li><input type="checkbox" class="task-checkbox"> React.memo com selectors</li>
+                            <li><input type="checkbox" class="task-checkbox"> Code splitting de slices</li>
+                            <li><input type="checkbox" class="task-checkbox"> DevTools profiling</li>
+                        </ul>
+                    </div>
+
+                    <!-- Dia 27 -->
+                    <div class="day-card practice">
+                        <h4>💻 Dia 27 - Polish & Testing <span class="day-type">PRÁTICA</span></h4>
+                        <p style="color: var(--gray); font-size: 0.85rem;">~3 horas</p>
+                        <ul>
+                            <li><input type="checkbox" class="task-checkbox"> Testes unitários de slices</li>
+                            <li><input type="checkbox" class="task-checkbox"> Testes de integração</li>
+                            <li><input type="checkbox" class="task-checkbox"> Error boundaries</li>
+                            <li><input type="checkbox" class="task-checkbox"> Loading states consistentes</li>
+                        </ul>
+                    </div>
+
+                    <!-- Dia 28 -->
+                    <div class="day-card rest">
+                        <h4>😴 Dia 28 - Descanso Ativo <span class="day-type">REST</span></h4>
+                        <p style="color: var(--gray); font-size: 0.85rem;">~1 hora</p>
+                        <ul>
+                            <li><input type="checkbox" class="task-checkbox"> Revisar projeto final</li>
+                            <li><input type="checkbox" class="task-checkbox"> Documentar decisões</li>
+                            <li><input type="checkbox" class="task-checkbox"> Preparar para apresentação</li>
+                        </ul>
+                    </div>
+
+                    <!-- Dia 29 -->
+                    <div class="day-card practice">
+                        <h4>💻 Dia 29 - Projeto Real: ft_transcendence <span class="day-type">PRÁTICA</span></h4>
+                        <p style="color: var(--gray); font-size: 0.85rem;">~4 horas</p>
+                        <ul>
+                            <li><input type="checkbox" class="task-checkbox"> Aplicar Redux no ft_transcendence</li>
+                            <li><input type="checkbox" class="task-checkbox"> gameSlice: estado do Pong</li>
+                            <li><input type="checkbox" class="task-checkbox"> userSlice: autenticação</li>
+                            <li><input type="checkbox" class="task-checkbox"> WebSocket com Redux</li>
+                        </ul>
+                    </div>
+
+                    <!-- Dia 30 -->
+                    <div class="day-card practice">
+                        <h4>🏆 Dia 30 - Avaliação Final <span class="day-type">FINAL</span></h4>
+                        <p style="color: var(--gray); font-size: 0.85rem;">~2 horas</p>
+                        <ul>
+                            <li><input type="checkbox" class="task-checkbox"> <strong>TESTE:</strong> Criar slice do zero em 15 min</li>
+                            <li><input type="checkbox" class="task-checkbox"> <strong>TESTE:</strong> Implementar async flow</li>
+                            <li><input type="checkbox" class="task-checkbox"> <strong>TESTE:</strong> Explicar arquitetura Redux</li>
+                            <li><input type="checkbox" class="task-checkbox"> Celebrar a conquista! 🎉</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Entity Adapter Example -->
+                <div style="margin-top: 1.5rem;">
+                    <h4 style="color: var(--secondary); margin-bottom: 1rem;">📝 Entity Adapter (Padrão Top 1%)</h4>
+                    <div class="code-block">
+<code><span class="code-keyword">import</span> { createEntityAdapter, createSlice } <span class="code-keyword">from</span> <span class="code-string">'@reduxjs/toolkit'</span>;
+
+<span class="code-comment">// Adapter normaliza dados automaticamente</span>
+<span class="code-keyword">const</span> productsAdapter = <span class="code-function">createEntityAdapter</span>&lt;Product&gt;({
+  selectId: (product) => product.id,
+  sortComparer: (a, b) => a.name.localeCompare(b.name),
+});
+
+<span class="code-keyword">const</span> productsSlice = <span class="code-function">createSlice</span>({
+  name: <span class="code-string">'products'</span>,
+  initialState: productsAdapter.<span class="code-function">getInitialState</span>({
+    loading: false,
+  }),
+  reducers: {
+    <span class="code-comment">// Métodos CRUD prontos!</span>
+    addProduct: productsAdapter.addOne,
+    addProducts: productsAdapter.addMany,
+    updateProduct: productsAdapter.updateOne,
+    removeProduct: productsAdapter.removeOne,
+  },
+});
+
+<span class="code-comment">// Selectors otimizados prontos!</span>
+<span class="code-keyword">export const</span> {
+  selectAll: selectAllProducts,
+  selectById: selectProductById,
+  selectIds: selectProductIds,
+} = productsAdapter.<span class="code-function">getSelectors</span>(
+  (state: RootState) => state.products
+);</code>
+                    </div>
+                </div>
+
+                <!-- Feynman -->
+                <div class="feynman-box">
+                    <h4>👨‍🏫 Exercício Feynman Final</h4>
+                    <div class="feynman-prompt">
+                        "Você é um arquiteto de software. Explique para um cliente por que o projeto dele precisa de Redux, quando Context API seria suficiente, e como RTK Query economiza 80% do código de data fetching. Use analogias do mundo real."
+                    </div>
+                </div>
+
+                <!-- Final Recall -->
+                <div class="recall-box">
+                    <h4>🧪 Teste Final de Recuperação</h4>
+                    <div class="recall-questions">
+                        <div class="recall-question" onclick="toggleAnswer(this)">
+                            1. Quando usar Redux vs Context API?
+                            <div class="recall-answer">Redux: estado complexo, muitas atualizações, debugging avançado, múltiplos slices interdependentes. Context: estado simples, poucas atualizações, árvore pequena de componentes.</div>
+                        </div>
+                        <div class="recall-question" onclick="toggleAnswer(this)">
+                            2. Qual a estrutura de pastas ideal para Redux escalável?
+                            <div class="recall-answer">Feature-based: /features/[feature]/slice.ts, /features/[feature]/selectors.ts, /features/[feature]/types.ts. Store em /store/index.ts com hooks tipados.</div>
+                        </div>
+                        <div class="recall-question" onclick="toggleAnswer(this)">
+                            3. Implemente mentalmente: como WebSocket se integra com Redux?
+                            <div class="recall-answer">Middleware que escuta eventos WS e despacha actions. Ou: listener middleware do RTK que reage a actions e envia via WS.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Interleaving Example -->
+        <section class="interleaving-section">
+            <h3>🔀 Exemplo de Interleaving (Como Estudar)</h3>
+            <p style="color: var(--gray); margin-bottom: 1rem;">
+                Em vez de estudar 2h de createSlice → 2h de TypeScript → 2h de Thunks...<br>
+                Faça sessões de 25min alternando tópicos:
+            </p>
+            <div class="interleaving-example">
+                <div class="interleave-block topic-a">25min<br>createSlice</div>
+                <div class="interleave-block topic-b">25min<br>Tipagem TS</div>
+                <div class="interleave-block topic-c">25min<br>Selectors</div>
+                <div class="interleave-block topic-a">25min<br>createSlice</div>
+                <div class="interleave-block topic-c">25min<br>Selectors</div>
+                <div class="interleave-block topic-b">25min<br>Tipagem TS</div>
+            </div>
+            <p style="color: var(--gray); margin-top: 1rem; font-size: 0.9rem;">
+                ⚠️ Parece menos eficiente, mas força seu cérebro a discriminar e conectar conceitos!
+            </p>
+        </section>
+
+        <!-- Tips Section -->
+        <section class="tips-section">
+            <h3>💡 Dicas para Maximizar Resultados</h3>
+            <div class="tips-grid">
+                <div class="tip-card">
+                    <h4>🎯 Técnica Pomodoro</h4>
+                    <p>25min foco → 5min pausa. A cada 4 ciclos, pausa de 15-30min. Seu cérebro consolida durante as pausas.</p>
+                </div>
+                <div class="tip-card">
+                    <h4>😴 Sono é Superpoder</h4>
+                    <p>7-8h de sono. A consolidação de memória acontece durante o sono REM. Não sacrifique sono por estudo!</p>
+                </div>
+                <div class="tip-card">
+                    <h4>🏃 Exercício Físico</h4>
+                    <p>20min de exercício aeróbico aumenta BDNF (fertilizante para neurônios). Estude após exercício!</p>
+                </div>
+                <div class="tip-card">
+                    <h4>📝 Escreva à Mão</h4>
+                    <p>Anotações manuscritas ativam mais áreas cerebrais que digitação. Use para conceitos-chave.</p>
+                </div>
+                <div class="tip-card">
+                    <h4>🎓 Ensine Alguém</h4>
+                    <p>Explicar para outros força você a preencher lacunas de conhecimento. Grave vídeos, escreva posts.</p>
+                </div>
+                <div class="tip-card">
+                    <h4>🚫 Multitasking = Inimigo</h4>
+                    <p>Foco total em uma coisa. Celular em modo avião. Notificações desligadas. Deep work!</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer>
+            <p>🧠 Plano Neuro-Otimizado para Redux + TypeScript</p>
+            <p style="margin-top: 0.5rem;">Criado com base em neurociência da aprendizagem</p>
+            <p style="margin-top: 1rem; font-size: 0.85rem;">
+                Técnicas: Repetições Espaçadas | Interleaving | Feynman | Recuperação Ativa
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        // Toggle week sections
+        function toggleWeek(header) {
+            const section = header.parentElement;
+            const content = section.querySelector('.week-content');
+            section.classList.toggle('open');
+            content.classList.toggle('active');
+        }
+
+        // Toggle recall answers
+        function toggleAnswer(element) {
+            const answer = element.querySelector('.recall-answer');
+            if (answer.style.display === 'block') {
+                answer.style.display = 'none';
+            } else {
+                answer.style.display = 'block';
+            }
+        }
+
+        // Progress tracking
+        function updateProgress() {
+            const checkboxes = document.querySelectorAll('.task-checkbox');
+            const total = checkboxes.length;
+            const completed = document.querySelectorAll('.task-checkbox:checked').length;
+            const percentage = Math.round((completed / total) * 100);
+            
+            document.getElementById('progressFill').style.width = percentage + '%';
+            document.getElementById('progressFill').textContent = percentage + '%';
+            document.getElementById('completedTasks').textContent = completed;
+            document.getElementById('totalTasks').textContent = total;
+            
+            // Save to localStorage
+            const state = Array.from(checkboxes).map(cb => cb.checked);
+            localStorage.setItem('redux-learning-progress', JSON.stringify(state));
+        }
+
+        // Load progress from localStorage
+        function loadProgress() {
+            const saved = localStorage.getItem('redux-learning-progress');
+            if (saved) {
+                const state = JSON.parse(saved);
+                const checkboxes = document.querySelectorAll('.task-checkbox');
+                checkboxes.forEach((cb, i) => {
+                    if (state[i]) cb.checked = true;
+                });
+            }
+            updateProgress();
+        }
+
+        // Add event listeners
+        document.addEventListener('DOMContentLoaded', () => {
+            loadProgress();
+            
+            document.querySelectorAll('.task-checkbox').forEach(cb => {
+                cb.addEventListener('change', updateProgress);
+            });
+
+            // Open first week by default
+            document.querySelector('.week-section').classList.add('open');
+            document.querySelector('.week-content').classList.add('active');
+        });
+    </script>
+</body>
+</html>

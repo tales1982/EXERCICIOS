@@ -1,0 +1,894 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Plano Neurootimizado — Java Spring Boot (30 dias)</title>
+  <style>
+    :root{
+      --bg0:#0a0e1a;
+      --bg1:#0d1420;
+      --card: rgba(102,187,106,.08);
+      --card2: rgba(102,187,106,.12);
+      --stroke: rgba(102,187,106,.2);
+      --text: rgba(255,255,255,.92);
+      --muted: rgba(255,255,255,.72);
+      --muted2: rgba(255,255,255,.58);
+      --accent:#66bb6a;
+      --accent2:#42a5f5;
+      --good:#81c784;
+      --warn:#ffb74d;
+      --bad:#e57373;
+
+      --shadow: 0 14px 40px rgba(0,0,0,.4);
+      --radius: 16px;
+      --radius2: 12px;
+      --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+    }
+
+    *{
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html{
+      scroll-behavior: smooth;
+    }
+    body{
+      margin:0;
+      font-family: var(--sans);
+      color: var(--text);
+      background:
+        radial-gradient(1000px 600px at 20% 0%, rgba(102,187,106,.14), transparent 60%),
+        radial-gradient(1000px 700px at 90% 10%, rgba(66,165,245,.12), transparent 60%),
+        linear-gradient(180deg, var(--bg0), var(--bg1));
+      background-attachment: fixed;
+      min-height: 100vh;
+      line-height: 1.55;
+    }
+
+    a{
+      color: var(--accent);
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+    a:hover{
+      text-decoration: underline;
+      color: var(--accent2);
+    }
+
+    .wrap{
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 28px 18px 70px;
+    }
+
+    header.hero{
+      padding: 22px 22px 18px;
+      border: 1px solid var(--stroke);
+      background: linear-gradient(180deg, rgba(102,187,106,.1), rgba(102,187,106,.05));
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow: hidden;
+    }
+    header.hero:before{
+      content:"";
+      position:absolute; inset:-2px;
+      background:
+        radial-gradient(700px 240px at 15% 0%, rgba(102,187,106,.14), transparent 60%),
+        radial-gradient(700px 240px at 85% 0%, rgba(66,165,245,.14), transparent 60%);
+      pointer-events:none;
+      filter: blur(0px);
+      opacity: .95;
+    }
+    header.hero > *{ position: relative; }
+
+    .title{
+      display:flex;
+      gap:14px;
+      align-items:flex-start;
+      flex-wrap: wrap;
+      justify-content: space-between;
+    }
+    h1{
+      margin:0;
+      font-size: 22px;
+      letter-spacing: .2px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .subtitle{
+      margin: 6px 0 0;
+      color: var(--muted);
+      max-width: 72ch;
+    }
+
+    .badges{
+      display:flex; gap:8px; flex-wrap: wrap;
+      margin-top: 8px;
+    }
+    .badge{
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      color: var(--text);
+      border: 1px solid var(--stroke);
+      background: rgba(0,0,0,.15);
+      backdrop-filter: blur(6px);
+      white-space: nowrap;
+      transition: all 0.2s ease;
+    }
+    .badge:hover{
+      background: rgba(102,187,106,.12);
+      border-color: rgba(102,187,106,.3);
+    }
+    .badge b{ color: var(--accent); font-weight: 600; }
+
+    .grid{
+      margin-top: 18px;
+      display:grid;
+      grid-template-columns: 1.15fr .85fr;
+      gap: 14px;
+    }
+    @media (max-width: 900px){
+      .grid{ grid-template-columns: 1fr; }
+    }
+
+    .card{
+      border: 1px solid var(--stroke);
+      background: rgba(102,187,106,.06);
+      border-radius: var(--radius);
+      padding: 16px 16px 14px;
+      box-shadow: 0 10px 30px rgba(0,0,0,.25);
+      transition: all 0.3s ease;
+    }
+    .card:hover{
+      box-shadow: 0 12px 36px rgba(0,0,0,.3);
+      border-color: rgba(102,187,106,.28);
+    }
+    .card h2{
+      margin:0 0 10px;
+      font-size: 15px;
+      letter-spacing: .2px;
+      color: rgba(255,255,255,.9);
+      display:flex; align-items:center; justify-content: space-between;
+      gap: 10px;
+    }
+    .card p{ margin: 8px 0; color: var(--muted); }
+    .card ul{ margin: 10px 0 0; padding-left: 18px; color: var(--muted); }
+    .card li{ margin: 6px 0; }
+
+    .progress{
+      display:flex; gap: 10px; align-items:center;
+      margin-top: 10px;
+    }
+    .bar{
+      flex:1;
+      height: 10px;
+      background: rgba(255,255,255,.08);
+      border: 1px solid var(--stroke);
+      border-radius: 999px;
+      overflow:hidden;
+    }
+    .bar > span{
+      display:block;
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      border-radius: 999px;
+      transition: width 0.4s ease;
+      box-shadow: 0 0 10px rgba(102,187,106,.3);
+    }
+    .progress small{ color: var(--muted2); }
+
+    nav.toc{
+      margin-top: 16px;
+      display:flex; gap:10px; flex-wrap: wrap;
+    }
+    nav.toc a{
+      padding: 8px 10px;
+      border-radius: 12px;
+      border: 1px solid var(--stroke);
+      background: rgba(102,187,106,.08);
+      color: var(--text);
+      font-size: 13px;
+      transition: all 0.2s ease;
+    }
+    nav.toc a:hover{
+      background: rgba(102,187,106,.15);
+      border-color: rgba(102,187,106,.35);
+      text-decoration: none;
+      transform: translateY(-1px);
+    }
+
+    .section{
+      margin-top: 18px;
+    }
+    .section h2{
+      margin: 18px 0 10px;
+      font-size: 16px;
+      letter-spacing: .2px;
+    }
+
+    .week{
+      border: 1px solid var(--stroke);
+      background: rgba(102,187,106,.06);
+      border-radius: var(--radius);
+      padding: 14px;
+      margin-top: 12px;
+      transition: all 0.3s ease;
+    }
+    .week:hover{
+      box-shadow: 0 8px 24px rgba(102,187,106,.12);
+      border-color: rgba(102,187,106,.25);
+    }
+    .week h3{
+      margin:0 0 6px;
+      font-size: 15px;
+      color: var(--accent);
+      font-weight: 600;
+    }
+    .meta{
+      display:flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      color: var(--muted);
+      font-size: 13px;
+      margin-bottom: 10px;
+    }
+    .pill{
+      border: 1px solid var(--stroke);
+      background: rgba(0,0,0,.14);
+      border-radius: 999px;
+      padding: 4px 10px;
+    }
+
+    details.day{
+      border: 1px solid rgba(102,187,106,.18);
+      background: rgba(0,0,0,.12);
+      border-radius: var(--radius2);
+      padding: 10px 12px;
+      margin: 10px 0;
+      transition: all 0.2s ease;
+    }
+    details.day:hover{
+      background: rgba(0,0,0,.18);
+      border-color: rgba(102,187,106,.25);
+      box-shadow: 0 4px 12px rgba(0,0,0,.2);
+    }
+    details.day summary{
+      cursor:pointer;
+      list-style:none;
+      display:flex;
+      align-items:center;
+      justify-content: space-between;
+      gap: 12px;
+      transition: all 0.2s ease;
+    }
+    details.day summary:hover{
+      color: var(--accent);
+    }
+    details.day summary::-webkit-details-marker{ display:none; }
+    details.day[open] summary{
+      margin-bottom: 10px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid rgba(102,187,106,.15);
+    }
+    .day-title{
+      font-weight: 650;
+      letter-spacing: .15px;
+      color: rgba(255,255,255,.92);
+    }
+    .day-tags{
+      display:flex; gap:6px; flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+    .tag{
+      font-size: 12px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      border: 1px solid var(--stroke);
+      background: rgba(102,187,106,.08);
+      color: var(--muted);
+      white-space: nowrap;
+      transition: all 0.2s ease;
+    }
+    .tag:hover{
+      background: rgba(102,187,106,.14);
+      border-color: rgba(102,187,106,.3);
+    }
+    .tag.accent{
+      color: rgba(255,255,255,.92);
+      border-color: rgba(102,187,106,.4);
+      background: rgba(102,187,106,.12);
+    }
+    .tag.accent:hover{
+      background: rgba(102,187,106,.2);
+    }
+    .tag.blue{
+      color: rgba(255,255,255,.92);
+      border-color: rgba(66,165,245,.4);
+      background: rgba(66,165,245,.12);
+    }
+    .tag.blue:hover{
+      background: rgba(66,165,245,.2);
+    }
+
+    .checkline{
+      margin-top: 10px;
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding: 10px 10px;
+      border-radius: 12px;
+      border: 1px dashed rgba(102,187,106,.2);
+      background: rgba(102,187,106,.04);
+      color: var(--muted);
+    }
+    .checkline input{
+      width: 18px; height: 18px;
+      accent-color: var(--good);
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+    .checkline input:hover{
+      transform: scale(1.1);
+    }
+
+    .cols{
+      margin-top: 10px;
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    @media (max-width: 900px){
+      .cols{ grid-template-columns: 1fr; }
+    }
+    .box{
+      border: 1px solid rgba(102,187,106,.18);
+      background: rgba(102,187,106,.05);
+      border-radius: 14px;
+      padding: 10px 12px;
+      transition: all 0.2s ease;
+    }
+    .box:hover{
+      background: rgba(102,187,106,.08);
+      border-color: rgba(102,187,106,.25);
+    }
+    .box h4{
+      margin: 0 0 8px;
+      font-size: 13px;
+      color: rgba(255,255,255,.88);
+      display:flex; align-items:center; gap:8px;
+    }
+    .box ul{ margin: 8px 0 0; padding-left: 18px; color: var(--muted); }
+    .box li{ margin: 6px 0; }
+    .box code{
+      font-family: var(--mono);
+      font-size: 12px;
+      color: rgba(255,255,255,.86);
+    }
+
+    footer{
+      margin-top: 22px;
+      color: var(--muted2);
+      font-size: 12px;
+      text-align:center;
+    }
+
+    @media print{
+      body{ background: white; color: #111; }
+      .card, .week, details.day, header.hero{ box-shadow:none; }
+      nav.toc, .progress{ display:none; }
+      a{ color:#111; text-decoration: underline; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header class="hero">
+      <div class="title">
+        <div>
+          <h1>Plano Neurootimizado — Java Spring Boot (30 dias)</h1>
+          <p class="subtitle">
+            Estrutura focada em <b>recuperação ativa</b>, <b>repetição espaçada</b>, <b>interleaving</b> e <b>técnica de Feynman</b>.
+            Objetivo: construir APIs REST enterprise-grade com confiança (código + arquitetura + testes + deploy).
+          </p>
+          <div class="badges">
+            <span class="badge"><b>1</b> Recuperação ativa diária</span>
+            <span class="badge"><b>2</b> Revisões D+1/D+3/D+7/D+15</span>
+            <span class="badge"><b>3</b> Interleaving (mistura intencional)</span>
+            <span class="badge"><b>4</b> Output estilo Feynman</span>
+          </div>
+        </div>
+
+        <div class="card" style="min-width: 270px; max-width: 330px;">
+          <h2>Progresso <span id="pct" class="tag accent">0%</span></h2>
+          <div class="progress">
+            <div class="bar" aria-label="Progresso do plano"><span id="bar"></span></div>
+          </div>
+          <p style="margin-top:10px;">
+            <small id="count">0/30 dias concluídos</small>
+          </p>
+          <p style="margin-top:10px; color: var(--muted2);">
+            Dica: marque "concluído" só quando você tiver feito <i>recuperação ativa + código funcionando + interleaving + Feynman</i>.
+          </p>
+        </div>
+      </div>
+
+      <nav class="toc" aria-label="Navegação">
+        <a href="#como-usar">Como usar</a>
+        <a href="#ritual">Ritual diário</a>
+        <a href="#repeticao">Repetição espaçada</a>
+        <a href="#semanas">Plano por semanas</a>
+        <a href="#criterios">Critérios de domínio</a>
+      </nav>
+    </header>
+
+    <div class="grid">
+      <section class="card" id="como-usar">
+        <h2>Como usar este plano</h2>
+        <ul>
+          <li><b>Uma fonte principal</b> (docs oficiais do Spring) + <b>uma secundária</b> (Baeldung, livro, vídeo).</li>
+          <li>Crie flashcards (ou lista de perguntas) de cada dia e revise em <b>D+1, D+3, D+7, D+15</b>.</li>
+          <li>Seu "superpoder" é o <b>output</b>: código rodando + testes passando + explicação clara.</li>
+          <li>Interleaving é obrigatório: misture temas para treinar <b>diagnóstico</b> e <b>escolha de padrões</b>.</li>
+        </ul>
+      </section>
+
+      <section class="card" id="ritual">
+        <h2>Ritual diário (checklist mental)</h2>
+        <ul>
+          <li><b>Recuperação ativa:</b> sem consultar, escreva o que lembra + 5 perguntas.</li>
+          <li><b>Aprender:</b> leia/assista só o suficiente para corrigir falhas.</li>
+          <li><b>Construir:</b> implementar uma feature (endpoint/service/repo/teste).</li>
+          <li><b>Interleaving:</b> 2 micro-desafios misturando hoje + dias anteriores.</li>
+          <li><b>Feynman:</b> explique em 10–15 linhas (ou áudio curto) como se ensinasse.</li>
+        </ul>
+      </section>
+    </div>
+
+    <section class="section card" id="repeticao">
+      <h2>Repetição espaçada (regra operacional simples)</h2>
+      <p>
+        Todo conceito importante vira pergunta/flashcard e é revisado em <b>D+1, D+3, D+7, D+15</b>.
+        Se você usar Anki, ele automatiza; se não, use uma lista no seu editor/Notion com essas datas.
+      </p>
+      <div class="cols">
+        <div class="box">
+          <h4>O que vira flashcard</h4>
+          <ul>
+            <li>Definições ("o que é <code>@Transactional</code>?")</li>
+            <li>Porquês ("por que usar DTOs em vez de entidades na API?")</li>
+            <li>Como fazer ("como configurar JWT no Spring Security?")</li>
+            <li>Armadilhas ("quando lazy loading causa N+1?")</li>
+          </ul>
+        </div>
+        <div class="box">
+          <h4>Formato de pergunta (melhor para retenção)</h4>
+          <ul>
+            <li><b>Explique:</b> "O ciclo de vida de um bean Spring."</li>
+            <li><b>Decida:</b> "Repository direto ou Service aqui? Por quê?"</li>
+            <li><b>Implemente:</b> "Escreva um controller com tratamento de exceção sem olhar."</li>
+            <li><b>Depure:</b> "Por que estou tendo LazyInitializationException?"</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="semanas">
+      <h2>Plano por semanas (30 dias)</h2>
+
+      <!-- WEEK 1 -->
+      <div class="week" id="semana1">
+        <h3>Semana 1 — Fundamentos Java + Spring Core (IoC, DI, beans)</h3>
+        <div class="meta">
+          <span class="pill">Foco: modelo mental Spring, injeção de dependências, configuração</span>
+          <span class="pill">Entregável: app com beans configurados, profiles, testes unitários</span>
+        </div>
+
+        <details class="day">
+          <summary>
+            <span class="day-title">Dia 01 — Java moderno (streams, optionals, lambdas) + setup</span>
+            <span class="day-tags">
+              <span class="tag accent">Java 17+</span><span class="tag">fundamentos</span><span class="tag">setup</span>
+            </span>
+          </summary>
+          <div class="checkline">
+            <input type="checkbox" data-key="day01" />
+            <span>Concluído (recall + código + interleaving + Feynman)</span>
+          </div>
+          <div class="cols">
+            <div class="box">
+              <h4>Aprender</h4>
+              <ul>
+                <li>Streams API, Optional, lambdas, method references.</li>
+                <li>Setup: Maven/Gradle, Spring Initializr, IDE (IntelliJ/Eclipse).</li>
+              </ul>
+            </div>
+            <div class="box">
+              <h4>Saída (output)</h4>
+              <ul>
+                <li>5 exercícios de Stream + Optional sem consultar.</li>
+                <li>Projeto Spring Boot rodando (vazio, mas funcionando).</li>
+              </ul>
+            </div>
+          </div>
+        </details>
+
+        <details class="day">
+          <summary>
+            <span class="day-title">Dia 02 — IoC (Inversão de Controle) e DI (Injeção de Dependências)</span>
+            <span class="day-tags">
+              <span class="tag accent">Spring Core</span><span class="tag">DI</span><span class="tag blue">Feynman</span>
+            </span>
+          </summary>
+          <div class="checkline">
+            <input type="checkbox" data-key="day02" />
+            <span>Concluído</span>
+          </div>
+          <div class="cols">
+            <div class="box">
+              <h4>Aprender</h4>
+              <ul>
+                <li>O que é IoC? Como o container Spring gerencia objetos?</li>
+                <li>DI via construtor, setter, field (qual é melhor?).</li>
+              </ul>
+            </div>
+            <div class="box">
+              <h4>Output</h4>
+              <ul>
+                <li>Desenhar grafo de dependências de 3 beans.</li>
+                <li>Feynman: "Por que DI reduz acoplamento?"</li>
+              </ul>
+            </div>
+          </div>
+        </details>
+
+        <details class="day">
+          <summary>
+            <span class="day-title">Dia 03 — Anotações Spring (@Component, @Service, @Repository) + ciclo de vida</span>
+            <span class="day-tags">
+              <span class="tag accent">beans</span><span class="tag">lifecycle</span><span class="tag">stereotypes</span>
+            </span>
+          </summary>
+          <div class="checkline">
+            <input type="checkbox" data-key="day03" />
+            <span>Concluído</span>
+          </div>
+          <div class="cols">
+            <div class="box">
+              <h4>Aprender</h4>
+              <ul>
+                <li>Diferença entre <code>@Component</code>, <code>@Service</code>, <code>@Repository</code>.</li>
+                <li>Ciclo de vida: <code>@PostConstruct</code>, <code>@PreDestroy</code>.</li>
+              </ul>
+            </div>
+            <div class="box">
+              <h4>Interleaving</h4>
+              <ul>
+                <li>Criar 3 beans com escopos diferentes (singleton, prototype, request).</li>
+                <li>Sem olhar: explicar quando cada estereótipo é usado.</li>
+              </ul>
+            </div>
+          </div>
+        </details>
+
+        <details class="day">
+          <summary>
+            <span class="day-title">Dia 04 — Spring Boot auto-configuration + properties/yml + profiles</span>
+            <span class="day-tags">
+              <span class="tag accent">config</span><span class="tag">properties</span><span class="tag">profiles</span>
+            </span>
+          </summary>
+          <div class="checkline">
+            <input type="checkbox" data-key="day04" />
+            <span>Concluído</span>
+          </div>
+          <div class="cols">
+            <div class="box">
+              <h4>Aprender</h4>
+              <ul>
+                <li>Como funciona a auto-configuração do Spring Boot?</li>
+                <li><code>application.properties</code> vs <code>application.yml</code>.</li>
+                <li>Profiles (dev, test, prod).</li>
+              </ul>
+            </div>
+            <div class="box">
+              <h4>Recuperação ativa</h4>
+              <ul>
+                <li>Listar 5 propriedades comuns (ex.: <code>server.port</code>).</li>
+                <li>Configurar 2 profiles e alternar entre eles.</li>
+              </ul>
+            </div>
+          </div>
+        </details>
+
+        <details class="day">
+          <summary>
+            <span class="day-title">Dia 05 — Configuração via anotações vs Java Config vs XML (conceito)</span>
+            <span class="day-tags">
+              <span class="tag">config</span><span class="tag accent">@ConfigurationProperties</span>
+            </span>
+          </summary>
+          <div class="checkline">
+            <input type="checkbox" data-key="day05" />
+            <span>Concluído</span>
+          </div>
+          <div class="box">
+            <h4>Prática</h4>
+            <ul>
+              <li>Migrar configuração de <code>application.properties</code> para <code>@ConfigurationProperties</code>.</li>
+              <li>Feynman: "Qual abordagem de config eu usaria em um projeto real? Por quê?"</li>
+            </ul>
+          </div>
+        </details>
+
+        <details class="day">
+          <summary>
+            <span class="day-title">Dia 06 — Mini-projeto 1: Service Layer com 3 serviços + testes unitários</span>
+            <span class="day-tags">
+              <span class="tag accent">projeto</span><span class="tag">Mockito</span><span class="tag">testes</span>
+            </span>
+          </summary>
+          <div class="checkline">
+            <input type="checkbox" data-key="day06" />
+            <span>Concluído</span>
+          </div>
+          <div class="box">
+            <h4>Output esperado</h4>
+            <ul>
+              <li>3 services com DI + lógica de negócio simples.</li>
+              <li>Testes unitários com Mockito (mockar dependências).</li>
+              <li>Interleaving: DI + profiles + testes.</li>
+            </ul>
+          </div>
+        </details>
+
+        <details class="day">
+          <summary>
+            <span class="day-title">Dia 07 — Revisão forte + descanso ativo</span>
+            <span class="day-tags">
+              <span class="tag accent">revisão</span><span class="tag blue">Feynman</span><span class="tag">simulado</span>
+            </span>
+          </summary>
+          <div class="checkline">
+            <input type="checkbox" data-key="day07" />
+            <span>Concluído</span>
+          </div>
+          <div class="cols">
+            <div class="box">
+              <h4>Simulado (sem consulta)</h4>
+              <ul>
+                <li>Recriar projeto com beans + DI + config sem olhar.</li>
+                <li>Explicar o container Spring em voz alta.</li>
+              </ul>
+            </div>
+            <div class="box">
+              <h4>Descanso ativo</h4>
+              <ul>
+                <li>Ler docs do Spring Core e anotar 5 "armadilhas".</li>
+              </ul>
+            </div>
+          </div>
+        </details>
+      </div>
+
+      <!-- WEEK 2 -->
+      <div class="week" id="semana2">
+        <h3>Semana 2 — Spring Boot + REST APIs + JPA/Hibernate</h3>
+        <div class="meta">
+          <span class="pill">Foco: REST controllers, JPA, relacionamentos, DTOs, validações</span>
+          <span class="pill">Entregável: API CRUD com banco + testes de integração</span>
+        </div>
+
+        <details class="day"><summary><span class="day-title">Dia 08 — Spring MVC: @RestController, paths, verbos HTTP</span><span class="day-tags"><span class="tag accent">REST</span><span class="tag">MVC</span></span></summary>
+          <div class="checkline"><input type="checkbox" data-key="day08"/><span>Concluído</span></div>
+          <div class="box"><h4>Recuperação ativa</h4><ul><li>Sem olhar, escrever 1 controller com GET/POST/PUT/DELETE.</li><li>Explicar a diferença entre <code>@Controller</code> e <code>@RestController</code>.</li></ul></div>
+        </details>
+
+        <details class="day"><summary><span class="day-title">Dia 09 — ResponseEntity, status codes, @ControllerAdvice para exceptions</span><span class="day-tags"><span class="tag accent">HTTP</span><span class="tag">exceptions</span><span class="tag blue">Feynman</span></span></summary>
+          <div class="checkline"><input type="checkbox" data-key="day09"/><span>Concluído</span></div>
+          <div class="box"><h4>Output</h4><ul><li>Tratamento global de exceções com <code>@ControllerAdvice</code>.</li><li>Feynman: "Por que 201 vs 200? Quando usar 204?"</li></ul></div>
+        </details>
+
+        <details class="day"><summary><span class="day-title">Dia 10 — JPA/Hibernate: @Entity, @Id, @GeneratedValue, repositórios</span><span class="day-tags"><span class="tag accent">JPA</span><span class="tag">persistence</span></span></summary>
+          <div class="checkline"><input type="checkbox" data-key="day10"/><span>Concluído</span></div>
+          <div class="box"><h4>Interleaving</h4><ul><li>Controller + Service + Repository + entidade mapeada.</li><li>Recuperação: desenhar fluxo de requisição até banco.</li></ul></div>
+        </details>
+
+        <details class="day"><summary><span class="day-title">Dia 11 — Relacionamentos JPA: @OneToMany, @ManyToOne, lazy/eager</span><span class="day-tags"><span class="tag accent">relacionamentos</span><span class="tag">JPA</span></span></summary>
+          <div class="checkline"><input type="checkbox" data-key="day11"/><span>Concluído</span></div>
+          <div class="box"><h4>Recuperação ativa</h4><ul><li>Desenhar ERD + código para relacionamento bidirecional.</li><li>Explicar problema N+1 e como resolver.</li></ul></div>
+        </details>
+
+        <details class="day"><summary><span class="day-title">Dia 12 — DTOs, MapStruct/ModelMapper, validação (@Valid, @NotNull)</span><span class="day-tags"><span class="tag accent">DTOs</span><span class="tag">validação</span></span></summary>
+          <div class="checkline"><input type="checkbox" data-key="day12"/><span>Concluído</span></div>
+          <div class="box"><h4>Prática</h4><ul><li>Converter entidade → DTO na camada de serviço.</li><li>Adicionar validações e testar com Postman/REST Client.</li></ul></div>
+        </details>
+
+        <details class="day"><summary><span class="day-title">Dia 13 — Paginação, sorting, JPQL, @Transactional</span><span class="day-tags"><span class="tag accent">queries</span><span class="tag">transações</span></span></summary>
+          <div class="checkline"><input type="checkbox" data-key="day13"/><span>Concluído</span></div>
+          <div class="box"><h4>Interleaving</h4><ul><li>Endpoint paginado + filtros + validação.</li><li>Revisar relacionamentos (Dia 11) enquanto implementa query.</li></ul></div>
+        </details>
+
+        <details class="day"><summary><span class="day-title">Dia 14 — Mini-projeto 2: Blog API (Posts + Comments) + testes integração</span><span class="day-tags"><span class="tag accent">projeto</span><span class="tag blue">Feynman</span></span></summary>
+          <div class="checkline"><input type="checkbox" data-key="day14"/><span>Concluído</span></div>
+          <div class="box"><h4>Prova</h4><ul><li>CRUD completo + relacionamentos + tratamento de exceção.</li><li>Explicar ciclo completo da requisição (controller → service → repo → DB).</li></ul></div>
+        </details>
+      </div>
+
+      <!-- WEEK 3 -->
+      <div class="week" id="semana3">
+        <h3>Semana 3 — Segurança, testes, arquitetura avançada</h3>
+        <div class="meta">
+          <span class="pill">Foco: Spring Security (JWT), testes robustos, cache, padrões</span>
+          <span class="pill">Entregável: API com autenticação + testes + arquitetura limpa</span>
+        </div>
+
+        <details class="day"><summary><span class="day-title">Dia 15 — Spring Security: conceitos (autenticação vs autorização, filtros)</span><span class="day-tags"><span class="tag accent">Security</span><span class="tag blue">Feynman</span></span></summary>
+          <div class="checkline"><input type="checkbox" data-key="day15"/><span>Concluído</span></div>
+          <div class="box"><h4>Output</h4><ul><li>Configurar security básica (form login ou HTTP Basic).</li><li>Feynman: "Como funciona o filter chain do Spring Security?"</li></ul></div>
+        </details>
+
+        <details class="day"><summary><span class="day-title">Dia 16 — JWT: geração, validação, @PreAuthorize, controle por role</span><span class="day-tags"><span class="tag accent">JWT</span><span class="tag">auth</span></span></summary>
+          <div class="checkline"><input type="checkbox" data-key="day16"/><span>Concluído</span></div>
+          <div class="box"><h4>Recuperação ativa</h4><ul><li>Sem consultar, implementar filter JWT customizado.</li><li>Explicar fluxo: login → JWT → validação → autorização.</li></ul></div>
+        </details>
+
+        <details class="day"><summary><span class="day-title">Dia 17 — Testes: unitários (Mockito), integração (@SpringBootTest), TestContainers</span><span class="day-tags"><span class="tag accent">testes</span><span class="tag">TestContainers</span></span></summary>
+          <div class="checkline"><input type="checkbox" data-key="day17"/><span>Concluído</span></div>
+          <div class="box"><h4>Interleaving</h4><ul><li>Testar controller + service + repository com banco real (H2 ou TestContainers).</li><li>Revisar JWT (Dia 16) enquanto testa endpoints protegidos.</li></ul></div>
+        </details>
+
+        <details class="day"><summary><span class="day-title">Dia 18 — Cache com Spring Cache (@Cacheable, @CacheEvict), Redis (conceito)</span><span class="day-tags"><span class="tag accent">cache</span><span class="tag">performance</span></span></summary>
+          <div class="checkline"><input type="checkbox" data-key="day18"/><span>Concluído</span></div>
+          <div class="box"><h4>Prática</h4><ul><li>Adicionar cache em endpoint "pesado" e medir diferença (antes/depois).</li><li>Feynman: "Quando invalidar cache? Quais são os riscos?"</li></ul></div>
+        </details>
+
+        <details class="day"><summary><span class="day-title">Dia 19 — Mensageria: conceito de filas, Spring AMQP/Kafka (básico)</span><span class="day-tags"><span class="tag accent">mensageria</span><span class="tag">async</span></span></summary>
+          <div class="checkline"><input type="checkbox" data-key="day19"/><span>Concluído</span></div>
+          <div class="box"><h4>Recuperação ativa</h4><ul><li>Explicar quando usar mensageria vs REST síncrono.</li><li>Implementar publisher/consumer simples (RabbitMQ ou Kafka embedded).</li></ul></div>
+        </details>
+
+        <details class="day"><summary><span class="day-title">Dia 20 — Arquitetura: camadas, patterns (DTO, VO, Builder), DDD leve</span><span class="day-tags"><span class="tag accent">arquitetura</span><span class="tag">patterns</span></span></summary>
+          <div class="checkline"><input type="checkbox" data-key="day20"/><span>Concluído</span></div>
+          <div class="box"><h4>Interleaving</h4><ul><li>Refatorar código para seguir padrões + DDD leve.</li><li>Revisar: cache (Dia 18) + security (Dia 16) + testes (Dia 17).</li></ul></div>
+        </details>
+
+        <details class="day"><summary><span class="day-title">Dia 21 — Revisão + ADR (Architecture Decision Record) + descanso ativo</span><span class="day-tags"><span class="tag accent">revisão</span><span class="tag blue">Feynman</span></span></summary>
+          <div class="checkline"><input type="checkbox" data-key="day21"/><span>Concluído</span></div>
+          <div class="box"><h4>Output</h4><ul><li>Guia de 1 página: "Como estruturo uma API Spring Boot escalável".</li><li>Simulado: implementar endpoint protegido + cache sem consultar.</li></ul></div>
+        </details>
+      </div>
+
+      <!-- WEEK 4 -->
+      <div class="week" id="semana4">
+        <h3>Semana 4 — Projeto final (portfólio enterprise)</h3>
+        <div class="meta">
+          <span class="pill">Foco: projeto production-ready (testes, docs, Docker, CI/CD)</span>
+          <span class="pill">Entregável: GitHub + Swagger + Docker + pipeline CI/CD</span>
+        </div>
+
+        <details class="day"><summary><span class="day-title">Dia 22 — Definir capstone (E-commerce/Task Manager/Library) + modelar domínio</span><span class="day-tags"><span class="tag accent">projeto</span><span class="tag">design</span></span></summary>
+          <div class="checkline"><input type="checkbox" data-key="day22"/><span>Concluído</span></div>
+          <div class="box"><h4>Output</h4><ul><li>ERD + endpoints + autenticação/autorização planejados.</li><li>Lista de riscos/armadilhas para revisar depois.</li></ul></div>
+        </details>
+
+        <details class="day"><summary><span class="day-title">Dia 23 — Fundar arquitetura: camadas, exceptions, DTOs, config inicial</span><span class="day-tags"><span class="tag accent">arquitetura</span><span class="tag">setup</span></span></summary>
+          <div class="checkline"><input type="checkbox" data-key="day23"/><span>Concluído</span></div>
+          <div class="box"><h4>Interleaving</h4><ul><li>DI + profiles + security base.</li><li>Documentar em 10 linhas o porquê da estrutura.</li></ul></div>
+        </details>
+
+        <details class="day"><summary><span class="day-title">Dia 24 — Feature A: entidade principal + CRUD + relacionamentos + validações</span><span class="day-tags"><span class="tag accent">feature</span><span class="tag">CRUD</span></span></summary>
+          <div class="checkline"><input type="checkbox" data-key="day24"/><span>Concluído</span></div>
+          <div class="box"><h4>Output</h4><ul><li>Testes de integração para todos os endpoints.</li><li>Estados de loading/empty/error bem tratados.</li></ul></div>
+        </details>
+
+        <details class="day"><summary><span class="day-title">Dia 25 — Feature B: autenticação JWT + autorização por role + refresh token</span><span class="day-tags"><span class="tag accent">JWT</span><span class="tag">auth</span></span></summary>
+          <div class="checkline"><input type="checkbox" data-key="day25"/><span>Concluído</span></div>
+          <div class="box"><h4>Prova</h4><ul><li>Explicar fluxo login → JWT → refresh sem consultar.</li><li>Tratar erros de autenticação/autorização corretamente.</li></ul></div>
+        </details>
+
+        <details class="day"><summary><span class="day-title">Dia 26 — Feature C: paginação, filtros avançados, cache em queries pesadas</span><span class="day-tags"><span class="tag accent">queries</span><span class="tag">performance</span></span></summary>
+          <div class="checkline"><input type="checkbox" data-key="day26"/><span>Concluído</span></div>
+          <div class="box"><h4>Interleaving</h4><ul><li>JPA + cache + testes de performance (antes/depois).</li><li>Otimizar 1 gargalo real e provar com evidência.</li></ul></div>
+        </details>
+
+        <details class="day"><summary><span class="day-title">Dia 27 — Documentação (Swagger/OpenAPI), logging, métricas (Actuator)</span><span class="day-tags"><span class="tag accent">docs</span><span class="tag">observability</span></span></summary>
+          <div class="checkline"><input type="checkbox" data-key="day27"/><span>Concluído</span></div>
+          <div class="box"><h4>Output</h4><ul><li>API documentada + healthcheck endpoints + logs estruturados.</li><li>Configurar Actuator para métricas básicas.</li></ul></div>
+        </details>
+
+        <details class="day"><summary><span class="day-title">Dia 28 — Docker: Dockerfile + docker-compose (app + PostgreSQL + Redis)</span><span class="day-tags"><span class="tag accent">Docker</span><span class="tag">infra</span></span></summary>
+          <div class="checkline"><input type="checkbox" data-key="day28"/><span>Concluído</span></div>
+          <div class="box"><h4>Prática</h4><ul><li>Subir stack completa e testar localmente.</li><li>Documentar comandos no README.</li></ul></div>
+        </details>
+
+        <details class="day"><summary><span class="day-title">Dia 29 — CI/CD: GitHub Actions (build + testes) + deploy conceitual</span><span class="day-tags"><span class="tag accent">CI/CD</span><span class="tag">deploy</span></span></summary>
+          <div class="checkline"><input type="checkbox" data-key="day29"/><span>Concluído</span></div>
+          <div class="box"><h4>Prova</h4><ul><li>Pipeline rodando + explicar cada etapa.</li><li>Deploy em Heroku/Railway/Render (conceitual ou real).</li></ul></div>
+        </details>
+
+        <details class="day"><summary><span class="day-title">Dia 30 — Prova final: feature nova do zero + cheat sheet pessoal</span><span class="day-tags"><span class="tag accent">prova final</span><span class="tag blue">Feynman</span></span></summary>
+          <div class="checkline"><input type="checkbox" data-key="day30"/><span>Concluído</span></div>
+          <div class="box"><h4>Output</h4><ul><li>Feature completa: endpoint → service → repo → testes → docs.</li><li>Cheat sheet (1 página) com padrões e armadilhas Spring Boot.</li></ul></div>
+        </details>
+      </div>
+    </section>
+
+    <section class="section card" id="criterios">
+      <h2>Critérios de domínio (autoavaliação "top tier")</h2>
+      <p>Se você consegue fazer estes itens <b>sem consulta</b>, você está em nível enterprise:</p>
+      <div class="cols">
+        <div class="box">
+          <h4>Spring Boot + Java</h4>
+          <ul>
+            <li>Configurar DI, beans, profiles e auto-configuration em 5 minutos.</li>
+            <li>Modelar entidades JPA com relacionamentos corretos (evitando N+1).</li>
+            <li>Escrever controller + service + repo + DTO + validação sem olhar.</li>
+          </ul>
+        </div>
+        <div class="box">
+          <h4>Segurança + qualidade</h4>
+          <ul>
+            <li>Implementar autenticação JWT + autorização por role do zero.</li>
+            <li>Explicar filter chain do Spring Security e justificar escolhas.</li>
+            <li>Testar com Mockito + TestContainers e depurar via logs/DevTools.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <p>
+        Feito para execução diária com foco em retenção de longo prazo. Salve este arquivo e use como painel de controle.
+      </p>
+    </footer>
+  </div>
+
+  <script>
+    (function(){
+      const prefix = "springboot30d:";
+      const checks = Array.from(document.querySelectorAll('input[type="checkbox"][data-key]'));
+
+      function load(){
+        checks.forEach(ch => {
+          const key = prefix + ch.dataset.key;
+          const v = localStorage.getItem(key);
+          ch.checked = (v === "1");
+        });
+        update();
+      }
+
+      function save(ch){
+        const key = prefix + ch.dataset.key;
+        localStorage.setItem(key, ch.checked ? "1" : "0");
+        update();
+      }
+
+      function update(){
+        const total = checks.length;
+        const done = checks.filter(c => c.checked).length;
+        const pct = total ? Math.round((done/total)*100) : 0;
+
+        const bar = document.getElementById("bar");
+        const pctEl = document.getElementById("pct");
+        const countEl = document.getElementById("count");
+
+        if(bar) bar.style.width = pct + "%";
+        if(pctEl) pctEl.textContent = pct + "%";
+        if(countEl) countEl.textContent = done + "/" + total + " dias concluídos";
+      }
+
+      checks.forEach(ch => ch.addEventListener('change', () => save(ch)));
+      load();
+    })();
+  </script>
+</body>
+</html>

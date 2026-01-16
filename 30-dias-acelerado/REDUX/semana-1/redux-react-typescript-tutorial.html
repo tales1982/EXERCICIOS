@@ -1,0 +1,1588 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redux com React Puro + TypeScript - Tutorial Completo</title>
+    <style>
+        :root {
+            --primary: #764abc;
+            --primary-dark: #593d88;
+            --secondary: #61dafb;
+            --bg-dark: #1a1a2e;
+            --bg-card: #16213e;
+            --bg-code: #0f0f23;
+            --text: #e8e8e8;
+            --text-muted: #a0a0a0;
+            --success: #4ade80;
+            --warning: #fbbf24;
+            --danger: #f87171;
+            --border: #2d3748;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--bg-dark) 0%, #0f0f1a 100%);
+            color: var(--text);
+            line-height: 1.7;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 50px;
+            padding: 40px;
+            background: var(--bg-card);
+            border-radius: 20px;
+            border: 1px solid var(--border);
+        }
+
+        .logo-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .logo {
+            width: 80px;
+            height: 80px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            font-weight: bold;
+        }
+
+        .redux-logo {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+        }
+
+        .react-logo {
+            background: linear-gradient(135deg, #61dafb, #21a1c4);
+            color: var(--bg-dark);
+        }
+
+        .ts-logo {
+            background: linear-gradient(135deg, #3178c6, #235a97);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 1.2rem;
+        }
+
+        .section {
+            background: var(--bg-card);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border: 1px solid var(--border);
+        }
+
+        h2 {
+            color: var(--secondary);
+            font-size: 1.6rem;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        h2 .step {
+            background: var(--primary);
+            color: white;
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+        }
+
+        h3 {
+            color: var(--primary);
+            font-size: 1.2rem;
+            margin: 25px 0 15px;
+        }
+
+        h4 {
+            color: var(--warning);
+            font-size: 1.1rem;
+            margin: 20px 0 10px;
+        }
+
+        p {
+            margin-bottom: 15px;
+            color: var(--text);
+        }
+
+        .code-block {
+            background: var(--bg-code);
+            border-radius: 10px;
+            margin: 15px 0;
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+
+        .code-header {
+            background: rgba(118, 74, 188, 0.3);
+            padding: 10px 15px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .code-header .filename {
+            color: var(--secondary);
+            font-weight: 600;
+        }
+
+        .code-header .lang {
+            background: var(--primary);
+            padding: 3px 10px;
+            border-radius: 5px;
+            font-size: 0.75rem;
+            color: white;
+        }
+
+        pre {
+            padding: 20px;
+            overflow-x: auto;
+            font-family: 'Fira Code', 'Consolas', monospace;
+            font-size: 0.9rem;
+            line-height: 1.6;
+        }
+
+        code {
+            font-family: 'Fira Code', 'Consolas', monospace;
+        }
+
+        .inline-code {
+            background: rgba(118, 74, 188, 0.3);
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            color: var(--secondary);
+        }
+
+        .comment { color: #6a9955; }
+        .keyword { color: #c586c0; }
+        .string { color: #ce9178; }
+        .function { color: #dcdcaa; }
+        .type { color: #4ec9b0; }
+        .variable { color: #9cdcfe; }
+        .number { color: #b5cea8; }
+        .operator { color: #d4d4d4; }
+        .import { color: #c586c0; }
+        .component { color: #4ec9b0; }
+
+        .info-box {
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 4px solid;
+        }
+
+        .info-box.tip {
+            background: rgba(74, 222, 128, 0.1);
+            border-color: var(--success);
+        }
+
+        .info-box.warning {
+            background: rgba(251, 191, 36, 0.1);
+            border-color: var(--warning);
+        }
+
+        .info-box.concept {
+            background: rgba(118, 74, 188, 0.1);
+            border-color: var(--primary);
+        }
+
+        .info-box-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .info-box.tip .info-box-title { color: var(--success); }
+        .info-box.warning .info-box-title { color: var(--warning); }
+        .info-box.concept .info-box-title { color: var(--primary); }
+
+        .folder-structure {
+            background: var(--bg-code);
+            padding: 20px;
+            border-radius: 10px;
+            font-family: 'Consolas', monospace;
+            border: 1px solid var(--border);
+        }
+
+        .folder-structure .folder { color: var(--warning); }
+        .folder-structure .file { color: var(--secondary); }
+        .folder-structure .special { color: var(--success); }
+
+        .concept-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin: 20px 0;
+        }
+
+        .concept-card {
+            background: rgba(118, 74, 188, 0.1);
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px solid var(--primary);
+        }
+
+        .concept-card h4 {
+            color: var(--secondary);
+            margin-top: 0;
+        }
+
+        .flow-diagram {
+            background: var(--bg-code);
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            margin: 20px 0;
+            border: 1px solid var(--border);
+        }
+
+        .flow-item {
+            display: inline-block;
+            padding: 15px 25px;
+            border-radius: 10px;
+            margin: 5px;
+            font-weight: bold;
+        }
+
+        .flow-arrow {
+            color: var(--primary);
+            font-size: 1.5rem;
+            margin: 0 10px;
+        }
+
+        .action-flow { background: var(--primary); }
+        .reducer-flow { background: #059669; }
+        .store-flow { background: #dc2626; }
+        .ui-flow { background: #2563eb; }
+
+        ul, ol {
+            margin: 15px 0 15px 25px;
+        }
+
+        li {
+            margin-bottom: 8px;
+        }
+
+        .toc {
+            background: rgba(118, 74, 188, 0.1);
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            border: 1px solid var(--primary);
+        }
+
+        .toc h3 {
+            margin-top: 0;
+            color: var(--secondary);
+        }
+
+        .toc ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        .toc li {
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .toc li:last-child {
+            border-bottom: none;
+        }
+
+        .toc a {
+            color: var(--text);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: color 0.3s;
+        }
+
+        .toc a:hover {
+            color: var(--primary);
+        }
+
+        .toc .step-num {
+            background: var(--primary);
+            color: white;
+            width: 25px;
+            height: 25px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+        }
+
+        footer {
+            text-align: center;
+            padding: 30px;
+            color: var(--text-muted);
+            border-top: 1px solid var(--border);
+            margin-top: 50px;
+        }
+
+        @media (max-width: 768px) {
+            h1 { font-size: 1.8rem; }
+            .logo-container { flex-wrap: wrap; }
+            .flow-diagram { overflow-x: auto; }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo-container">
+                <div class="logo redux-logo">Rx</div>
+                <div class="logo react-logo">⚛</div>
+                <div class="logo ts-logo">TS</div>
+            </div>
+            <h1>Redux + React Puro + TypeScript</h1>
+            <p class="subtitle">Tutorial Completo: Do Zero ao CRUD Funcional</p>
+        </header>
+
+        <nav class="toc">
+            <h3>📚 Índice do Tutorial</h3>
+            <ul>
+                <li><a href="#step1"><span class="step-num">1</span> Criando o Projeto React + TypeScript</a></li>
+                <li><a href="#step2"><span class="step-num">2</span> Entendendo os Conceitos do Redux</a></li>
+                <li><a href="#step3"><span class="step-num">3</span> Instalando o Redux Toolkit</a></li>
+                <li><a href="#step4"><span class="step-num">4</span> Estrutura de Pastas</a></li>
+                <li><a href="#step5"><span class="step-num">5</span> Criando os Types (Interfaces TypeScript)</a></li>
+                <li><a href="#step6"><span class="step-num">6</span> Criando o Slice (Actions + Reducer)</a></li>
+                <li><a href="#step7"><span class="step-num">7</span> Configurando a Store</a></li>
+                <li><a href="#step8"><span class="step-num">8</span> Criando Hooks Tipados</a></li>
+                <li><a href="#step9"><span class="step-num">9</span> Conectando o Provider</a></li>
+                <li><a href="#step10"><span class="step-num">10</span> Componente de Lista de Itens</a></li>
+                <li><a href="#step11"><span class="step-num">11</span> Componente de Formulário</a></li>
+                <li><a href="#step12"><span class="step-num">12</span> Componente Principal (App)</a></li>
+                <li><a href="#step13"><span class="step-num">13</span> Executando o Projeto</a></li>
+            </ul>
+        </nav>
+
+        <!-- STEP 1 -->
+        <section class="section" id="step1">
+            <h2><span class="step">1</span> Criando o Projeto React + TypeScript</h2>
+            
+            <p>Vamos criar um projeto React puro (sem Next.js ou outros frameworks) usando Vite, que é o bundler mais rápido e moderno para React.</p>
+
+            <div class="info-box tip">
+                <div class="info-box-title">💡 Por que Vite?</div>
+                <p>Vite é muito mais rápido que Create React App (CRA), tem hot reload instantâneo e configuração simples. É a escolha recomendada pela própria documentação do React.</p>
+            </div>
+
+            <h3>Comandos no Terminal</h3>
+            
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="filename">Terminal</span>
+                    <span class="lang">bash</span>
+                </div>
+                <pre><span class="comment"># 1. Criar o projeto com Vite + React + TypeScript</span>
+<span class="function">npm</span> create vite@latest redux-crud-app -- --template react-ts
+
+<span class="comment"># 2. Entrar na pasta do projeto</span>
+<span class="keyword">cd</span> redux-crud-app
+
+<span class="comment"># 3. Instalar as dependências</span>
+<span class="function">npm</span> install
+
+<span class="comment"># 4. Testar se está funcionando</span>
+<span class="function">npm</span> run dev</pre>
+            </div>
+
+            <p>Após executar <span class="inline-code">npm run dev</span>, você verá algo assim no terminal:</p>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="filename">Output</span>
+                    <span class="lang">terminal</span>
+                </div>
+                <pre>  VITE v5.x.x  ready in xxx ms
+
+  ➜  Local:   <span class="string">http://localhost:5173/</span>
+  ➜  Network: use --host to expose
+  ➜  press h + enter to show help</pre>
+            </div>
+
+            <div class="info-box warning">
+                <div class="info-box-title">⚠️ Importante</div>
+                <p>Mantenha o terminal aberto! Pressione <span class="inline-code">Ctrl + C</span> para parar o servidor quando necessário.</p>
+            </div>
+        </section>
+
+        <!-- STEP 2 -->
+        <section class="section" id="step2">
+            <h2><span class="step">2</span> Entendendo os Conceitos do Redux</h2>
+            
+            <p>Antes de codar, é essencial entender os 4 conceitos fundamentais do Redux:</p>
+
+            <div class="concept-grid">
+                <div class="concept-card">
+                    <h4>🏪 Store</h4>
+                    <p>É o "depósito central" que guarda todo o estado da aplicação. Existe apenas UMA store por app.</p>
+                </div>
+                <div class="concept-card">
+                    <h4>📦 State</h4>
+                    <p>São os dados armazenados na store. É imutável - nunca modificamos diretamente, sempre criamos uma nova versão.</p>
+                </div>
+                <div class="concept-card">
+                    <h4>🎯 Action</h4>
+                    <p>É um objeto que descreve "O QUE aconteceu". Tem um <span class="inline-code">type</span> e opcionalmente um <span class="inline-code">payload</span> com dados.</p>
+                </div>
+                <div class="concept-card">
+                    <h4>⚙️ Reducer</h4>
+                    <p>É uma função pura que recebe o state atual + action e retorna o NOVO state. É aqui que a lógica de atualização acontece.</p>
+                </div>
+            </div>
+
+            <h3>Fluxo de Dados Unidirecional</h3>
+            <div class="flow-diagram">
+                <span class="flow-item ui-flow">UI (Componente)</span>
+                <span class="flow-arrow">→</span>
+                <span class="flow-item action-flow">Action (dispatch)</span>
+                <span class="flow-arrow">→</span>
+                <span class="flow-item reducer-flow">Reducer</span>
+                <span class="flow-arrow">→</span>
+                <span class="flow-item store-flow">Store (novo state)</span>
+                <span class="flow-arrow">→</span>
+                <span class="flow-item ui-flow">UI (re-render)</span>
+            </div>
+
+            <div class="info-box concept">
+                <div class="info-box-title">🧠 Analogia do Restaurante</div>
+                <p><strong>Store</strong> = Cozinha do restaurante (onde tudo acontece)</p>
+                <p><strong>State</strong> = Os pratos prontos na cozinha</p>
+                <p><strong>Action</strong> = O pedido que você faz ("Quero uma pizza de calabresa")</p>
+                <p><strong>Reducer</strong> = O cozinheiro que recebe o pedido e prepara o prato</p>
+                <p><strong>dispatch()</strong> = O garçom que leva seu pedido até a cozinha</p>
+            </div>
+        </section>
+
+        <!-- STEP 3 -->
+        <section class="section" id="step3">
+            <h2><span class="step">3</span> Instalando o Redux Toolkit</h2>
+            
+            <p>O Redux Toolkit (RTK) é a forma oficial e moderna de usar Redux. Ele simplifica muito a configuração!</p>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="filename">Terminal</span>
+                    <span class="lang">bash</span>
+                </div>
+                <pre><span class="comment"># Instalar Redux Toolkit + React-Redux</span>
+<span class="function">npm</span> install @reduxjs/toolkit react-redux</pre>
+            </div>
+
+            <div class="info-box tip">
+                <div class="info-box-title">📦 O que instalamos?</div>
+                <p><strong>@reduxjs/toolkit</strong> - Contém createSlice, configureStore e outras utilidades</p>
+                <p><strong>react-redux</strong> - Contém Provider, useSelector e useDispatch para conectar React com Redux</p>
+            </div>
+        </section>
+
+        <!-- STEP 4 -->
+        <section class="section" id="step4">
+            <h2><span class="step">4</span> Estrutura de Pastas</h2>
+            
+            <p>Vamos organizar nosso projeto de forma profissional:</p>
+
+            <div class="folder-structure">
+<pre>
+<span class="folder">📁 redux-crud-app/</span>
+├── <span class="folder">📁 src/</span>
+│   ├── <span class="folder">📁 app/</span>
+│   │   ├── <span class="file">store.ts</span>          <span class="comment"># Configuração da Store</span>
+│   │   └── <span class="file">hooks.ts</span>          <span class="comment"># Hooks tipados (useAppDispatch, useAppSelector)</span>
+│   │
+│   ├── <span class="folder">📁 features/</span>
+│   │   └── <span class="folder">📁 items/</span>
+│   │       ├── <span class="file">itemsSlice.ts</span> <span class="comment"># Slice com actions + reducer</span>
+│   │       └── <span class="file">types.ts</span>      <span class="comment"># Interfaces TypeScript</span>
+│   │
+│   ├── <span class="folder">📁 components/</span>
+│   │   ├── <span class="file">ItemList.tsx</span>      <span class="comment"># Componente de lista</span>
+│   │   └── <span class="file">ItemForm.tsx</span>      <span class="comment"># Componente de formulário</span>
+│   │
+│   ├── <span class="special">App.tsx</span>               <span class="comment"># Componente principal</span>
+│   ├── <span class="special">main.tsx</span>              <span class="comment"># Entry point com Provider</span>
+│   └── <span class="file">App.css</span>               <span class="comment"># Estilos</span>
+│
+└── <span class="file">package.json</span>
+</pre>
+            </div>
+
+            <h3>Criando as Pastas</h3>
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="filename">Terminal</span>
+                    <span class="lang">bash</span>
+                </div>
+                <pre><span class="comment"># Criar estrutura de pastas</span>
+<span class="function">mkdir</span> -p src/app src/features/items src/components</pre>
+            </div>
+        </section>
+
+        <!-- STEP 5 -->
+        <section class="section" id="step5">
+            <h2><span class="step">5</span> Criando os Types (Interfaces TypeScript)</h2>
+            
+            <p>Primeiro, definimos as interfaces que descrevem a estrutura dos nossos dados:</p>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="filename">src/features/items/types.ts</span>
+                    <span class="lang">TypeScript</span>
+                </div>
+                <pre><span class="comment">// Interface que define a estrutura de um Item</span>
+<span class="keyword">export interface</span> <span class="type">Item</span> {
+  <span class="variable">id</span>: <span class="type">string</span>;          <span class="comment">// ID único do item</span>
+  <span class="variable">name</span>: <span class="type">string</span>;        <span class="comment">// Nome do item</span>
+  <span class="variable">description</span>: <span class="type">string</span>; <span class="comment">// Descrição do item</span>
+  <span class="variable">completed</span>: <span class="type">boolean</span>;  <span class="comment">// Status de conclusão</span>
+  <span class="variable">createdAt</span>: <span class="type">string</span>;   <span class="comment">// Data de criação (ISO string)</span>
+}
+
+<span class="comment">// Interface que define o estado do slice de items</span>
+<span class="keyword">export interface</span> <span class="type">ItemsState</span> {
+  <span class="variable">items</span>: <span class="type">Item</span>[];       <span class="comment">// Array de itens</span>
+  <span class="variable">loading</span>: <span class="type">boolean</span>;    <span class="comment">// Indicador de carregamento</span>
+  <span class="variable">error</span>: <span class="type">string</span> | <span class="type">null</span>; <span class="comment">// Mensagem de erro (se houver)</span>
+}
+
+<span class="comment">// Interface para criar um novo item (sem id e createdAt)</span>
+<span class="keyword">export interface</span> <span class="type">CreateItemPayload</span> {
+  <span class="variable">name</span>: <span class="type">string</span>;
+  <span class="variable">description</span>: <span class="type">string</span>;
+}
+
+<span class="comment">// Interface para atualizar um item existente</span>
+<span class="keyword">export interface</span> <span class="type">UpdateItemPayload</span> {
+  <span class="variable">id</span>: <span class="type">string</span>;           <span class="comment">// ID do item a ser atualizado</span>
+  <span class="variable">changes</span>: <span class="type">Partial</span>&lt;<span class="type">Omit</span>&lt;<span class="type">Item</span>, <span class="string">'id'</span> | <span class="string">'createdAt'</span>&gt;&gt;; <span class="comment">// Campos a atualizar</span>
+}</pre>
+            </div>
+
+            <div class="info-box concept">
+                <div class="info-box-title">🔍 Explicando os Types</div>
+                <p><strong>Partial&lt;T&gt;</strong> - Torna todos os campos de T opcionais</p>
+                <p><strong>Omit&lt;T, K&gt;</strong> - Remove os campos K do tipo T</p>
+                <p>Então <span class="inline-code">Partial&lt;Omit&lt;Item, 'id' | 'createdAt'&gt;&gt;</span> significa: "Um objeto com campos opcionais de Item, exceto id e createdAt"</p>
+            </div>
+        </section>
+
+        <!-- STEP 6 -->
+        <section class="section" id="step6">
+            <h2><span class="step">6</span> Criando o Slice (Actions + Reducer)</h2>
+            
+            <p>O Slice é onde a mágica acontece! Ele combina actions e reducer em um único lugar:</p>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="filename">src/features/items/itemsSlice.ts</span>
+                    <span class="lang">TypeScript</span>
+                </div>
+                <pre><span class="import">import</span> { <span class="variable">createSlice</span>, <span class="type">PayloadAction</span> } <span class="import">from</span> <span class="string">'@reduxjs/toolkit'</span>;
+<span class="import">import</span> <span class="keyword">type</span> { <span class="type">Item</span>, <span class="type">ItemsState</span>, <span class="type">CreateItemPayload</span>, <span class="type">UpdateItemPayload</span> } <span class="import">from</span> <span class="string">'./types'</span>;
+
+<span class="comment">// ===========================================</span>
+<span class="comment">// ESTADO INICIAL</span>
+<span class="comment">// ===========================================</span>
+<span class="keyword">const</span> <span class="variable">initialState</span>: <span class="type">ItemsState</span> = {
+  <span class="variable">items</span>: [],
+  <span class="variable">loading</span>: <span class="keyword">false</span>,
+  <span class="variable">error</span>: <span class="keyword">null</span>,
+};
+
+<span class="comment">// ===========================================</span>
+<span class="comment">// HELPER: Gerar ID único</span>
+<span class="comment">// ===========================================</span>
+<span class="keyword">const</span> <span class="function">generateId</span> = (): <span class="type">string</span> => {
+  <span class="keyword">return</span> Date.<span class="function">now</span>().<span class="function">toString</span>(<span class="number">36</span>) + Math.<span class="function">random</span>().<span class="function">toString</span>(<span class="number">36</span>).<span class="function">substring</span>(<span class="number">2</span>);
+};
+
+<span class="comment">// ===========================================</span>
+<span class="comment">// CRIAÇÃO DO SLICE</span>
+<span class="comment">// ===========================================</span>
+<span class="keyword">const</span> <span class="variable">itemsSlice</span> = <span class="function">createSlice</span>({
+  <span class="comment">// Nome do slice (usado no devtools e para gerar action types)</span>
+  <span class="variable">name</span>: <span class="string">'items'</span>,
+  
+  <span class="comment">// Estado inicial</span>
+  <span class="variable">initialState</span>,
+  
+  <span class="comment">// Reducers: funções que modificam o estado</span>
+  <span class="variable">reducers</span>: {
+    
+    <span class="comment">// ==================</span>
+    <span class="comment">// 1. ADICIONAR ITEM</span>
+    <span class="comment">// ==================</span>
+    <span class="function">addItem</span>: (<span class="variable">state</span>, <span class="variable">action</span>: <span class="type">PayloadAction</span>&lt;<span class="type">CreateItemPayload</span>&gt;) => {
+      <span class="comment">// Criar novo item com ID e data gerados automaticamente</span>
+      <span class="keyword">const</span> <span class="variable">newItem</span>: <span class="type">Item</span> = {
+        <span class="variable">id</span>: <span class="function">generateId</span>(),
+        <span class="variable">name</span>: <span class="variable">action</span>.<span class="variable">payload</span>.<span class="variable">name</span>,
+        <span class="variable">description</span>: <span class="variable">action</span>.<span class="variable">payload</span>.<span class="variable">description</span>,
+        <span class="variable">completed</span>: <span class="keyword">false</span>,
+        <span class="variable">createdAt</span>: <span class="keyword">new</span> <span class="type">Date</span>().<span class="function">toISOString</span>(),
+      };
+      
+      <span class="comment">// Push direto! Immer cuida da imutabilidade por baixo dos panos</span>
+      <span class="variable">state</span>.<span class="variable">items</span>.<span class="function">push</span>(<span class="variable">newItem</span>);
+    },
+
+    <span class="comment">// ==================</span>
+    <span class="comment">// 2. REMOVER ITEM</span>
+    <span class="comment">// ==================</span>
+    <span class="function">removeItem</span>: (<span class="variable">state</span>, <span class="variable">action</span>: <span class="type">PayloadAction</span>&lt;<span class="type">string</span>&gt;) => {
+      <span class="comment">// action.payload é o ID do item a remover</span>
+      <span class="variable">state</span>.<span class="variable">items</span> = <span class="variable">state</span>.<span class="variable">items</span>.<span class="function">filter</span>(
+        (<span class="variable">item</span>) => <span class="variable">item</span>.<span class="variable">id</span> !== <span class="variable">action</span>.<span class="variable">payload</span>
+      );
+    },
+
+    <span class="comment">// ==================</span>
+    <span class="comment">// 3. ATUALIZAR ITEM</span>
+    <span class="comment">// ==================</span>
+    <span class="function">updateItem</span>: (<span class="variable">state</span>, <span class="variable">action</span>: <span class="type">PayloadAction</span>&lt;<span class="type">UpdateItemPayload</span>&gt;) => {
+      <span class="comment">// Encontrar o índice do item a atualizar</span>
+      <span class="keyword">const</span> <span class="variable">index</span> = <span class="variable">state</span>.<span class="variable">items</span>.<span class="function">findIndex</span>(
+        (<span class="variable">item</span>) => <span class="variable">item</span>.<span class="variable">id</span> === <span class="variable">action</span>.<span class="variable">payload</span>.<span class="variable">id</span>
+      );
+      
+      <span class="comment">// Se encontrou, aplicar as mudanças</span>
+      <span class="keyword">if</span> (<span class="variable">index</span> !== -<span class="number">1</span>) {
+        <span class="variable">state</span>.<span class="variable">items</span>[<span class="variable">index</span>] = {
+          ...<span class="variable">state</span>.<span class="variable">items</span>[<span class="variable">index</span>],
+          ...<span class="variable">action</span>.<span class="variable">payload</span>.<span class="variable">changes</span>,
+        };
+      }
+    },
+
+    <span class="comment">// ==================</span>
+    <span class="comment">// 4. TOGGLE COMPLETED</span>
+    <span class="comment">// ==================</span>
+    <span class="function">toggleCompleted</span>: (<span class="variable">state</span>, <span class="variable">action</span>: <span class="type">PayloadAction</span>&lt;<span class="type">string</span>&gt;) => {
+      <span class="keyword">const</span> <span class="variable">item</span> = <span class="variable">state</span>.<span class="variable">items</span>.<span class="function">find</span>(
+        (<span class="variable">item</span>) => <span class="variable">item</span>.<span class="variable">id</span> === <span class="variable">action</span>.<span class="variable">payload</span>
+      );
+      
+      <span class="keyword">if</span> (<span class="variable">item</span>) {
+        <span class="variable">item</span>.<span class="variable">completed</span> = !<span class="variable">item</span>.<span class="variable">completed</span>;
+      }
+    },
+
+    <span class="comment">// ==================</span>
+    <span class="comment">// 5. LIMPAR TODOS</span>
+    <span class="comment">// ==================</span>
+    <span class="function">clearAllItems</span>: (<span class="variable">state</span>) => {
+      <span class="variable">state</span>.<span class="variable">items</span> = [];
+    },
+
+    <span class="comment">// ==================</span>
+    <span class="comment">// 6. SET ERROR</span>
+    <span class="comment">// ==================</span>
+    <span class="function">setError</span>: (<span class="variable">state</span>, <span class="variable">action</span>: <span class="type">PayloadAction</span>&lt;<span class="type">string</span> | <span class="type">null</span>&gt;) => {
+      <span class="variable">state</span>.<span class="variable">error</span> = <span class="variable">action</span>.<span class="variable">payload</span>;
+    },
+  },
+});
+
+<span class="comment">// ===========================================</span>
+<span class="comment">// EXPORTAÇÕES</span>
+<span class="comment">// ===========================================</span>
+
+<span class="comment">// Exportar as actions (para usar com dispatch)</span>
+<span class="keyword">export const</span> { 
+  <span class="variable">addItem</span>, 
+  <span class="variable">removeItem</span>, 
+  <span class="variable">updateItem</span>, 
+  <span class="variable">toggleCompleted</span>, 
+  <span class="variable">clearAllItems</span>,
+  <span class="variable">setError</span>
+} = <span class="variable">itemsSlice</span>.<span class="variable">actions</span>;
+
+<span class="comment">// Exportar o reducer (para usar na store)</span>
+<span class="keyword">export default</span> <span class="variable">itemsSlice</span>.<span class="variable">reducer</span>;</pre>
+            </div>
+
+            <div class="info-box tip">
+                <div class="info-box-title">🪄 Magia do Immer</div>
+                <p>Note que escrevemos <span class="inline-code">state.items.push(newItem)</span> como se estivéssemos mutando diretamente! Isso é possível porque o Redux Toolkit usa a biblioteca <strong>Immer</strong> internamente, que converte essas "mutações" em atualizações imutáveis automaticamente.</p>
+            </div>
+        </section>
+
+        <!-- STEP 7 -->
+        <section class="section" id="step7">
+            <h2><span class="step">7</span> Configurando a Store</h2>
+            
+            <p>A Store é o coração do Redux. Aqui combinamos todos os reducers e criamos os tipos para TypeScript:</p>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="filename">src/app/store.ts</span>
+                    <span class="lang">TypeScript</span>
+                </div>
+                <pre><span class="import">import</span> { <span class="variable">configureStore</span> } <span class="import">from</span> <span class="string">'@reduxjs/toolkit'</span>;
+<span class="import">import</span> <span class="variable">itemsReducer</span> <span class="import">from</span> <span class="string">'../features/items/itemsSlice'</span>;
+
+<span class="comment">// ===========================================</span>
+<span class="comment">// CONFIGURAÇÃO DA STORE</span>
+<span class="comment">// ===========================================</span>
+<span class="keyword">export const</span> <span class="variable">store</span> = <span class="function">configureStore</span>({
+  <span class="comment">// Combinar todos os reducers aqui</span>
+  <span class="variable">reducer</span>: {
+    <span class="comment">// 'items' será a chave no state global</span>
+    <span class="comment">// Ex: state.items.items, state.items.loading, etc.</span>
+    <span class="variable">items</span>: <span class="variable">itemsReducer</span>,
+    
+    <span class="comment">// Adicione outros reducers aqui conforme necessário</span>
+    <span class="comment">// users: usersReducer,</span>
+    <span class="comment">// auth: authReducer,</span>
+  },
+});
+
+<span class="comment">// ===========================================</span>
+<span class="comment">// TIPOS PARA TYPESCRIPT</span>
+<span class="comment">// ===========================================</span>
+
+<span class="comment">// Tipo do estado completo da aplicação</span>
+<span class="comment">// Inferido automaticamente a partir da store</span>
+<span class="keyword">export type</span> <span class="type">RootState</span> = <span class="type">ReturnType</span>&lt;<span class="keyword">typeof</span> <span class="variable">store</span>.<span class="variable">getState</span>&gt;;
+
+<span class="comment">// Tipo do dispatch</span>
+<span class="comment">// Necessário para ações assíncronas (thunks)</span>
+<span class="keyword">export type</span> <span class="type">AppDispatch</span> = <span class="keyword">typeof</span> <span class="variable">store</span>.<span class="variable">dispatch</span>;</pre>
+            </div>
+
+            <div class="info-box concept">
+                <div class="info-box-title">📐 Entendendo RootState</div>
+                <p><strong>RootState</strong> representa a estrutura completa do estado. Com nossa configuração:</p>
+                <pre style="background: var(--bg-code); padding: 10px; border-radius: 5px; margin-top: 10px;">
+{
+  items: {
+    items: Item[],
+    loading: boolean,
+    error: string | null
+  }
+}</pre>
+            </div>
+        </section>
+
+        <!-- STEP 8 -->
+        <section class="section" id="step8">
+            <h2><span class="step">8</span> Criando Hooks Tipados</h2>
+            
+            <p>Para ter autocomplete e type safety nos componentes, criamos versões tipadas dos hooks do Redux:</p>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="filename">src/app/hooks.ts</span>
+                    <span class="lang">TypeScript</span>
+                </div>
+                <pre><span class="import">import</span> { <span class="variable">useDispatch</span>, <span class="variable">useSelector</span> } <span class="import">from</span> <span class="string">'react-redux'</span>;
+<span class="import">import</span> <span class="keyword">type</span> { <span class="type">RootState</span>, <span class="type">AppDispatch</span> } <span class="import">from</span> <span class="string">'./store'</span>;
+
+<span class="comment">// ===========================================</span>
+<span class="comment">// HOOKS TIPADOS</span>
+<span class="comment">// ===========================================</span>
+
+<span class="comment">// Use este hook em vez de useDispatch padrão</span>
+<span class="comment">// Já vem com os tipos corretos para nossas actions</span>
+<span class="keyword">export const</span> <span class="function">useAppDispatch</span> = <span class="variable">useDispatch</span>.<span class="function">withTypes</span>&lt;<span class="type">AppDispatch</span>&gt;();
+
+<span class="comment">// Use este hook em vez de useSelector padrão</span>
+<span class="comment">// O state já vem tipado como RootState</span>
+<span class="keyword">export const</span> <span class="function">useAppSelector</span> = <span class="variable">useSelector</span>.<span class="function">withTypes</span>&lt;<span class="type">RootState</span>&gt;();</pre>
+            </div>
+
+            <div class="info-box tip">
+                <div class="info-box-title">✨ Benefícios dos Hooks Tipados</div>
+                <p>Ao usar <span class="inline-code">useAppSelector</span>, você terá autocomplete para acessar o estado:</p>
+                <p><span class="inline-code">const items = useAppSelector(state => state.items.items)</span></p>
+                <p>O TypeScript vai mostrar todas as propriedades disponíveis!</p>
+            </div>
+        </section>
+
+        <!-- STEP 9 -->
+        <section class="section" id="step9">
+            <h2><span class="step">9</span> Conectando o Provider</h2>
+            
+            <p>O Provider envolve a aplicação e disponibiliza a store para todos os componentes:</p>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="filename">src/main.tsx</span>
+                    <span class="lang">TypeScript</span>
+                </div>
+                <pre><span class="import">import</span> <span class="type">React</span> <span class="import">from</span> <span class="string">'react'</span>;
+<span class="import">import</span> <span class="type">ReactDOM</span> <span class="import">from</span> <span class="string">'react-dom/client'</span>;
+<span class="import">import</span> { <span class="component">Provider</span> } <span class="import">from</span> <span class="string">'react-redux'</span>;
+<span class="import">import</span> { <span class="variable">store</span> } <span class="import">from</span> <span class="string">'./app/store'</span>;
+<span class="import">import</span> <span class="component">App</span> <span class="import">from</span> <span class="string">'./App'</span>;
+<span class="import">import</span> <span class="string">'./App.css'</span>;
+
+<span class="comment">// O Provider DEVE envolver toda a aplicação</span>
+<span class="comment">// Isso permite que qualquer componente acesse a store</span>
+<span class="type">ReactDOM</span>.<span class="function">createRoot</span>(<span class="variable">document</span>.<span class="function">getElementById</span>(<span class="string">'root'</span>)!).<span class="function">render</span>(
+  &lt;<span class="type">React</span>.<span class="component">StrictMode</span>&gt;
+    &lt;<span class="component">Provider</span> <span class="variable">store</span>={<span class="variable">store</span>}&gt;
+      &lt;<span class="component">App</span> /&gt;
+    &lt;/<span class="component">Provider</span>&gt;
+  &lt;/<span class="type">React</span>.<span class="component">StrictMode</span>&gt;
+);</pre>
+            </div>
+        </section>
+
+        <!-- STEP 10 -->
+        <section class="section" id="step10">
+            <h2><span class="step">10</span> Componente de Lista de Itens</h2>
+            
+            <p>Este componente exibe os itens e permite remover, editar e marcar como completo:</p>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="filename">src/components/ItemList.tsx</span>
+                    <span class="lang">TypeScript</span>
+                </div>
+                <pre><span class="import">import</span> { <span class="variable">useState</span> } <span class="import">from</span> <span class="string">'react'</span>;
+<span class="import">import</span> { <span class="variable">useAppSelector</span>, <span class="variable">useAppDispatch</span> } <span class="import">from</span> <span class="string">'../app/hooks'</span>;
+<span class="import">import</span> { 
+  <span class="variable">removeItem</span>, 
+  <span class="variable">updateItem</span>, 
+  <span class="variable">toggleCompleted</span>,
+  <span class="variable">clearAllItems</span> 
+} <span class="import">from</span> <span class="string">'../features/items/itemsSlice'</span>;
+<span class="import">import</span> <span class="keyword">type</span> { <span class="type">Item</span> } <span class="import">from</span> <span class="string">'../features/items/types'</span>;
+
+<span class="keyword">const</span> <span class="component">ItemList</span> = () => {
+  <span class="comment">// ===========================================</span>
+  <span class="comment">// ACESSANDO O ESTADO COM useAppSelector</span>
+  <span class="comment">// ===========================================</span>
+  <span class="keyword">const</span> <span class="variable">items</span> = <span class="function">useAppSelector</span>((<span class="variable">state</span>) => <span class="variable">state</span>.<span class="variable">items</span>.<span class="variable">items</span>);
+  
+  <span class="comment">// ===========================================</span>
+  <span class="comment">// DISPATCH PARA ENVIAR ACTIONS</span>
+  <span class="comment">// ===========================================</span>
+  <span class="keyword">const</span> <span class="variable">dispatch</span> = <span class="function">useAppDispatch</span>();
+  
+  <span class="comment">// Estado local para controlar modo de edição</span>
+  <span class="keyword">const</span> [<span class="variable">editingId</span>, <span class="variable">setEditingId</span>] = <span class="function">useState</span>&lt;<span class="type">string</span> | <span class="type">null</span>&gt;(<span class="keyword">null</span>);
+  <span class="keyword">const</span> [<span class="variable">editName</span>, <span class="variable">setEditName</span>] = <span class="function">useState</span>(<span class="string">''</span>);
+  <span class="keyword">const</span> [<span class="variable">editDescription</span>, <span class="variable">setEditDescription</span>] = <span class="function">useState</span>(<span class="string">''</span>);
+
+  <span class="comment">// ===========================================</span>
+  <span class="comment">// HANDLERS</span>
+  <span class="comment">// ===========================================</span>
+
+  <span class="comment">// Iniciar edição de um item</span>
+  <span class="keyword">const</span> <span class="function">handleStartEdit</span> = (<span class="variable">item</span>: <span class="type">Item</span>) => {
+    <span class="function">setEditingId</span>(<span class="variable">item</span>.<span class="variable">id</span>);
+    <span class="function">setEditName</span>(<span class="variable">item</span>.<span class="variable">name</span>);
+    <span class="function">setEditDescription</span>(<span class="variable">item</span>.<span class="variable">description</span>);
+  };
+
+  <span class="comment">// Salvar edição</span>
+  <span class="keyword">const</span> <span class="function">handleSaveEdit</span> = (<span class="variable">id</span>: <span class="type">string</span>) => {
+    <span class="keyword">if</span> (<span class="variable">editName</span>.<span class="function">trim</span>()) {
+      <span class="comment">// Dispatch da action updateItem com os novos valores</span>
+      <span class="variable">dispatch</span>(<span class="function">updateItem</span>({
+        <span class="variable">id</span>,
+        <span class="variable">changes</span>: {
+          <span class="variable">name</span>: <span class="variable">editName</span>.<span class="function">trim</span>(),
+          <span class="variable">description</span>: <span class="variable">editDescription</span>.<span class="function">trim</span>(),
+        },
+      }));
+    }
+    <span class="function">setEditingId</span>(<span class="keyword">null</span>);
+  };
+
+  <span class="comment">// Cancelar edição</span>
+  <span class="keyword">const</span> <span class="function">handleCancelEdit</span> = () => {
+    <span class="function">setEditingId</span>(<span class="keyword">null</span>);
+    <span class="function">setEditName</span>(<span class="string">''</span>);
+    <span class="function">setEditDescription</span>(<span class="string">''</span>);
+  };
+
+  <span class="comment">// Remover item</span>
+  <span class="keyword">const</span> <span class="function">handleRemove</span> = (<span class="variable">id</span>: <span class="type">string</span>) => {
+    <span class="comment">// Dispatch da action removeItem com o ID</span>
+    <span class="variable">dispatch</span>(<span class="function">removeItem</span>(<span class="variable">id</span>));
+  };
+
+  <span class="comment">// Toggle completed</span>
+  <span class="keyword">const</span> <span class="function">handleToggle</span> = (<span class="variable">id</span>: <span class="type">string</span>) => {
+    <span class="variable">dispatch</span>(<span class="function">toggleCompleted</span>(<span class="variable">id</span>));
+  };
+
+  <span class="comment">// Limpar todos</span>
+  <span class="keyword">const</span> <span class="function">handleClearAll</span> = () => {
+    <span class="keyword">if</span> (<span class="function">confirm</span>(<span class="string">'Tem certeza que deseja remover todos os itens?'</span>)) {
+      <span class="variable">dispatch</span>(<span class="function">clearAllItems</span>());
+    }
+  };
+
+  <span class="comment">// Formatar data</span>
+  <span class="keyword">const</span> <span class="function">formatDate</span> = (<span class="variable">dateString</span>: <span class="type">string</span>) => {
+    <span class="keyword">return new</span> <span class="type">Date</span>(<span class="variable">dateString</span>).<span class="function">toLocaleString</span>(<span class="string">'pt-BR'</span>);
+  };
+
+  <span class="comment">// ===========================================</span>
+  <span class="comment">// RENDER</span>
+  <span class="comment">// ===========================================</span>
+  
+  <span class="keyword">if</span> (<span class="variable">items</span>.<span class="variable">length</span> === <span class="number">0</span>) {
+    <span class="keyword">return</span> (
+      &lt;<span class="variable">div</span> <span class="variable">className</span>=<span class="string">"empty-state"</span>&gt;
+        &lt;<span class="variable">p</span>&gt;📭 Nenhum item cadastrado&lt;/<span class="variable">p</span>&gt;
+        &lt;<span class="variable">p</span> <span class="variable">className</span>=<span class="string">"hint"</span>&gt;Use o formulário acima para adicionar itens&lt;/<span class="variable">p</span>&gt;
+      &lt;/<span class="variable">div</span>&gt;
+    );
+  }
+
+  <span class="keyword">return</span> (
+    &lt;<span class="variable">div</span> <span class="variable">className</span>=<span class="string">"item-list"</span>&gt;
+      &lt;<span class="variable">div</span> <span class="variable">className</span>=<span class="string">"list-header"</span>&gt;
+        &lt;<span class="variable">h2</span>&gt;📋 Lista de Itens ({<span class="variable">items</span>.<span class="variable">length</span>})&lt;/<span class="variable">h2</span>&gt;
+        &lt;<span class="variable">button</span> 
+          <span class="variable">onClick</span>={<span class="variable">handleClearAll</span>}
+          <span class="variable">className</span>=<span class="string">"btn-danger"</span>
+        &gt;
+          🗑️ Limpar Todos
+        &lt;/<span class="variable">button</span>&gt;
+      &lt;/<span class="variable">div</span>&gt;
+
+      &lt;<span class="variable">ul</span>&gt;
+        {<span class="variable">items</span>.<span class="function">map</span>((<span class="variable">item</span>) => (
+          &lt;<span class="variable">li</span> 
+            <span class="variable">key</span>={<span class="variable">item</span>.<span class="variable">id</span>} 
+            <span class="variable">className</span>={<span class="variable">item</span>.<span class="variable">completed</span> ? <span class="string">'completed'</span> : <span class="string">''</span>}
+          &gt;
+            {<span class="variable">editingId</span> === <span class="variable">item</span>.<span class="variable">id</span> ? (
+              <span class="comment">{/* MODO DE EDIÇÃO */}</span>
+              &lt;<span class="variable">div</span> <span class="variable">className</span>=<span class="string">"edit-mode"</span>&gt;
+                &lt;<span class="variable">input</span>
+                  <span class="variable">type</span>=<span class="string">"text"</span>
+                  <span class="variable">value</span>={<span class="variable">editName</span>}
+                  <span class="variable">onChange</span>={(<span class="variable">e</span>) => <span class="function">setEditName</span>(<span class="variable">e</span>.<span class="variable">target</span>.<span class="variable">value</span>)}
+                  <span class="variable">placeholder</span>=<span class="string">"Nome do item"</span>
+                /&gt;
+                &lt;<span class="variable">input</span>
+                  <span class="variable">type</span>=<span class="string">"text"</span>
+                  <span class="variable">value</span>={<span class="variable">editDescription</span>}
+                  <span class="variable">onChange</span>={(<span class="variable">e</span>) => <span class="function">setEditDescription</span>(<span class="variable">e</span>.<span class="variable">target</span>.<span class="variable">value</span>)}
+                  <span class="variable">placeholder</span>=<span class="string">"Descrição"</span>
+                /&gt;
+                &lt;<span class="variable">div</span> <span class="variable">className</span>=<span class="string">"edit-buttons"</span>&gt;
+                  &lt;<span class="variable">button</span> 
+                    <span class="variable">onClick</span>={() => <span class="function">handleSaveEdit</span>(<span class="variable">item</span>.<span class="variable">id</span>)}
+                    <span class="variable">className</span>=<span class="string">"btn-success"</span>
+                  &gt;
+                    ✅ Salvar
+                  &lt;/<span class="variable">button</span>&gt;
+                  &lt;<span class="variable">button</span> 
+                    <span class="variable">onClick</span>={<span class="variable">handleCancelEdit</span>}
+                    <span class="variable">className</span>=<span class="string">"btn-secondary"</span>
+                  &gt;
+                    ❌ Cancelar
+                  &lt;/<span class="variable">button</span>&gt;
+                &lt;/<span class="variable">div</span>&gt;
+              &lt;/<span class="variable">div</span>&gt;
+            ) : (
+              <span class="comment">{/* MODO DE VISUALIZAÇÃO */}</span>
+              &lt;&gt;
+                &lt;<span class="variable">div</span> <span class="variable">className</span>=<span class="string">"item-content"</span>&gt;
+                  &lt;<span class="variable">div</span> <span class="variable">className</span>=<span class="string">"item-checkbox"</span>&gt;
+                    &lt;<span class="variable">input</span>
+                      <span class="variable">type</span>=<span class="string">"checkbox"</span>
+                      <span class="variable">checked</span>={<span class="variable">item</span>.<span class="variable">completed</span>}
+                      <span class="variable">onChange</span>={() => <span class="function">handleToggle</span>(<span class="variable">item</span>.<span class="variable">id</span>)}
+                    /&gt;
+                  &lt;/<span class="variable">div</span>&gt;
+                  &lt;<span class="variable">div</span> <span class="variable">className</span>=<span class="string">"item-details"</span>&gt;
+                    &lt;<span class="variable">h3</span>&gt;{<span class="variable">item</span>.<span class="variable">name</span>}&lt;/<span class="variable">h3</span>&gt;
+                    &lt;<span class="variable">p</span>&gt;{<span class="variable">item</span>.<span class="variable">description</span>}&lt;/<span class="variable">p</span>&gt;
+                    &lt;<span class="variable">small</span>&gt;Criado em: {<span class="function">formatDate</span>(<span class="variable">item</span>.<span class="variable">createdAt</span>)}&lt;/<span class="variable">small</span>&gt;
+                  &lt;/<span class="variable">div</span>&gt;
+                &lt;/<span class="variable">div</span>&gt;
+                &lt;<span class="variable">div</span> <span class="variable">className</span>=<span class="string">"item-actions"</span>&gt;
+                  &lt;<span class="variable">button</span> 
+                    <span class="variable">onClick</span>={() => <span class="function">handleStartEdit</span>(<span class="variable">item</span>)}
+                    <span class="variable">className</span>=<span class="string">"btn-primary"</span>
+                  &gt;
+                    ✏️ Editar
+                  &lt;/<span class="variable">button</span>&gt;
+                  &lt;<span class="variable">button</span> 
+                    <span class="variable">onClick</span>={() => <span class="function">handleRemove</span>(<span class="variable">item</span>.<span class="variable">id</span>)}
+                    <span class="variable">className</span>=<span class="string">"btn-danger"</span>
+                  &gt;
+                    🗑️ Remover
+                  &lt;/<span class="variable">button</span>&gt;
+                &lt;/<span class="variable">div</span>&gt;
+              &lt;/&gt;
+            )}
+          &lt;/<span class="variable">li</span>&gt;
+        ))}
+      &lt;/<span class="variable">ul</span>&gt;
+    &lt;/<span class="variable">div</span>&gt;
+  );
+};
+
+<span class="keyword">export default</span> <span class="component">ItemList</span>;</pre>
+            </div>
+        </section>
+
+        <!-- STEP 11 -->
+        <section class="section" id="step11">
+            <h2><span class="step">11</span> Componente de Formulário</h2>
+            
+            <p>Este componente permite adicionar novos itens à lista:</p>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="filename">src/components/ItemForm.tsx</span>
+                    <span class="lang">TypeScript</span>
+                </div>
+                <pre><span class="import">import</span> { <span class="variable">useState</span> } <span class="import">from</span> <span class="string">'react'</span>;
+<span class="import">import</span> { <span class="variable">useAppDispatch</span> } <span class="import">from</span> <span class="string">'../app/hooks'</span>;
+<span class="import">import</span> { <span class="variable">addItem</span> } <span class="import">from</span> <span class="string">'../features/items/itemsSlice'</span>;
+
+<span class="keyword">const</span> <span class="component">ItemForm</span> = () => {
+  <span class="comment">// ===========================================</span>
+  <span class="comment">// ESTADO LOCAL DO FORMULÁRIO</span>
+  <span class="comment">// ===========================================</span>
+  <span class="keyword">const</span> [<span class="variable">name</span>, <span class="variable">setName</span>] = <span class="function">useState</span>(<span class="string">''</span>);
+  <span class="keyword">const</span> [<span class="variable">description</span>, <span class="variable">setDescription</span>] = <span class="function">useState</span>(<span class="string">''</span>);
+  <span class="keyword">const</span> [<span class="variable">error</span>, <span class="variable">setError</span>] = <span class="function">useState</span>(<span class="string">''</span>);
+
+  <span class="comment">// Dispatch para enviar actions</span>
+  <span class="keyword">const</span> <span class="variable">dispatch</span> = <span class="function">useAppDispatch</span>();
+
+  <span class="comment">// ===========================================</span>
+  <span class="comment">// HANDLER DO SUBMIT</span>
+  <span class="comment">// ===========================================</span>
+  <span class="keyword">const</span> <span class="function">handleSubmit</span> = (<span class="variable">e</span>: <span class="type">React</span>.<span class="type">FormEvent</span>) => {
+    <span class="variable">e</span>.<span class="function">preventDefault</span>();
+    
+    <span class="comment">// Validação</span>
+    <span class="keyword">if</span> (!<span class="variable">name</span>.<span class="function">trim</span>()) {
+      <span class="function">setError</span>(<span class="string">'O nome é obrigatório!'</span>);
+      <span class="keyword">return</span>;
+    }
+
+    <span class="comment">// Limpar erro anterior</span>
+    <span class="function">setError</span>(<span class="string">''</span>);
+
+    <span class="comment">// ===========================================</span>
+    <span class="comment">// DISPATCH DA ACTION addItem</span>
+    <span class="comment">// ===========================================</span>
+    <span class="comment">// O payload deve ter a estrutura de CreateItemPayload</span>
+    <span class="variable">dispatch</span>(<span class="function">addItem</span>({
+      <span class="variable">name</span>: <span class="variable">name</span>.<span class="function">trim</span>(),
+      <span class="variable">description</span>: <span class="variable">description</span>.<span class="function">trim</span>(),
+    }));
+
+    <span class="comment">// Limpar formulário após adicionar</span>
+    <span class="function">setName</span>(<span class="string">''</span>);
+    <span class="function">setDescription</span>(<span class="string">''</span>);
+  };
+
+  <span class="comment">// ===========================================</span>
+  <span class="comment">// RENDER</span>
+  <span class="comment">// ===========================================</span>
+  <span class="keyword">return</span> (
+    &lt;<span class="variable">div</span> <span class="variable">className</span>=<span class="string">"item-form"</span>&gt;
+      &lt;<span class="variable">h2</span>&gt;➕ Adicionar Novo Item&lt;/<span class="variable">h2</span>&gt;
+      
+      &lt;<span class="variable">form</span> <span class="variable">onSubmit</span>={<span class="variable">handleSubmit</span>}&gt;
+        {<span class="variable">error</span> && &lt;<span class="variable">div</span> <span class="variable">className</span>=<span class="string">"error-message"</span>&gt;{<span class="variable">error</span>}&lt;/<span class="variable">div</span>&gt;}
+        
+        &lt;<span class="variable">div</span> <span class="variable">className</span>=<span class="string">"form-group"</span>&gt;
+          &lt;<span class="variable">label</span> <span class="variable">htmlFor</span>=<span class="string">"name"</span>&gt;Nome *&lt;/<span class="variable">label</span>&gt;
+          &lt;<span class="variable">input</span>
+            <span class="variable">type</span>=<span class="string">"text"</span>
+            <span class="variable">id</span>=<span class="string">"name"</span>
+            <span class="variable">value</span>={<span class="variable">name</span>}
+            <span class="variable">onChange</span>={(<span class="variable">e</span>) => <span class="function">setName</span>(<span class="variable">e</span>.<span class="variable">target</span>.<span class="variable">value</span>)}
+            <span class="variable">placeholder</span>=<span class="string">"Ex: Comprar leite"</span>
+            <span class="variable">autoComplete</span>=<span class="string">"off"</span>
+          /&gt;
+        &lt;/<span class="variable">div</span>&gt;
+
+        &lt;<span class="variable">div</span> <span class="variable">className</span>=<span class="string">"form-group"</span>&gt;
+          &lt;<span class="variable">label</span> <span class="variable">htmlFor</span>=<span class="string">"description"</span>&gt;Descrição&lt;/<span class="variable">label</span>&gt;
+          &lt;<span class="variable">textarea</span>
+            <span class="variable">id</span>=<span class="string">"description"</span>
+            <span class="variable">value</span>={<span class="variable">description</span>}
+            <span class="variable">onChange</span>={(<span class="variable">e</span>) => <span class="function">setDescription</span>(<span class="variable">e</span>.<span class="variable">target</span>.<span class="variable">value</span>)}
+            <span class="variable">placeholder</span>=<span class="string">"Ex: Ir ao supermercado pela manhã..."</span>
+            <span class="variable">rows</span>={<span class="number">3</span>}
+          /&gt;
+        &lt;/<span class="variable">div</span>&gt;
+
+        &lt;<span class="variable">button</span> <span class="variable">type</span>=<span class="string">"submit"</span> <span class="variable">className</span>=<span class="string">"btn-success"</span>&gt;
+          ✅ Adicionar Item
+        &lt;/<span class="variable">button</span>&gt;
+      &lt;/<span class="variable">form</span>&gt;
+    &lt;/<span class="variable">div</span>&gt;
+  );
+};
+
+<span class="keyword">export default</span> <span class="component">ItemForm</span>;</pre>
+            </div>
+        </section>
+
+        <!-- STEP 12 -->
+        <section class="section" id="step12">
+            <h2><span class="step">12</span> Componente Principal (App)</h2>
+            
+            <h3>App.tsx</h3>
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="filename">src/App.tsx</span>
+                    <span class="lang">TypeScript</span>
+                </div>
+                <pre><span class="import">import</span> <span class="component">ItemForm</span> <span class="import">from</span> <span class="string">'./components/ItemForm'</span>;
+<span class="import">import</span> <span class="component">ItemList</span> <span class="import">from</span> <span class="string">'./components/ItemList'</span>;
+
+<span class="keyword">function</span> <span class="component">App</span>() {
+  <span class="keyword">return</span> (
+    &lt;<span class="variable">div</span> <span class="variable">className</span>=<span class="string">"app"</span>&gt;
+      &lt;<span class="variable">header</span> <span class="variable">className</span>=<span class="string">"app-header"</span>&gt;
+        &lt;<span class="variable">h1</span>&gt;🚀 Redux + React + TypeScript&lt;/<span class="variable">h1</span>&gt;
+        &lt;<span class="variable">p</span>&gt;CRUD Completo com Gerenciamento de Estado&lt;/<span class="variable">p</span>&gt;
+      &lt;/<span class="variable">header</span>&gt;
+      
+      &lt;<span class="variable">main</span>&gt;
+        &lt;<span class="component">ItemForm</span> /&gt;
+        &lt;<span class="component">ItemList</span> /&gt;
+      &lt;/<span class="variable">main</span>&gt;
+      
+      &lt;<span class="variable">footer</span>&gt;
+        &lt;<span class="variable">p</span>&gt;Feito com ❤️ usando Redux Toolkit&lt;/<span class="variable">p</span>&gt;
+      &lt;/<span class="variable">footer</span>&gt;
+    &lt;/<span class="variable">div</span>&gt;
+  );
+}
+
+<span class="keyword">export default</span> <span class="component">App</span>;</pre>
+            </div>
+
+            <h3>App.css (Estilos)</h3>
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="filename">src/App.css</span>
+                    <span class="lang">CSS</span>
+                </div>
+                <pre><span class="comment">/* ===========================================
+   RESET E BASE
+   =========================================== */</span>
+* {
+  <span class="variable">margin</span>: <span class="number">0</span>;
+  <span class="variable">padding</span>: <span class="number">0</span>;
+  <span class="variable">box-sizing</span>: border-box;
+}
+
+<span class="variable">body</span> {
+  <span class="variable">font-family</span>: <span class="string">'Segoe UI'</span>, Tahoma, Geneva, Verdana, sans-serif;
+  <span class="variable">background</span>: linear-gradient(<span class="number">135deg</span>, <span class="string">#1a1a2e</span> <span class="number">0%</span>, <span class="string">#16213e</span> <span class="number">100%</span>);
+  <span class="variable">min-height</span>: <span class="number">100vh</span>;
+  <span class="variable">color</span>: <span class="string">#e8e8e8</span>;
+}
+
+<span class="comment">/* ===========================================
+   LAYOUT PRINCIPAL
+   =========================================== */</span>
+.<span class="variable">app</span> {
+  <span class="variable">max-width</span>: <span class="number">800px</span>;
+  <span class="variable">margin</span>: <span class="number">0</span> auto;
+  <span class="variable">padding</span>: <span class="number">20px</span>;
+}
+
+.<span class="variable">app-header</span> {
+  <span class="variable">text-align</span>: center;
+  <span class="variable">padding</span>: <span class="number">40px 20px</span>;
+  <span class="variable">background</span>: rgba(<span class="number">118</span>, <span class="number">74</span>, <span class="number">188</span>, <span class="number">0.2</span>);
+  <span class="variable">border-radius</span>: <span class="number">15px</span>;
+  <span class="variable">margin-bottom</span>: <span class="number">30px</span>;
+  <span class="variable">border</span>: <span class="number">1px</span> solid rgba(<span class="number">118</span>, <span class="number">74</span>, <span class="number">188</span>, <span class="number">0.3</span>);
+}
+
+.<span class="variable">app-header</span> <span class="variable">h1</span> {
+  <span class="variable">font-size</span>: <span class="number">2.5rem</span>;
+  <span class="variable">background</span>: linear-gradient(<span class="number">90deg</span>, <span class="string">#764abc</span>, <span class="string">#61dafb</span>);
+  <span class="variable">-webkit-background-clip</span>: text;
+  <span class="variable">-webkit-text-fill-color</span>: transparent;
+  <span class="variable">margin-bottom</span>: <span class="number">10px</span>;
+}
+
+.<span class="variable">app-header</span> <span class="variable">p</span> {
+  <span class="variable">color</span>: <span class="string">#a0a0a0</span>;
+}
+
+<span class="comment">/* ===========================================
+   FORMULÁRIO
+   =========================================== */</span>
+.<span class="variable">item-form</span> {
+  <span class="variable">background</span>: <span class="string">#16213e</span>;
+  <span class="variable">padding</span>: <span class="number">25px</span>;
+  <span class="variable">border-radius</span>: <span class="number">15px</span>;
+  <span class="variable">margin-bottom</span>: <span class="number">30px</span>;
+  <span class="variable">border</span>: <span class="number">1px</span> solid <span class="string">#2d3748</span>;
+}
+
+.<span class="variable">item-form</span> <span class="variable">h2</span> {
+  <span class="variable">color</span>: <span class="string">#61dafb</span>;
+  <span class="variable">margin-bottom</span>: <span class="number">20px</span>;
+  <span class="variable">font-size</span>: <span class="number">1.3rem</span>;
+}
+
+.<span class="variable">form-group</span> {
+  <span class="variable">margin-bottom</span>: <span class="number">15px</span>;
+}
+
+.<span class="variable">form-group</span> <span class="variable">label</span> {
+  <span class="variable">display</span>: block;
+  <span class="variable">margin-bottom</span>: <span class="number">5px</span>;
+  <span class="variable">color</span>: <span class="string">#a0a0a0</span>;
+  <span class="variable">font-size</span>: <span class="number">0.9rem</span>;
+}
+
+.<span class="variable">form-group</span> <span class="variable">input</span>,
+.<span class="variable">form-group</span> <span class="variable">textarea</span> {
+  <span class="variable">width</span>: <span class="number">100%</span>;
+  <span class="variable">padding</span>: <span class="number">12px 15px</span>;
+  <span class="variable">background</span>: <span class="string">#0f0f23</span>;
+  <span class="variable">border</span>: <span class="number">1px</span> solid <span class="string">#2d3748</span>;
+  <span class="variable">border-radius</span>: <span class="number">8px</span>;
+  <span class="variable">color</span>: <span class="string">#e8e8e8</span>;
+  <span class="variable">font-size</span>: <span class="number">1rem</span>;
+  <span class="variable">transition</span>: border-color <span class="number">0.3s</span>;
+}
+
+.<span class="variable">form-group</span> <span class="variable">input</span>:<span class="variable">focus</span>,
+.<span class="variable">form-group</span> <span class="variable">textarea</span>:<span class="variable">focus</span> {
+  <span class="variable">outline</span>: none;
+  <span class="variable">border-color</span>: <span class="string">#764abc</span>;
+}
+
+.<span class="variable">error-message</span> {
+  <span class="variable">background</span>: rgba(<span class="number">248</span>, <span class="number">113</span>, <span class="number">113</span>, <span class="number">0.2</span>);
+  <span class="variable">color</span>: <span class="string">#f87171</span>;
+  <span class="variable">padding</span>: <span class="number">10px 15px</span>;
+  <span class="variable">border-radius</span>: <span class="number">8px</span>;
+  <span class="variable">margin-bottom</span>: <span class="number">15px</span>;
+  <span class="variable">border-left</span>: <span class="number">4px</span> solid <span class="string">#f87171</span>;
+}
+
+<span class="comment">/* ===========================================
+   BOTÕES
+   =========================================== */</span>
+<span class="variable">button</span> {
+  <span class="variable">padding</span>: <span class="number">12px 20px</span>;
+  <span class="variable">border</span>: none;
+  <span class="variable">border-radius</span>: <span class="number">8px</span>;
+  <span class="variable">cursor</span>: pointer;
+  <span class="variable">font-size</span>: <span class="number">0.95rem</span>;
+  <span class="variable">font-weight</span>: <span class="number">600</span>;
+  <span class="variable">transition</span>: all <span class="number">0.3s</span>;
+}
+
+.<span class="variable">btn-success</span> {
+  <span class="variable">background</span>: linear-gradient(<span class="number">135deg</span>, <span class="string">#059669</span>, <span class="string">#10b981</span>);
+  <span class="variable">color</span>: white;
+}
+
+.<span class="variable">btn-success</span>:<span class="variable">hover</span> {
+  <span class="variable">transform</span>: translateY(<span class="number">-2px</span>);
+  <span class="variable">box-shadow</span>: <span class="number">0 5px 15px</span> rgba(<span class="number">16</span>, <span class="number">185</span>, <span class="number">129</span>, <span class="number">0.3</span>);
+}
+
+.<span class="variable">btn-danger</span> {
+  <span class="variable">background</span>: linear-gradient(<span class="number">135deg</span>, <span class="string">#dc2626</span>, <span class="string">#f87171</span>);
+  <span class="variable">color</span>: white;
+}
+
+.<span class="variable">btn-danger</span>:<span class="variable">hover</span> {
+  <span class="variable">transform</span>: translateY(<span class="number">-2px</span>);
+  <span class="variable">box-shadow</span>: <span class="number">0 5px 15px</span> rgba(<span class="number">248</span>, <span class="number">113</span>, <span class="number">113</span>, <span class="number">0.3</span>);
+}
+
+.<span class="variable">btn-primary</span> {
+  <span class="variable">background</span>: linear-gradient(<span class="number">135deg</span>, <span class="string">#764abc</span>, <span class="string">#9f7aea</span>);
+  <span class="variable">color</span>: white;
+}
+
+.<span class="variable">btn-primary</span>:<span class="variable">hover</span> {
+  <span class="variable">transform</span>: translateY(<span class="number">-2px</span>);
+  <span class="variable">box-shadow</span>: <span class="number">0 5px 15px</span> rgba(<span class="number">118</span>, <span class="number">74</span>, <span class="number">188</span>, <span class="number">0.3</span>);
+}
+
+.<span class="variable">btn-secondary</span> {
+  <span class="variable">background</span>: <span class="string">#4b5563</span>;
+  <span class="variable">color</span>: white;
+}
+
+<span class="comment">/* ===========================================
+   LISTA DE ITENS
+   =========================================== */</span>
+.<span class="variable">item-list</span> {
+  <span class="variable">background</span>: <span class="string">#16213e</span>;
+  <span class="variable">padding</span>: <span class="number">25px</span>;
+  <span class="variable">border-radius</span>: <span class="number">15px</span>;
+  <span class="variable">border</span>: <span class="number">1px</span> solid <span class="string">#2d3748</span>;
+}
+
+.<span class="variable">list-header</span> {
+  <span class="variable">display</span>: flex;
+  <span class="variable">justify-content</span>: space-between;
+  <span class="variable">align-items</span>: center;
+  <span class="variable">margin-bottom</span>: <span class="number">20px</span>;
+  <span class="variable">padding-bottom</span>: <span class="number">15px</span>;
+  <span class="variable">border-bottom</span>: <span class="number">1px</span> solid <span class="string">#2d3748</span>;
+}
+
+.<span class="variable">list-header</span> <span class="variable">h2</span> {
+  <span class="variable">color</span>: <span class="string">#61dafb</span>;
+  <span class="variable">font-size</span>: <span class="number">1.3rem</span>;
+}
+
+.<span class="variable">item-list</span> <span class="variable">ul</span> {
+  <span class="variable">list-style</span>: none;
+}
+
+.<span class="variable">item-list</span> <span class="variable">li</span> {
+  <span class="variable">background</span>: <span class="string">#0f0f23</span>;
+  <span class="variable">padding</span>: <span class="number">20px</span>;
+  <span class="variable">border-radius</span>: <span class="number">10px</span>;
+  <span class="variable">margin-bottom</span>: <span class="number">15px</span>;
+  <span class="variable">display</span>: flex;
+  <span class="variable">justify-content</span>: space-between;
+  <span class="variable">align-items</span>: center;
+  <span class="variable">gap</span>: <span class="number">15px</span>;
+  <span class="variable">border</span>: <span class="number">1px</span> solid <span class="string">#2d3748</span>;
+  <span class="variable">transition</span>: all <span class="number">0.3s</span>;
+}
+
+.<span class="variable">item-list</span> <span class="variable">li</span>:<span class="variable">hover</span> {
+  <span class="variable">border-color</span>: <span class="string">#764abc</span>;
+}
+
+.<span class="variable">item-list</span> <span class="variable">li</span>.<span class="variable">completed</span> {
+  <span class="variable">opacity</span>: <span class="number">0.6</span>;
+  <span class="variable">background</span>: rgba(<span class="number">5</span>, <span class="number">150</span>, <span class="number">105</span>, <span class="number">0.1</span>);
+  <span class="variable">border-color</span>: <span class="string">#059669</span>;
+}
+
+.<span class="variable">item-list</span> <span class="variable">li</span>.<span class="variable">completed</span> <span class="variable">h3</span> {
+  <span class="variable">text-decoration</span>: line-through;
+  <span class="variable">color</span>: <span class="string">#6b7280</span>;
+}
+
+.<span class="variable">item-content</span> {
+  <span class="variable">display</span>: flex;
+  <span class="variable">align-items</span>: flex-start;
+  <span class="variable">gap</span>: <span class="number">15px</span>;
+  <span class="variable">flex</span>: <span class="number">1</span>;
+}
+
+.<span class="variable">item-checkbox</span> <span class="variable">input</span> {
+  <span class="variable">width</span>: <span class="number">20px</span>;
+  <span class="variable">height</span>: <span class="number">20px</span>;
+  <span class="variable">cursor</span>: pointer;
+  <span class="variable">accent-color</span>: <span class="string">#764abc</span>;
+}
+
+.<span class="variable">item-details</span> <span class="variable">h3</span> {
+  <span class="variable">color</span>: <span class="string">#e8e8e8</span>;
+  <span class="variable">font-size</span>: <span class="number">1.1rem</span>;
+  <span class="variable">margin-bottom</span>: <span class="number">5px</span>;
+}
+
+.<span class="variable">item-details</span> <span class="variable">p</span> {
+  <span class="variable">color</span>: <span class="string">#a0a0a0</span>;
+  <span class="variable">font-size</span>: <span class="number">0.95rem</span>;
+  <span class="variable">margin-bottom</span>: <span class="number">5px</span>;
+}
+
+.<span class="variable">item-details</span> <span class="variable">small</span> {
+  <span class="variable">color</span>: <span class="string">#6b7280</span>;
+  <span class="variable">font-size</span>: <span class="number">0.8rem</span>;
+}
+
+.<span class="variable">item-actions</span> {
+  <span class="variable">display</span>: flex;
+  <span class="variable">gap</span>: <span class="number">10px</span>;
+}
+
+<span class="comment">/* ===========================================
+   MODO DE EDIÇÃO
+   =========================================== */</span>
+.<span class="variable">edit-mode</span> {
+  <span class="variable">width</span>: <span class="number">100%</span>;
+  <span class="variable">display</span>: flex;
+  <span class="variable">flex-direction</span>: column;
+  <span class="variable">gap</span>: <span class="number">10px</span>;
+}
+
+.<span class="variable">edit-mode</span> <span class="variable">input</span> {
+  <span class="variable">padding</span>: <span class="number">10px</span>;
+  <span class="variable">background</span>: <span class="string">#1a1a2e</span>;
+  <span class="variable">border</span>: <span class="number">1px</span> solid <span class="string">#764abc</span>;
+  <span class="variable">border-radius</span>: <span class="number">5px</span>;
+  <span class="variable">color</span>: <span class="string">#e8e8e8</span>;
+}
+
+.<span class="variable">edit-buttons</span> {
+  <span class="variable">display</span>: flex;
+  <span class="variable">gap</span>: <span class="number">10px</span>;
+}
+
+<span class="comment">/* ===========================================
+   ESTADO VAZIO
+   =========================================== */</span>
+.<span class="variable">empty-state</span> {
+  <span class="variable">text-align</span>: center;
+  <span class="variable">padding</span>: <span class="number">40px</span>;
+  <span class="variable">background</span>: <span class="string">#16213e</span>;
+  <span class="variable">border-radius</span>: <span class="number">15px</span>;
+  <span class="variable">border</span>: <span class="number">1px</span> dashed <span class="string">#2d3748</span>;
+}
+
+.<span class="variable">empty-state</span> <span class="variable">p</span> {
+  <span class="variable">font-size</span>: <span class="number">1.2rem</span>;
+  <span class="variable">margin-bottom</span>: <span class="number">10px</span>;
+}
+
+.<span class="variable">empty-state</span> .<span class="variable">hint</span> {
+  <span class="variable">color</span>: <span class="string">#6b7280</span>;
+  <span class="variable">font-size</span>: <span class="number">0.9rem</span>;
+}
+
+<span class="comment">/* ===========================================
+   FOOTER
+   =========================================== */</span>
+<span class="variable">footer</span> {
+  <span class="variable">text-align</span>: center;
+  <span class="variable">padding</span>: <span class="number">30px</span>;
+  <span class="variable">color</span>: <span class="string">#6b7280</span>;
+  <span class="variable">margin-top</span>: <span class="number">30px</span>;
+}
+
+<span class="comment">/* ===========================================
+   RESPONSIVO
+   =========================================== */</span>
+<span class="keyword">@media</span> (<span class="variable">max-width</span>: <span class="number">600px</span>) {
+  .<span class="variable">item-list</span> <span class="variable">li</span> {
+    <span class="variable">flex-direction</span>: column;
+    <span class="variable">align-items</span>: flex-start;
+  }
+  
+  .<span class="variable">item-actions</span> {
+    <span class="variable">width</span>: <span class="number">100%</span>;
+    <span class="variable">justify-content</span>: flex-end;
+  }
+  
+  .<span class="variable">list-header</span> {
+    <span class="variable">flex-direction</span>: column;
+    <span class="variable">gap</span>: <span class="number">15px</span>;
+  }
+}</pre>
+            </div>
+        </section>
+
+        <!-- STEP 13 -->
+        <section class="section" id="step13">
+            <h2><span class="step">13</span> Executando o Projeto</h2>
+            
+            <p>Agora é só rodar o projeto e testar todas as funcionalidades!</p>
+
+            <div class="code-block">
+                <div class="code-header">
+                    <span class="filename">Terminal</span>
+                    <span class="lang">bash</span>
+                </div>
+                <pre><span class="comment"># Iniciar o servidor de desenvolvimento</span>
+<span class="function">npm</span> run dev</pre>
+            </div>
+
+            <div class="info-box tip">
+                <div class="info-box-title">🎉 O que você pode testar</div>
+                <p>✅ <strong>Adicionar</strong> - Preencha o formulário e clique em "Adicionar Item"</p>
+                <p>✅ <strong>Remover</strong> - Clique no botão "🗑️ Remover" em qualquer item</p>
+                <p>✅ <strong>Atualizar</strong> - Clique em "✏️ Editar", modifique e salve</p>
+                <p>✅ <strong>Toggle</strong> - Marque/desmarque o checkbox para completar tarefas</p>
+                <p>✅ <strong>Limpar Todos</strong> - Remove todos os itens de uma vez</p>
+            </div>
+
+            <div class="info-box warning">
+                <div class="info-box-title">🔧 Redux DevTools</div>
+                <p>Instale a extensão <strong>Redux DevTools</strong> no seu navegador para debugar o estado em tempo real!</p>
+                <p>Disponível para Chrome, Firefox e Edge.</p>
+            </div>
+
+            <h3>Resumo do Fluxo Redux</h3>
+            <div class="flow-diagram">
+                <div style="text-align: left; display: inline-block;">
+                    <p style="margin: 10px 0;"><strong style="color: var(--secondary);">1.</strong> Componente chama <span class="inline-code">dispatch(addItem({...}))</span></p>
+                    <p style="margin: 10px 0;"><strong style="color: var(--secondary);">2.</strong> Redux envia a action para o reducer</p>
+                    <p style="margin: 10px 0;"><strong style="color: var(--secondary);">3.</strong> Reducer processa e retorna novo state</p>
+                    <p style="margin: 10px 0;"><strong style="color: var(--secondary);">4.</strong> Store atualiza</p>
+                    <p style="margin: 10px 0;"><strong style="color: var(--secondary);">5.</strong> Componentes com <span class="inline-code">useAppSelector</span> re-renderizam</p>
+                </div>
+            </div>
+        </section>
+
+        <footer>
+            <p>🚀 Tutorial criado para aprendizado de Redux com React Puro e TypeScript</p>
+            <p style="margin-top: 10px; font-size: 0.9rem;">Bons estudos, Tales! 💜</p>
+        </footer>
+    </div>
+</body>
+</html>
